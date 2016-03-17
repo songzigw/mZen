@@ -2886,3 +2886,6 @@ input.mzen-counter-input {
 .mzen-tap-active:active {
 	background-color: #f4f4f4;
 }
+.mzen-up-hover:hover {
+    background-color: #f4f4f4;
+}
