@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+        <title>title</title>
+        <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
+        <link rel="stylesheet" type="text/css" href="../css/mzen-custom.css" />
+        <style>
+        #main-footer:before {
+            border-top: 1px solid #c8c7cc;
+            display: block;
+            position: absolute;
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0.0;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            pointer-events: none;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+        }
+        /*设置图标变大*/
+        #main-footer ul li span.mzen-iconfont {
+            display: block;
+            font-size: 28px;
+            height: 35px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="mzen-content">
+        <!--头部集合 BEGIN-->
+        <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
+            <a class="mzen-pull-left mzen-img mzen-tap-active im-user">
+            <img class="mzen-img-object" src="../imgs/head_def.png">
+            </a>
+            <div class="mzen-title">
+                消息
+            </div>
+        </header>
+        <!--头部集合 END-->
+        
+        <div id="main-content">
+        
+        <div class="mzen-content main-wrap message">
+            <div class="mzen-searchbar-wrap demo" id="search">
+			    <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
+			        <i class="mzen-iconfont mzen-icon-search"></i>
+			        <div class="mzen-searchbar-text">请输入搜索内容</div>
+			        <div class="mzen-searchbar-input">
+			            <form action="javascript:search();">
+			            <input type="search" placeholder="请输入搜索内容" id="search-input">
+			            </form>
+			        </div>
+			        <i class="mzen-iconfont mzen-icon-roundclosefill" onclick="clearInput()"></i>
+			    </div>
+			    <div class="mzen-searchbar-cancel mzen-text-info" onclick="cancelSearch()">取消</div>
+			</div>
+			
+            <ul class="mzen-list-view">
+                
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active" onclick="goReceiveFavorite();">
+                    <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">
+                    <a class="mzen-arrow-right font-line-height">系统通知
+                    <span class="mzen-badge mzen-badge-danger">12</span></a>
+                </li>
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active">
+                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_b.jpg">
+                    <div class="mzen-img-body mzen-arrow-right">
+                        <label>通话往来</label>
+                        <em class="mzen-pull-right msg-time">2016/1/3</em>
+                        <span class="mzen-badge mzen-badge-danger">12</span>
+                        <p class='mzen-ellipsis-2'>[文本消息]:哈哈哈哈哈</p>
+                    </div>
+                </li>
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active">
+                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_def.png">
+                    <div class="mzen-img-body mzen-arrow-right">
+                        <label>张三</label>
+                        <em class="mzen-pull-right msg-time">2016/1/3</em>
+                        <span class="mzen-badge mzen-badge-danger">12</span>
+                        <p class='mzen-ellipsis-2'>[文本消息]:哈哈哈哈哈</p>
+                    </div>
+                </li>
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active">
+                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_a.jpg">
+                    <div class="mzen-img-body mzen-arrow-right">
+                        <label>李四</label>
+                        <em class="mzen-pull-right msg-time">2016/1/3</em>
+                        <span class="mzen-badge mzen-badge-danger">12</span>
+                        <p class='mzen-ellipsis-2'>[文本消息]:哈哈哈哈哈</p>
+                    </div>
+                </li>
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active">
+                    <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_messagebox.png">
+                    <div class="mzen-img-body mzen-arrow-right">
+                        <label>王五</label>
+                        <em class="mzen-pull-right msg-time">2016/1/3</em>
+                        <span class="mzen-badge mzen-badge-danger">12</span>
+                        <p class='mzen-ellipsis-2'>[文本消息]:哈哈哈哈哈</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        </div>
+        
+        <!--底部导航 BEGIN-->
+        <footer class="mzen-nav" id="main-footer">
+            <ul class="mzen-bar-tab">
+                <li class="active">
+                    <span class="mzen-iconfont mzen-icon-message"></span>
+                    <p>消息</p>
+                </li>
+                <li>
+                    <span class="mzen-iconfont mzen-icon-friend"></span>
+                    <p>联系人</p>
+                </li>
+                <li data-id="my">
+                    <span class="mzen-iconfont mzen-icon-settings"></span>
+                    <p>设置</p>
+                </li>
+            </ul>
+        </footer>
+        <!--底部导航 END-->
+        </div>
+    </body>
+    <script type="text/javascript" src="./script/api.js"></script>
+    <script type="text/javascript" src="./script/zepto.js"></script>
+    <script type="text/javascript" src="./script/doT.min.js"></script>
+    <script type="text/javascript" src="./script/song-web-api.js"></script>
+    <script type="text/javascript" src="./script/song-base.js"></script>
+    <script type="text/javascript">
+        
+    </script>
+</html>
