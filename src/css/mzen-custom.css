@@ -334,3 +334,7 @@ html, body {
 .chatbox .mzen-searchbar-wrap {
 	height: 45px;
 }
+.chatbox .mzen-bar-nav {
+	-wekbit-box-shadow: 0 0px 0px #cfcfcf;
+    box-shadow: 0 0px 0px #cfcfcf;
+}
