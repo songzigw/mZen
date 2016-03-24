@@ -1,15 +1,43 @@
 {
-    "name":"mZen",
-    "version":"0.1.0",
-    "engines":{
-        "node":">= 0.8.0"
+    "name": "mZen",
+    "title": "mZen Phone UI framework",
+    "description": "mZen Phone UI framework",
+    "version": "0.1.0",
+    "homepage": "https://github.com/songzigw/mZen",
+    "author": {
+        "name":"zhangsong",
+        "email":"songzigw@163.com"
     },
-    "devDependencies":{
+    "engines": {
+        "node":">= 4.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/songzigw/mZen.git"
+    },
+    "bugs": {
+    "url": "https://github.com/songzigw/mZen/issues"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/songzigw/mZen/LICENSE"
+        }
+    ],
+    "keywords": [],
+    "devDependencies": {
         "grunt":"~0.4.0",
         "grunt-contrib-concat":"~0.3.0",
         "grunt-contrib-copy" : "~0.4.1",
         "grunt-contrib-cssmin" : "~0.6.0",
         "grunt-contrib-uglify":"~0.2.0",
         "express":""
-    }
+    },
+    "dependencies": {
+        "zepto": "*"
+    },
+    config: {},
+    directories: {},
+    main: {},
+    bin: {}
 }

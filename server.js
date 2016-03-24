@@ -1,8 +1,6 @@
-/**
- * 使用nodejs来实现本地开发环境的跨域请求转发，发布为手机应用后通过phonegap的白名单机制来实现跨域
- * User: walker
- * Date: 12-8-29
- * Time: 上午9:44
+/*!
+ * @auth zhangsong
+ * @date: 2016年3月24日
  */
 var http = require('http');
 var path = require('path');
@@ -54,7 +52,7 @@ app.use("/proxy", function (req, res) {
     });
 });
 
-app.use(express.static(__dirname + '/demo'));
+app.use(express.static(__dirname + '/src'));
 
 app.listen(3000);
 console.log("Server is launching at http://localhost:3000");
