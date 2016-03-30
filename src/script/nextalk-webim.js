@@ -1203,13 +1203,14 @@ var NexTalkWebIM = function() {
     });
 
     // 全局性的定义-----------------
-    IM.VERSION = "0.0.1";
+
+    IM.VERSION = IM.version = IM.v = "0.0.1";
+
     /** 默认配置信息 */
     IM.DEFAULTS = {
-        // 消息通道强制设置为长链接方式，
+        // 消息通道类型
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
-        webXhrPolling : true,
-        channelType : "websocked",
+        channelType : IM.connChannel.WEBSOCKET,
         isJsonp : true
     };
 
@@ -1243,6 +1244,16 @@ var NexTalkWebIM = function() {
         /** 网络不可用。 */
         connStatus[connStatus["NETWORK_UNAVAILABLE"] = -1] = "NETWORK_UNAVAILABLE";
     })(IM.connStatus);
+    /** 消息通道类型 */
+    IM.connChannel = {};
+    (function (connChannel) {
+        connChannel[connChannel["XHR_POLLING"] = 0] = "XHR_POLLING";
+        connChannel[connChannel["WEBSOCKET"] = 1] = "WEBSOCKET";
+        //外部调用
+        //connChannel[connChannel["HTTP"] = 0] = "HTTP";
+        //外部调用
+        //connChannel[connChannel["HTTPS"] = 1] = "HTTPS";
+    })(IM.connChannel);
     /** 会话通知状态 */
     IM.conversationNoticeStatus = {};
     /** 会话类型 */
@@ -1326,7 +1337,7 @@ var NexTalkWebIM = function() {
         IM.getInstance()._init(appKey, options);
         return IM.getInstance();
     };
-    
+
     IM.prototype.version = IM.VERSION;
 
     extend(IM.prototype, {
@@ -1429,12 +1440,14 @@ var NexTalkWebIM = function() {
         var self = this, options = self.options;
         var conn = self.getConnection();
 
-        self.channel = options.channelType != "jsonpd" && conn.websocket && socket.enable 
-        ? new socket(conn.websocket, conn) 
-        : new comet(conn.server + (/\?/.test(url) ? "&" : "?" ) + ajax.param({
-                ticket : conn.ticket,
-                domain : conn.domain
-        }));
+        self.channel = options.channelType == IM.connChannel.WEBSOCKET
+            && conn.websocket && socket.enable 
+            ? new socket(conn.websocket, conn) 
+            : new comet(conn.server + (/\?/.test(url) ? "&" : "?" ) +
+                    ajax.param({
+                        ticket : conn.ticket,
+                        domain : conn.domain
+                    }));
 
         self.channel.bind("connect", function(e, data) {
         }).bind("message", function(e, data) {
