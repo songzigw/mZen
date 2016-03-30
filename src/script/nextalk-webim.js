@@ -1211,7 +1211,8 @@ var NexTalkWebIM = function() {
         // 消息通道类型
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
         channelType : IM.connChannel.WEBSOCKET,
-        isJsonp : true
+        isJsonp : true,
+        path : "/"
     };
 
     /** 连接情形 */
@@ -1233,16 +1234,14 @@ var NexTalkWebIM = function() {
     /** 连接状态 */
     IM.connStatus = {};
     (function(connStatus) {
+        /** 网络不可用。 */
+        connStatus[connStatus["NETWORK_UNAVAILABLE"] = -1] = "NETWORK_UNAVAILABLE";
         /** 连接成功。 */
         connStatus[connStatus["CONNECTED"] = 0] = "CONNECTED";
         /** 连接中。 */
         connStatus[connStatus["CONNECTING"] = 1] = "CONNECTING";
         /** 断开连接。 */
         connStatus[connStatus["DISCONNECTED"] = 2] = "DISCONNECTED";
-        /** 用户账户在其他设备登录，本机会被踢掉线。 */
-        connStatus[connStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"] = 6] = "KICKED_OFFLINE_BY_OTHER_CLIENT";
-        /** 网络不可用。 */
-        connStatus[connStatus["NETWORK_UNAVAILABLE"] = -1] = "NETWORK_UNAVAILABLE";
     })(IM.connStatus);
     /** 消息通道类型 */
     IM.connChannel = {};
@@ -1413,8 +1412,9 @@ var NexTalkWebIM = function() {
         });
         
         // 初始化Web业务服务API
-        self.webApi = IM.WebApi.init({
-            path : options.path
+        IM.WebApi.init({
+            path : options.path,
+            dataType : ajax.settings.dataType
         });
         return self;
     };
@@ -1490,7 +1490,7 @@ var NexTalkWebIM = function() {
             status.set("o", false);
             status.set("s", params.show);
 
-            var api = self.webApi;
+            var api = IM.WebApi.getInstance();
             api.online(params, function(ret, err) {
                 if (ret) {
                     if (!ret.success) {
