@@ -1208,7 +1208,8 @@ var NexTalkWebIM = function() {
     IM.DEFAULTS = {
         // 消息通道强制设置为长链接方式，
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
-        webXhrPolling : true
+        webXhrPolling : true,
+        channelType : "websocked"
     };
 
     /** 连接情形 */
@@ -1395,6 +1396,11 @@ var NexTalkWebIM = function() {
         var self = this;
         self.appId = appId;
         options = self.options = extend({}, IM.DEFAULTS, options || {});
+        ajax.setup({
+            dataType : options.jsonp ? "jsonp" : "json"
+        });
+        
+        // 初始化Web业务服务API
         self.webApi = IM.WebApi.init({
             path : options.path
         });
@@ -1419,7 +1425,24 @@ var NexTalkWebIM = function() {
      * 连接服务器
      */
     IM.prototype.connectServer = function() {
-    
+        var self = this, options = self.options;
+        var conn = self.getConnection();
+
+        self.channel = options.channelType != "jsonpd" && conn.websocket && socket.enable 
+        ? new socket(conn.websocket, conn) 
+        : new comet(conn.server + (/\?/.test(url) ? "&" : "?" ) + ajax.param({
+                ticket : conn.ticket,
+                domain : conn.domain
+        }));
+
+        self.channel.bind("connect", function(e, data) {
+        }).bind("message", function(e, data) {
+                self.handle(data);
+        }).bind("error", function(e, data) {
+                self._stop("connect", "Connect Error");
+        }).bind("close", function(e, data) {
+                self._stop("connect", "Disconnect");
+        });
     };
 
     extend(IM.prototype, {
