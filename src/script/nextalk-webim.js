@@ -1420,14 +1420,14 @@ var NexTalkWebIM = function() {
     };
 
     /**
-     * 设置连接监听状态
+     * 设置连接状态监听器
      */
     IM.prototype.setConnStatusListener = function() {
 
     };
 
     /**
-     * 设置消息监听器
+     * 设置消息接收监听器
      */
     IM.prototype.setOnReceiveMessageListener = function() {
 
