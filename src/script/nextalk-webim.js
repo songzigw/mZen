@@ -1209,7 +1209,8 @@ var NexTalkWebIM = function() {
         // 消息通道强制设置为长链接方式，
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
         webXhrPolling : true,
-        channelType : "websocked"
+        channelType : "websocked",
+        isJsonp : true
     };
 
     /** 连接情形 */
@@ -1397,7 +1398,7 @@ var NexTalkWebIM = function() {
         self.appId = appId;
         options = self.options = extend({}, IM.DEFAULTS, options || {});
         ajax.setup({
-            dataType : options.jsonp ? "jsonp" : "json"
+            dataType : options.isJsonp ? "jsonp" : "json"
         });
         
         // 初始化Web业务服务API
