@@ -1210,7 +1210,7 @@ var NexTalkWebIM = function() {
     IM.DEFAULTS = {
         // 消息通道类型
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
-        channelType : IM.connChannel.WEBSOCKET,
+        channelType : IM.channelType.WEBSOCKET,
         isJsonp : true,
         path : "/"
     };
@@ -1244,15 +1244,11 @@ var NexTalkWebIM = function() {
         connStatus[connStatus["DISCONNECTED"] = 2] = "DISCONNECTED";
     })(IM.connStatus);
     /** 消息通道类型 */
-    IM.connChannel = {};
-    (function (connChannel) {
-        connChannel[connChannel["XHR_POLLING"] = 0] = "XHR_POLLING";
-        connChannel[connChannel["WEBSOCKET"] = 1] = "WEBSOCKET";
-        //外部调用
-        //connChannel[connChannel["HTTP"] = 0] = "HTTP";
-        //外部调用
-        //connChannel[connChannel["HTTPS"] = 1] = "HTTPS";
-    })(IM.connChannel);
+    IM.channelType = {};
+    (function (channelType) {
+        channelType[channelType["XHR_POLLING"] = 0] = "XHR_POLLING";
+        channelType[channelType["WEBSOCKET"] = 1] = "WEBSOCKET";
+    })(IM.channelType);
     /** 会话通知状态 */
     IM.conversationNoticeStatus = {};
     /** 会话类型 */
@@ -1279,15 +1275,17 @@ var NexTalkWebIM = function() {
     IM.presence = {};
     (function(pre) {
         /** 在线 */
-        pre[pre["ONLINE"] = 1] = "ONLINE";
+        pre[pre["AVAILABLE"] = 1] = "AVAILABLE";
         /** 忙碌 */
-        pre[pre["BUSY"] = 2] = "BUSY";
+        pre[pre["DND"] = 2] = "DND";
         /** 离开 */
-        pre[pre["BUSY"] = 2] = "BUSY";
+        pre[pre["AWAY"] = 3] = "AWAY";
         /** 隐身 */
-        pre[pre["DIVE"] = 4] = "DIVE";
+        pre[pre["INVISIBLE"] = 4] = "INVISIBLE";
+        /** 聊天中 */
+        pre[pre["CHAT"] = 5] = "CHAT";
         /** 离线 */
-        pre[pre["OFFLINE"] = 5] = "OFFLINE";
+        pre[pre["UNAVAILALE"] = 6] = "UNAVAILALE";
     })(IM.presence);
 
     /** 消息类型 */
@@ -1440,22 +1438,22 @@ var NexTalkWebIM = function() {
         var self = this, options = self.options;
         var conn = self.getConnection();
 
-        self.channel = options.channelType == IM.connChannel.WEBSOCKET
-            && conn.websocket && socket.enable 
-            ? new socket(conn.websocket, conn) 
-            : new comet(conn.server + (/\?/.test(url) ? "&" : "?" ) +
-                    ajax.param({
-                        ticket : conn.ticket,
-                        domain : conn.domain
-                    }));
+        self.channel = options.channelType == IM.channelType.WEBSOCKET
+                && conn.websocket && socket.enable ? new socket(conn.websocket,
+                conn) : new comet(conn.server + (/\?/.test(url) ? "&" : "?")
+                + ajax.param({
+                    ticket : conn.ticket,
+                    domain : conn.domain
+                }));
 
         self.channel.bind("connect", function(e, data) {
+
         }).bind("message", function(e, data) {
-                self.handle(data);
+            self.handle(data);
         }).bind("error", function(e, data) {
-                self._stop("connect", "Connect Error");
+            self._stop("connect", "Connect Error");
         }).bind("close", function(e, data) {
-                self._stop("connect", "Disconnect");
+            self._stop("connect", "Disconnect");
         });
     };
 
@@ -1465,11 +1463,12 @@ var NexTalkWebIM = function() {
          */
         online : function(params, callback) {
             var self = this, status = self.status;
-            if (self.getPresence() !== IM.presence.OFFLINE) {
+            if (self.getPresence() !== IM.presence.UNAVAILALE) {
                 return;
             }
 
-            var buddy_ids = [], room_ids = [], tabs = status.get("tabs"), tabIds = status.get("tabIds");
+            var buddy_ids = [], room_ids = [], tabs = status
+                    .get("tabs"), tabIds = status.get("tabIds");
             if (tabIds && tabIds.length && tabs) {
                 each(tabs, function(k, v) {
                     if (k[0] == "b")
@@ -1479,14 +1478,13 @@ var NexTalkWebIM = function() {
                 });
             }
             params = extend({
-                //chatlink_ids: self.chatlink_ids.join(","),
+                // chatlink_ids: self.chatlink_ids.join(","),
                 buddy_ids : buddy_ids.join(","),
                 room_ids : room_ids.join(","),
-                csrf_token : webim.csrf_token,
                 show : status.get("s") || "available"
             }, params);
             self._ready(params);
-            //set auto open true
+            // set auto open true
             status.set("o", false);
             status.set("s", params.show);
 
@@ -1499,7 +1497,7 @@ var NexTalkWebIM = function() {
                         self._serverTime(ret.serverTime);
                         self._connection(ret.connection);
                         self._currUser(ret.user);
-                        self._presence(IM.presence.ONLINE);
+                        self._presence(IM.presence.AVAILABLE);
                         self._buiddies(ret.buiddies);
                         self._rooms(ret.rooms);
                         if (typeof callback == "function") {
