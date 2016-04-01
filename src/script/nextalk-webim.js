@@ -1647,8 +1647,7 @@ var NexTalkWebIM = function() {
                 var _new = extend({}, _old, options);
                 self.data = _new;
                 IM.WebApi.getInstance().setting({
-                    data : JSON.stringify(_new),
-                    csrf_token : IM.getInstance().getCsrfToken()
+                    data : JSON.stringify(_new)
                 });
             }
         }
