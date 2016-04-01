@@ -1456,6 +1456,30 @@ var NexTalkWebIM = function() {
             self._stop("connect", "Disconnect");
         });
     };
+    
+    IM.prototype.handle = function(data) {
+        var self = this;
+        if (data.messages && data.messages.length) {
+            var origin = data.messages, msgs = [], events = [];
+            for (var i = 0; i < origin.length; i++) {
+                var msg = origin[i];
+                if (msg.body && msg.body.indexOf("webim-event:") == 0) {
+                    msg.event = msg.body.replace("webim-event:", "").split(
+                            "|,|");
+                    events.push(msg);
+                } else {
+                    msgs.push(msg);
+                }
+            }
+            ;
+            msgs.length && self.trigger("message", [ msgs ]);
+            events.length && self.trigger("event", [ events ]);
+        }
+        data.presences && data.presences.length
+                && self.trigger("presence", [ data.presences ]);
+        data.statuses && data.statuses.length
+                && self.trigger("status", [ data.statuses ]);
+    };
 
     extend(IM.prototype, {
         /**
@@ -1518,82 +1542,62 @@ var NexTalkWebIM = function() {
             self.status.set("o", true);
             self.connection.close();
             self._stop("offline", "offline");
-            ajax({
-                type : "post",
-                cache : false,
-                url : route("offline"),
-                data : {
+            
+            var api = IM.WebApi.getInstance();
+            var params = {
                     status : 'offline',
                     csrf_token : webim.csrf_token,
                     ticket : data.connection.ticket
-                }
+                };
+            api.offline(params, function(ret, err) {
+                
             });
-    
         },
 
         sendMessage : function(msg, callback) {
             var self = this;
-            msg.ticket = self.data.connection.ticket;
+            msg.ticket = self.getConnection().ticket;
             self.trigger("sendMessage", [msg]);
-            ajax({
-                type : "post",
-                cache : false,
-                url : route("message"),
-                data : extend({
-                    csrf_token : webim.csrf_token
-                }, msg),
-                success : callback,
-                error : callback
-            });
+            
+            var api = IM.WebApi.getInstance();
+            var params = extend({}, msg);
+            api.message(params, callback);
         },
 
         sendStatus : function(msg, callback) {
             var self = this;
-            msg.ticket = self.data.connection.ticket;
+            msg.ticket = self.getConnection().ticket;
             self.trigger("sendStatus", [msg]);
-            ajax({
-                type : "post",
-                cache : false,
-                url : route("status"),
-                data : extend({
-                    csrf_token : webim.csrf_token
-                }, msg),
-                success : callback,
-                error : callback
-            });
+            
+            var api = IM.WebApi.getInstance();
+            var params = extend({}, msg);
+            api.status(params, callback);
         },
 
         sendPresence : function(msg, callback) {
             var self = this;
-            msg.ticket = self.data.connection.ticket;
-            //save show status
-            self.data.user.show = msg.show;
+            msg.ticket = self.getConnection().ticket;
+            // save show status
+            self._presence(msg.show);
             self.status.set("s", msg.show);
             self.trigger("sendPresence", [msg]);
-            ajax({
-                type : "post",
-                cache : false,
-                url : route("presence"),
-                data : extend({
-                    csrf_token : webim.csrf_token
-                }, msg),
-                success : callback,
-                error : callback
-            });
+            
+            var api = IM.WebApi.getInstance();
+            var params = extend({}, msg);
+            api.presence(params, callback);
         },
 
         _deactivate : function() {
-            var self = this, data = self.data;
-            if (!data || !data.connection || !data.connection.ticket)
+            var self = this;
+            if (!self.getConnection() || !self.getConnection().ticket)
                 return;
-            ajax({
-                type : "get",
-                cache : false,
-                url : route("deactivate"),
-                data : {
-                    ticket : data.connection.ticket,
-                    csrf_token : webim.csrf_token
-                }
+            
+            var api = IM.WebApi.getInstance();
+            var params = {
+                ticket : self.getConnection().ticket
+            };
+            api.deactivate(params, null, {
+                type : "get"
             });
         }
     }); 
@@ -1651,6 +1655,524 @@ var NexTalkWebIM = function() {
                 });
             }
         }
+    });
+    
+
+        /**
+         * 状态(cookie临时存储[刷新页面有效])
+         */
+    model("Status",
+        {
+            key : "_webim",
+            storage : "local",
+            domain : document.domain
+        }, {
+            _init : function() {
+                var self = this, data = self.data, key = self.options.key;
+                var store = (self.options.storage == "local")
+                        && window.localStorage;
+                if (store) {
+                    // 无痕浏览模式
+                    try {
+                        var testKey = '__store_webim__'
+                        store.setItem(testKey, testKey)
+                        if (store.getItem(testKey) == testKey) {
+                            self.store = store;
+                        }
+                        store.removeItem(testKey);
+                    } catch (e) {
+                        self.store = undefined;
+                    }
+                }
+                if (!data) {
+                    var c = self.store ? self.store.getItem(key)
+                            : cookie(key);
+                    self.data = c ? JSON.parse(c) : {};
+                } else {
+                    self._save(data);
+                }
+            },
+            set : function(key, value) {
+                var options = key, self = this;
+                if (typeof key == "string") {
+                    options = {};
+                    options[key] = value;
+                }
+                var old = self.data;
+                if (checkUpdate(old, options)) {
+                    var _new = extend({}, old, options);
+                    self._save(_new);
+                }
+            },
+            get : function(key) {
+                return this.data[key];
+            },
+            clear : function() {
+                this._save({});
+            },
+            _save : function(data) {
+                var self = this, key = self.options.key, domain = self.options.domain;
+                self.data = data;
+                data = JSON.stringify(data);
+                self.store ? self.store.setItem(key, data) : cookie(key,
+                        data, {
+                            path : '/',
+                            domain : domain
+                        });
+            }
+    });
+
+    /**
+     * buddy
+     */
+    model("buddy", {
+            active : true
+    }, {
+            _init : function() {
+                    var self = this;
+                    self.data = self.data || [];
+                    self.dataHash = {};
+                    self.set(self.data);
+            },
+            remove : function(id) {
+                    var self = this;
+                    var v = self.get(id);
+                    if (!v)
+                            return;
+                    
+                    var api = IM.WebApi.getInstance();
+                    api.remove_buddy({id : id}, function(ret, err) {});
+                    self.trigger("unsubscribe", [[v]]);
+                    delete self.dataHash[id];
+            },
+            clear : function() {
+                    var self = this;
+                    self.data = [];
+                    self.dataHash = {};
+            },
+            count : function(conditions) {
+                    var data = this.dataHash, count = 0, t;
+                    for (var key in data) {
+                            if (isObject(conditions)) {
+                                    t = true;
+                                    for (var k in conditions) {
+                                            if (conditions[k] != data[key][k])
+                                                    t = false;
+                                    }
+                                    if (t)
+                                            count++;
+                            } else {
+                                    count++;
+                            }
+                    }
+                    return count;
+            },
+            get : function(id) {
+                    return this.dataHash[id];
+            },
+            all : function(onlyVisible) {
+                    if (onlyVisible)
+                            return grep(this.data, function(a) {
+                                    return a.show != "invisible" && a.presence == "online"
+                            });
+                    else
+                            return this.data;
+            },
+            complete : function() {
+                    var self = this, data = self.dataHash, ids = [], v;
+                    for (var key in data ) {
+                            v = data[key];
+                            //Will load offline info for show unavailable buddy.
+                            //if( v.incomplete && v.presence == 'online' ) {
+                            if (v.incomplete) {
+                                    //Don't load repeat.
+                                    v.incomplete = false;
+                                    ids.push(key);
+                            }
+                    }
+                    self.load(ids);
+            },
+            update : function(ids) {
+                    this.load(ids);
+            },
+            presence : function(data) {
+                    var self = this, dataHash = self.dataHash;
+                    data = isArray(data) ? data : [data];
+                    //Complete presence info.
+                    for (var i in data ) {
+                            var v = data[i];
+                            //Presence in [show,offline,online]
+                            v.presence = v.presence == "offline" ? "offline" : "online";
+                            v.incomplete = !dataHash[v.id];
+                            if (!v.group && v.id) {
+                                    v.group = v.id.indexOf("vid:") == 0 ? "visitor" : v.group;
+                            }
+                    }
+                    self.set(data);
+            },
+            load : function(ids) {
+                    ids = idsArray(ids);
+                    if (ids.length) {
+                            var self = this, options = self.options;
+                            var api = IM.WebApi.getInstance();
+                            var params = {ids : ids.join(",")};
+                            api.buddies(params, function(ret, err) {
+                                if (ret) {
+                                    self.set(ret);
+                                }
+                            }, {type : "get", context : self});
+                    }
+            },
+            search : function(val, callback) {
+                    var self = this, options = self.options;
+
+                    var api = IM.WebApi.getInstance();
+                    var params = {nick : val};
+                    api.search(params, function(ret, err) {
+                        if (ret) {
+                            self.set(ret);
+                            setTimeout(callback, 500);
+                        }
+                    }, {context : self});
+            },
+            set : function(addData) {
+                    var self = this, data = self.data, dataHash = self.dataHash, status = {};
+                    addData = addData || [];
+                    var l = addData.length, v, type, add, id;
+                    for (var i = 0; i < l; i++) {
+                            //for(var i in addData){
+                            v = addData[i], id = v.id;
+                            if (id) {
+                                    if (!dataHash[id]) {
+                                            v.presence = v.presence || "online";
+                                            v.show = v.show ? v.show : (v.presence == "offline" ? "unavailable" : "available");
+                                            dataHash[id] = {};
+                                            data.push(dataHash[id]);
+                                    }
+                                    v.incomplete = !!v.incomplete;
+                                    add = checkUpdate(dataHash[id], v);
+                                    if (add) {
+                                            type = add.presence || "update";
+                                            status[type] = status[type] || [];
+                                            extend(dataHash[id], add);
+                                            status[type].push(dataHash[id]);
+                                    }
+                            }
+                    }
+                    for (var key in status ) {
+                            self.trigger(key, [status[key]]);
+                    }
+                    self.options.active && self.complete();
+            }
+    });
+
+    (function() {
+            model("room", {
+            }, {
+                    _init : function() {
+                            var self = this;
+                            self.data = self.data || [];
+                            self.dataHash = {};
+                    },
+                    get : function(id) {
+                            return this.dataHash[id];
+                    },
+                    all : function(onlyTemporary) {
+                            if (onlyTemporary)
+                                    return grep(this.data, function(a) {
+                                            return a.temporary
+                                    });
+                            else
+                                    return this.data;
+                    },
+                    //Invite members to create a temporary room
+                    invite : function(id, nick, members, callback) {
+                            var self = this, options = self.options, user = options.user;
+                            
+                            var api = IM.WebApi.getInstance();
+                            var params = {
+                                    ticket : IM.getInstance().getConnection().ticket,
+                                    id : id,
+                                    nick : nick || "",
+                                    members : members.join(",")
+                            };
+                            api.invite(params, function(ret, err) {
+                                if (ret) {
+                                    self.set([data]);
+                                    self.loadMember(id);
+                                    callback && callback(ret);
+                                }
+                            });
+
+                    },
+                    join : function(id, nick, callback) {
+                            var self = this, options = self.options, d = self.dataHash[id], user = options.user;
+
+                            var api = IM.WebApi.getInstance();
+                            var params = {
+                                    ticket : IM.getInstance().getConnection().ticket,
+                                    id : id,
+                                    nick : nick || ""
+                            };
+                            api.join(params, function(ret, err) {
+                                if (ret) {
+                                    self.set([data]);
+                                    self.loadMember(id);
+                                    callback && callback(ret);
+                                }
+                            });
+                    },
+                    leave : function(id) {
+                            var self = this, options = self.options, d = self.dataHash[id], user = options.user;
+                            if (d) {
+                                var api = IM.WebApi.getInstance();
+                                var params = {
+                                        ticket : IM.getInstance().getConnection().ticket,
+                                        id : id,
+                                        nick : user.nick,
+                                        temporary : d.temporary
+                                };
+                                api.leave(params, function(ret, err) {
+                                    if (ret) {
+                                        delete self.dataHash[id];
+                                        self.trigger("leaved", [id]);
+                                    }
+                                });
+                            }
+                    },
+                    block : function(id) {
+                            var self = this, options = self.options, d = self.dataHash[id];
+                            if (d && !d.blocked) {
+                                    d.blocked = true;
+                                    var list = [];
+                                    each(self.dataHash, function(n, v) {
+                                            if (!v.temporary && v.blocked)
+                                                    list.push(v.id);
+                                    });
+                                    
+                                    var api = IM.WebApi.getInstance();
+                                    var params = {
+                                            ticket : IM.getInstance().getConnection().ticket,
+                                            id : id
+                                    };
+                                    api.block(params, function(ret, err) {
+                                        if (ret) {
+                                            self.trigger("blocked", [id, list]);
+                                        }
+                                    });
+                            }
+                    },
+                    unblock : function(id) {
+                            var self = this, options = self.options, d = self.dataHash[id];
+                            if (d && d.blocked) {
+                                    d.blocked = false;
+                                    var list = [];
+                                    each(self.dataHash, function(n, v) {
+                                            if (!v.temporary && v.blocked)
+                                                    list.push(v.id);
+                                    });
+                                    
+                                    var api = IM.WebApi.getInstance();
+                                    var params = {
+                                            ticket : IM.getInstance().getConnection().ticket,
+                                            id : id
+                                    };
+                                    api.unblock(params, function(ret, err) {
+                                        if (ret) {
+                                            self.trigger("unblocked", [id, list]);
+                                        }
+                                    });
+                            }
+                    },
+                    set : function(d) {
+                            var self = this, data = self.data, dataHash = self.dataHash, status = {};
+                            each(d, function(k, v) {
+                                    var id = v.id;
+                                    if (!id)
+                                            return;
+
+                                    v.members = v.members || [];
+                                    v.all_count = v.members.length;
+                                    v.count = 0;
+                                    each(v.members, function(k, m) {
+                                            if (m.presence == "online") {
+                                                    v.count += 1;
+                                            }
+                                    });
+                                    if (!dataHash[id]) {
+                                            dataHash[id] = v;
+                                            data.push(v);
+                                    } else {
+                                            extend(dataHash[id], v);
+                                            //TODO: compare and trigger
+                                    }
+                                    self.trigger("updated", dataHash[id]);
+                            });
+                    },
+                    loadMember : function(id) {
+                            var self = this, options = self.options;
+                            
+                            var api = IM.WebApi.getInstance();
+                            var params = {
+                                    ticket : IM.getInstance().getConnection().ticket,
+                                    id : id
+                            };
+                            api.members(params, function(ret, err) {
+                                if (ret) {
+                                    self.updateMember(id, ret);
+                                }
+                            });
+                    },
+
+                    updateMember : function(room_id, data) {
+                            var room = this.dataHash[room_id];
+                            if (room) {
+                                    room.memberLoaded = true;
+                                    room.members = data;
+                                    this.set([room]);
+                            }
+                    },
+
+                    onPresence : function(presence) {
+                            var self = this, tp = presence.type;
+                            if (presence.to && self.dataHash[presence.to]) {
+                                    var roomId = presence.to;
+                                    var oneRoom = this.dataHash[roomId];
+                                    if (oneRoom && oneRoom.memberLoaded) {
+                                            //alert("reloading " + roomId);
+                                            self.loadMember(roomId);
+                                    }
+                                    if (tp == "join") {
+                                            self.trigger("memberJoined", [roomId, presence]);
+                                    } else if (tp == "leave") {
+                                            self.trigger("memberLeaved", [roomId, presence]);
+                                    } else if (tp == "grponline") {
+                                            self.trigger("memberOnline", [roomId, presence]);
+                                    } else if (tp == "grpoffline") {
+                                            self.trigger("memberOffline", [roomId, presence]);
+                                    } else {
+                                        //do nothing
+                                    }
+                            }
+                    },
+
+                    clear : function() {
+                            var self = this;
+                            self.data = [];
+                            self.dataHash = {};
+                    }
+            });
+    } )();
+
+    /*
+     history // 消息历史记录 Support chat and grpchat
+     */
+    model("history", {
+    }, {
+            _init : function() {
+                    var self = this;
+                    self.data = self.data || {};
+                    self.data.chat = self.data.chat || {};
+                    self.data.grpchat = self.data.grpchat || {};
+            },
+            clean : function() {
+                    var self = this;
+                    self.data.chat = {};
+                    self.data.grpchat = {};
+            },
+            get : function(type, id) {
+                    return this.data[type][id];
+            },
+            set : function(addData) {
+                    var self = this, data = self.data, cache = {
+                            "chat" : {},
+                            "grpchat" : {}
+                    };
+                    addData = makeArray(addData);
+                    var l = addData.length, v, id, userId = self.options.userInfo.id;
+                    if (!l)
+                            return;
+                    for (var i = 0; i < l; i++) {
+                            //for(var i in addData){
+                            v = addData[i];
+                            type = v.type;
+                            id = type == "chat" ? (v.to == userId ? v.from : v.to) : v.to;
+                            if (id && type) {
+                                    cache[type][id] = cache[type][id] || [];
+                                    cache[type][id].push(v);
+                            }
+                    }
+                    for (var type in cache) {
+                            for (var id in cache[type]) {
+                                    var v = cache[type][id];
+                                    if (data[type][id]) {
+                                            //data[type][id] = data[type][id].concat(v);
+                                            data[type][id] = [].concat(data[type][id]).concat(v);
+                                            //Fix memory released in ie9
+                                            self._triggerMsg(type, id, v);
+                                    } else {
+                                            self.load(type, id);
+                                    }
+                            }
+                    }
+            },
+            _triggerMsg : function(type, id, data) {
+                    //this.trigger("message." + id, [data]);
+                    this.trigger(type, [id, data]);
+            },
+            clear : function(type, id) {
+                    var self = this, options = self.options;
+                    self.data[type][id] = [];
+                    self.trigger("clear", [type, id]);
+                    
+                    var api = IM.WebApi.getInstance();
+                    var params = {
+                            ticket : IM.getInstance().getConnection().ticket,
+                            type : type,
+                            id : id
+                    };
+                    api.clear(params, function(ret, err) {
+                        
+                    });
+            },
+            download : function(type, id) {
+                    var self = this, options = self.options, url = route("download"), f = document.createElement('iframe'), d = new Date(), ar = [], data = {
+                            id : id,
+                            type : type,
+                            time : (new Date()).getTime(),
+                            date : d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
+                    };
+                    for (var key in data ) {
+                            ar[ar.length] = encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+                    }
+                    url += (/\?/.test(url) ? "&" : "?" ) + ar.join("&");
+                    f.setAttribute("src", url);
+                    f.style.display = 'none';
+                    document.body.appendChild(f);
+            },
+            init : function(type, id, data) {
+                    var self = this;
+                    if (isArray(data)) {
+                            self.data[type][id] = data;
+                            self._triggerMsg(type, id, data);
+                    }
+            },
+            load : function(type, id) {
+                    var self = this, options = self.options;
+                    self.data[type][id] = [];
+                    
+                    var api = IM.WebApi.getInstance();
+                    var params = {
+                            ticket : IM.getInstance().getConnection().ticket,
+                            type : type,
+                            id : id
+                    };
+                    api.history(params, function(ret, err) {
+                        if (ret) {
+                            self.init(type, id, ret);
+                        }
+                    });
+            }
     });
 
     /**
