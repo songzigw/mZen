@@ -1420,8 +1420,12 @@ var NexTalkWebIM = function() {
 
     extend(IM.prototype, {
         /**
-         * 数据存储， serverTime 服务器运行时间戳 connection 连接信息 currUser 当前登入用户信息 presence
-         * 现场状态 buiddies 联系人列表 rooms 房间列表
+         * 数据存储， 
+         * serverTime 服务器运行时间戳 
+         * connection 连接信息 
+         * currUser 当前登入用户信息 
+         * buiddies 联系人列表 
+         * rooms 房间列表
          */
         _dataAccess : {},
 
@@ -1434,11 +1438,8 @@ var NexTalkWebIM = function() {
         },
 
         _currUser : function(user) {
-            this._dataAccess.currUser = user || {};
-        },
-
-        _presence : function(presence) {
-            this._dataAccess.presence = presence;
+            this._dataAccess.currUser = this._dataAccess.currUser || {};
+            extend(this._dataAccess.currUser, user);
         },
 
         _buiddies : function(buiddies) {
@@ -1461,8 +1462,8 @@ var NexTalkWebIM = function() {
             return this._dataAccess.currUser;
         },
 
-        getPresence : function() {
-            return this._dataAccess.presence;
+        getShow : function() {
+            return this._dataAccess.currUser.show;
         },
 
         getBuiddies : function() {
@@ -1490,6 +1491,9 @@ var NexTalkWebIM = function() {
             path : options.path,
             dataType : ajax.settings.dataType
         });
+        
+        self.status = new IM.Status();
+        
         return self;
     };
 
@@ -1523,7 +1527,7 @@ var NexTalkWebIM = function() {
                 }));
 
         self.channel.bind("connect", function(e, data) {
-
+            
         }).bind("message", function(e, data) {
             self.handle(data);
         }).bind("error", function(e, data) {
@@ -1531,6 +1535,9 @@ var NexTalkWebIM = function() {
         }).bind("close", function(e, data) {
             self._stop("connect", "Disconnect");
         });
+    };
+
+    IM.prototype._stop = function(type, msg) {
     };
 
     IM.prototype.handle = function(data) {
@@ -1564,7 +1571,7 @@ var NexTalkWebIM = function() {
                  */
                 online : function(params, callback) {
                     var self = this, status = self.status;
-                    if (self.getPresence() !== IM.presence.UNAVAILALE) {
+                    if (self.getShow() !== IM.presence.UNAVAILALE) {
                         return;
                     }
 
@@ -1598,7 +1605,6 @@ var NexTalkWebIM = function() {
                                 self._serverTime(ret.serverTime);
                                 self._connection(ret.connection);
                                 self._currUser(ret.user);
-                                self._presence(IM.presence.AVAILABLE);
                                 self._buiddies(ret.buiddies);
                                 self._rooms(ret.rooms);
                                 if (typeof callback == "function") {
@@ -1655,7 +1661,7 @@ var NexTalkWebIM = function() {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
                     // save show status
-                    self._presence(msg.show);
+                    self._currUser({show : msg.show});
                     self.status.set("s", msg.show);
                     self.trigger("sendPresence", [ msg ]);
 
