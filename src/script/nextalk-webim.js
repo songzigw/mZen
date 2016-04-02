@@ -1493,6 +1493,11 @@ var NexTalkWebIM = function() {
         });
         
         self.status = new IM.Status();
+        self.setting = new IM.Setting();
+        //self.models['presence'] = new webim.presence();
+        self.buddy = new IM.Buddy();
+        self.room = new IM.Room();
+        self.history = new IM.History();
         
         return self;
     };
@@ -1904,7 +1909,7 @@ var NexTalkWebIM = function() {
                 load : function(ids) {
                     ids = idsArray(ids);
                     if (ids.length) {
-                        var self = this, options = self.options;
+                        var self = this;
                         var api = IM.WebApi.getInstance();
                         var params = {
                             ids : ids.join(",")
@@ -1920,7 +1925,7 @@ var NexTalkWebIM = function() {
                     }
                 },
                 search : function(val, callback) {
-                    var self = this, options = self.options;
+                    var self = this;
 
                     var api = IM.WebApi.getInstance();
                     var params = {
@@ -1990,7 +1995,7 @@ var NexTalkWebIM = function() {
                 },
                 // Invite members to create a temporary room
                 invite : function(id, nick, members, callback) {
-                    var self = this, options = self.options, user = options.user;
+                    var self = this;
 
                     var api = IM.WebApi.getInstance();
                     var params = {
@@ -2009,7 +2014,7 @@ var NexTalkWebIM = function() {
 
                 },
                 join : function(id, nick, callback) {
-                    var self = this, options = self.options, d = self.dataHash[id], user = options.user;
+                    var self = this, d = self.dataHash[id];
 
                     var api = IM.WebApi.getInstance();
                     var params = {
@@ -2026,7 +2031,9 @@ var NexTalkWebIM = function() {
                     });
                 },
                 leave : function(id) {
-                    var self = this, options = self.options, d = self.dataHash[id], user = options.user;
+                    var self = this, d = self.dataHash[id],
+                    user = IM.getInstance().getCurrUser();
+                    
                     if (d) {
                         var api = IM.WebApi.getInstance();
                         var params = {
@@ -2044,7 +2051,7 @@ var NexTalkWebIM = function() {
                     }
                 },
                 block : function(id) {
-                    var self = this, options = self.options, d = self.dataHash[id];
+                    var self = this, d = self.dataHash[id];
                     if (d && !d.blocked) {
                         d.blocked = true;
                         var list = [];
@@ -2066,7 +2073,7 @@ var NexTalkWebIM = function() {
                     }
                 },
                 unblock : function(id) {
-                    var self = this, options = self.options, d = self.dataHash[id];
+                    var self = this, d = self.dataHash[id];
                     if (d && d.blocked) {
                         d.blocked = false;
                         var list = [];
@@ -2113,7 +2120,7 @@ var NexTalkWebIM = function() {
                     });
                 },
                 loadMember : function(id) {
-                    var self = this, options = self.options;
+                    var self = this;
 
                     var api = IM.WebApi.getInstance();
                     var params = {
@@ -2193,7 +2200,9 @@ var NexTalkWebIM = function() {
                         "grpchat" : {}
                     };
                     addData = makeArray(addData);
-                    var l = addData.length, v, id, userId = self.options.userInfo.id;
+                    var l = addData.length, v, id,
+                    userId = IM.getInstance().getCurrUser().id;
+                    
                     if (!l)
                         return;
                     for (var i = 0; i < l; i++) {
@@ -2227,7 +2236,7 @@ var NexTalkWebIM = function() {
                     this.trigger(type, [ id, data ]);
                 },
                 clear : function(type, id) {
-                    var self = this, options = self.options;
+                    var self = this;
                     self.data[type][id] = [];
                     self.trigger("clear", [ type, id ]);
 
@@ -2242,7 +2251,7 @@ var NexTalkWebIM = function() {
                     });
                 },
                 download : function(type, id) {
-                    var self = this, options = self.options, url = route("download"), f = document
+                    var self = this, url = route("download"), f = document
                             .createElement('iframe'), d = new Date(), ar = [], data = {
                         id : id,
                         type : type,
@@ -2267,7 +2276,7 @@ var NexTalkWebIM = function() {
                     }
                 },
                 load : function(type, id) {
-                    var self = this, options = self.options;
+                    var self = this;
                     self.data[type][id] = [];
 
                     var api = IM.WebApi.getInstance();
