@@ -101,6 +101,7 @@ html, body {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .nextalk-page {
 	background-color: #EDEDED;
+	display: table-cell;
 }
 
 .mzen-bar-nav .nextalk-user {
