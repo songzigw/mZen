@@ -134,6 +134,19 @@
     <script type="text/javascript" src="../script/jquery.min.js"></script>
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
     <script type="text/javascript">
-        
+        // 初始化
+        var imClient = NexTalkWebIM.init("123", {
+            path: "http://127.0.0.1/nextalk-webim-song/"
+            });
+        // 登入
+        imClient.online(null, function() {
+            // 设置连接状态监听器
+            imClient.setConnStatusListener();
+            // 设置消息接收监听器
+            imClient.setReceiveMsgListener();
+            // 连接服务器
+            imClient.connectServer();
+        });
+        {}
     </script>
 </html>

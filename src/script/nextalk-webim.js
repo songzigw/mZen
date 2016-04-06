@@ -12,8 +12,6 @@ var NexTalkWebIM = function() {
 
     // -------------------------
     "use strict";
-    var IM = NexTalkWebIM;
-    ClassEvent.on(IM);
 
     var JSON = window.JSON
             || (function() {
@@ -1046,218 +1044,318 @@ var NexTalkWebIM = function() {
         return ajax;
     })();
 
-    /*
-     * ! comet.js v0.1
-     * 
-     * http://github.com/webim/comet.js
-     * 
-     * Copyright (c) 2010 Hidden Released under the MIT, BSD, and GPL Licenses.
-     * 
-     * Depends: ClassEvent.js http://github.com/webim/ClassEvent.js ajax.js
-     * http://github.com/webim/ajax.js
-     * 
-     */
-    function comet(url) {
-        var self = this;
-        self.URL = url;
-        self._setting();
-        self._connect();
+    function idsArray(ids) {
+        return ids && ids.split ? ids.split(",") : (isArray(ids) ? ids
+                : (parseInt(ids) ? [ parseInt(ids) ] : []));
     }
 
+    /**
+     * XMLHttpRequest轮询
+     */
+    function comet(url) {
+        var _this = this;
+        _this.URL = url;
+        _this._setting();
+    }
+
+    // The connection has not yet been established.
+    comet.CONNECTING = 0;
+    // The connection is established and communication is possible.
+    comet.OPEN = 1;
+    // The connection has been closed or could not be opened.
+    comet.CLOSED = 2;
+    // Make the class work with custom events
+
     comet.prototype = {
-        readyState : 0,
-        send : function(data) {
+        readyState : comet.CLOSED,
+        send : function(msg) {
         },
         _setting : function() {
-            var self = this;
-            self.readyState = comet.CLOSED;
+            var _this = this;
+            _this.readyState = comet.CLOSED;
             // 是否已连接 只读属性
-            self._connecting = false;
+            _this._connecting = false;
             // 设置连接开关避免重复连接
-            self._onPolling = false;
+            _this._onPolling = false;
             // 避免重复polling
-            self._pollTimer = null;
-            self._pollingTimes = 0;
+            _this._pollTimer = null;
+            _this._pollingTimes = 0;
             // polling次数 第一次成功后 connected = true;
-            self._failTimes = 0;
+            _this._failTimes = 0;
             // polling失败累加2次判定服务器关闭连接
         },
-        _connect : function() {
+        connect : function() {
             // 连接
-            var self = this;
-            if (self._connecting)
-                return self;
-            self.readyState = comet.CONNECTING;
-            self._connecting = true;
-            if (!self._onPolling) {
+            var _this = this;
+            if (_this._connecting)
+                return _this;
+            _this.readyState = comet.CONNECTING;
+            _this._connecting = true;
+            if (!_this._onPolling) {
                 window.setTimeout(function() {
-                    self._startPolling();
+                    _this._startPolling();
                 }, 300);
             }
-            return self;
+            return _this;
         },
         close : function() {
-            var self = this;
-            if (self._pollTimer)
-                clearTimeout(self._pollTimer);
-            self._setting();
-            return self;
+            var _this = this;
+            if (_this._pollTimer)
+                clearTimeout(_this._pollTimer);
+            _this._setting();
+            return _this;
         },
         _onConnect : function() {
-            var self = this;
-            self.readyState = comet.OPEN;
-            self.trigger('open', 'success');
+            var _this = this;
+            _this.readyState = comet.OPEN;
+            _this.trigger('open', 'success');
         },
         _onClose : function(m) {
-            var self = this;
-            self._setting();
+            var _this = this;
+            _this._setting();
             // Delay trigger event when reflesh web site
             setTimeout(function() {
-                self.trigger('close', [ m ]);
+                _this.trigger('close', [ m ]);
             }, 1000);
         },
         _onData : function(data) {
-            var self = this;
-            self.trigger('message', [ data ]);
+            var _this = this;
+            _this.trigger('message', [ data ]);
         },
         _onError : function(text) {
-            var self = this;
-            self._setting();
+            var _this = this;
+            _this._setting();
             // Delay trigger event when reflesh web site
             setTimeout(function() {
-                self.trigger('error', [ text ]);
+                _this.trigger('error', [ text ]);
             }, 1000);
         },
         _startPolling : function() {
-            var self = this;
-            if (!self._connecting)
+            var _this = this;
+            if (!_this._connecting)
                 return;
-            self._onPolling = true;
-            self._pollingTimes++;
+            _this._onPolling = true;
+            _this._pollingTimes++;
             ajax({
-                url : self.URL,
+                url : _this.URL,
                 dataType : 'jsonp',
                 cache : false,
-                context : self,
-                success : self._onPollSuccess,
-                error : self._onPollError
+                context : _this,
+                success : _this._onPollSuccess,
+                error : _this._onPollError
             });
         },
         _onPollSuccess : function(d) {
-            var self = this;
-            self._onPolling = false;
-            if (self._connecting) {
+            var _this = this;
+            _this._onPolling = false;
+            if (_this._connecting) {
                 if (!d) {
-                    return self._onError('error data');
+                    return _this._onError('error data');
                 } else {
-                    if (self._pollingTimes == 1) {
-                        self._onConnect();
+                    if (_this._pollingTimes == 1) {
+                        _this._onConnect();
                     }
-                    self._onData(d);
-                    self._failTimes = 0;
+                    _this._onData(d);
+                    _this._failTimes = 0;
                     // 连接成功 失败累加清零
-                    self._pollTimer = window.setTimeout(function() {
-                        self._startPolling();
+                    _this._pollTimer = window.setTimeout(function() {
+                        _this._startPolling();
                     }, 200);
                 }
             }
         },
         _onPollError : function(m) {
-            var self = this;
-            self._onPolling = false;
-            if (!self._connecting)
+            var _this = this;
+            _this._onPolling = false;
+            if (!_this._connecting)
                 return;
             // 已断开连接
-            self._failTimes++;
-            if (self._pollingTimes == 1)
-                self._onError('can not connect.');
+            _this._failTimes++;
+            if (_this._pollingTimes == 1)
+                _this._onError('can not connect.');
             else {
-                if (self._failTimes > 1) {
+                if (_this._failTimes > 1) {
                     // 服务器关闭连接
-                    self._onClose(m);
+                    _this._onClose(m);
                 } else {
-                    self._pollTimer = window.setTimeout(function() {
-                        self._startPolling();
+                    _this._pollTimer = window.setTimeout(function() {
+                        _this._startPolling();
                     }, 200);
                 }
             }
         }
     };
-
-    // The connection has not yet been established.
-    comet.CONNECTING = 0;
-
-    // The connection is established and communication is possible.
-    comet.OPEN = 1;
-
-    // The connection has been closed or could not be opened.
-    comet.CLOSED = 2;
-
-    // Make the class work with custom events
     ClassEvent.on(comet);
 
     /**
-     * websocket
+     * 管道连接
      */
-    function socket(url, options) {
-        var self = this, options = options || {};
-        var ws = self.ws = new WebSocket(url);
-        ws.onopen = function(e) {
-            self.trigger('open', 'success');
-            ws.send("subscribe " + options.domain + " " + options.ticket);
-        };
-        ws.onclose = function(e) {
-            self.trigger('close', [ e.data ]);
-        };
-        ws.onmessage = function(e) {
-            var data = e.data;
+    function Channel(options) {
+        var _this = this;
 
-            try {
-                data = data ? (window.JSON && window.JSON.parse ? window.JSON
-                        .parse(data) : (new Function("return " + data))())
-                        : data;
-            } catch (e) {
+        _this._init(options);
+
+        // 当连接成功时触发
+        _this.onConnected = null;
+        // 当断开时候触发
+        _this.onDisconnected = null;
+        // 当连接异常时触发
+        _this.onError = null;
+        // 当有消息时触发
+        _this.onMessage = null;
+
+        _this.bind("connected", function(ev, data) {
+            _this.status = Channel.CONNECTED;
+            if (_this.onConnected) {
+                _this.onConnected(ev, data);
             }
-            ;
-
-            self.trigger('message', [ data ]);
-        };
-        ws.onerror = function(e) {
-            self.trigger('error', []);
-        };
+        });
+        _this.bind("disconnected", function(ev, data) {
+            _this.status = Channel.DISCONNECTED;
+            if (_this.onDisconnected) {
+                _this.onDisconnected(ev, data);
+            }
+        });
+        _this.bind("error", function(ev, data) {
+            _this.status = Channel.DISCONNECTED;
+            if (_this.onError) {
+                _this.onError(ev, data);
+            }
+        });
+        _this.bind("message", function(ev, data) {
+            _this.status = Channel.CONNECTED;
+            if (_this.onMessage) {
+                _this.onMessage(ev, data);
+            }
+        });
     }
-    ;
 
-    socket.prototype = {
-        readyState : 0,
-        send : function(data) {
-        },
-        close : function() {
-            this.ws.close();
-        }
+    Channel.CONNECTING = 0;
+    Channel.CONNECTED = 1;
+    Channel.DISCONNECTED = 2;
+
+    /** 管道类型 */
+    Channel.type = {};
+    (function(type) {
+        type[type["XHR_POLLING"] = 0] = "XHR_POLLING";
+        type[type["WEBSOCKET"] = 1] = "WEBSOCKET";
+    })(Channel.type);
+
+    Channel.DEFAULTS = {
+        type : Channel.type.WEBSOCKET
     };
 
-    socket.enable = !!window.WebSocket;
+    Channel.prototype = {
+        type : Channel.DEFAULTS.type,
+        status : Channel.DISCONNECTED,
 
-    // The connection has not yet been established.
-    socket.CONNECTING = 0;
+        _init : function(options) {
+            this.options = extend({}, Channel.DEFAULTS, options || {});
+            this.type = this.options.type;
+        },
 
-    // The connection is established and communication is possible.
-    socket.OPEN = 1;
+        _newSocket : function() {
+            var _this = this;
+            var ops = _this.options;
+            var ws = _this.ws = new WebSocket(ops.websocket);
 
-    // The connection has been closed or could not be opened.
-    socket.CLOSED = 2;
+            ws.onopen = function(ev) {
+                _this.trigger("connected", [ ev.data ]);
+                ws.send("subscribe " + ops.domain + " " + ops.ticket);
+            };
+            ws.onclose = function(ev) {
+                _this.trigger('disconnected', [ ev.data ]);
+            };
+            ws.onmessage = function(ev) {
+                var data = ev.data;
 
-    // Make the class work with custom events
-    ClassEvent.on(socket);
+                try {
+                    data = data ? (window.JSON && window.JSON.parse ? window.JSON
+                            .parse(data) : (new Function("return " + data))())
+                            : data;
+                } catch (e) {
+                }
+                _this.trigger('message', [ data ]);
+            };
+            ws.onerror = function(ev) {
+                _this.trigger("error", [ ev ]);
+            };
+            return ws;
+        },
 
-    // ----------------------------------
-    function idsArray(ids) {
-        return ids && ids.split ? ids.split(",") : (isArray(ids) ? ids
-                : (parseInt(ids) ? [ parseInt(ids) ] : []));
-    }
-    ;
+        _newComet : function() {
+            var _this = this;
+            var ops = _this.options;
 
+            var comet = _this.comet = new comet(ops.server
+                    + (/\?/.test(ops.server) ? "&" : "?") + ajax.param({
+                        ticket : ops.ticket,
+                        domain : ops.domain
+                    }));
+            // 注册长连接的事件监听器
+            comet.bind("open", function(ev, data) {
+                _this.trigger("connected", [ data ]);
+            });
+            comet.bind("close", function(ev, data) {
+                _this.trigger('disconnected', [ data ]);
+            });
+            comet.bind("message", function(ev, data) {
+                _this.trigger('message', [ data ]);
+            });
+            comet.bind("error", function(ev, data) {
+                _this.trigger('error', [ data ]);
+            });
+            // 发起连接
+            comet.connect();
+            return comet;
+        },
+
+        /** 发起连接 */
+        connect : function() {
+            var _this = this;
+            var ops = _this.options;
+            _this.status = Channel.CONNECTING;
+
+            if (ops.type == Channel.type.WEBSOCKET) {
+                if (window.WebSocket) {
+                    _this.type = Channel.type.WEBSOCKET;
+                    _this._newSocket();
+                    return;
+                }
+            }
+
+            _this.type = Channel.type.XHR_POLLING;
+            this._newComet();
+        },
+
+        /** 关闭连接 */
+        disconnect : function() {
+            var _this = this;
+
+            if (_this.type == Channel.type.WEBSOCKET) {
+                _this.ws.close();
+            }
+            if (_this.type == Channel.type.XHR_POLLING) {
+                _this.comet.close();
+            }
+        },
+
+        /** 发送消息 */
+        sendMessage : function(msg) {
+            var _this = this;
+
+            if (_this.type == Channel.type.WEBSOCKET) {
+                _this.ws.send(msg);
+            }
+            if (_this.type == Channel.type.XHR_POLLING) {
+                _this.comet.send(msg);
+            }
+        }
+    };
+    ClassEvent.on(Channel);
+    
+    var IM = NexTalkWebIM;
+    ClassEvent.on(IM);
     extend(IM, {
         log : log,
         idsArray : idsArray,
@@ -1274,24 +1372,15 @@ var NexTalkWebIM = function() {
         map : map,
         JSON : JSON,
         ajax : ajax,
-        comet : comet,
-        socket : socket,
+        Channel : Channel,
         ClassEvent : ClassEvent,
         isMobile : isMobile
     });
 
     // 全局性的定义-----------------
 
+    /** 版本号 */
     IM.VERSION = IM.version = IM.v = "0.0.1";
-
-    /** 默认配置信息 */
-    IM.DEFAULTS = {
-        // 消息通道类型
-        // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
-        channelType : IM.channelType.WEBSOCKET,
-        isJsonp : true,
-        path : "/"
-    };
 
     /** 连接情形 */
     // IM.connState = {};
@@ -1310,32 +1399,24 @@ var NexTalkWebIM = function() {
     // connState[connState["TOKEN_EXPIRE"] = 10] = "TOKEN_EXPIRE";
     // connState[connState["DEVICE_ERROR"] = 11] = "DEVICE_ERROR";
     // })(IM.connState);
+
     /** 连接状态 */
     IM.connStatus = {};
     (function(connStatus) {
         /** 网络不可用。 */
         connStatus[connStatus["NETWORK_UNAVAILABLE"] = -1] = "NETWORK_UNAVAILABLE";
-        /** 连接成功。 */
-        connStatus[connStatus["CONNECTED"] = 0] = "CONNECTED";
         /** 连接中。 */
-        connStatus[connStatus["CONNECTING"] = 1] = "CONNECTING";
+        connStatus[connStatus["CONNECTING"] = 0] = "CONNECTING";
+        /** 连接成功。 */
+        connStatus[connStatus["CONNECTED"] = 1] = "CONNECTED";
         /** 断开连接。 */
         connStatus[connStatus["DISCONNECTED"] = 2] = "DISCONNECTED";
     })(IM.connStatus);
-    /** 消息通道类型 */
-    IM.channelType = {};
-    (function(channelType) {
-        channelType[channelType["XHR_POLLING"] = 0] = "XHR_POLLING";
-        channelType[channelType["WEBSOCKET"] = 1] = "WEBSOCKET";
-    })(IM.channelType);
+
     /** 会话通知状态 */
     IM.conversationNoticeStatus = {};
     /** 会话类型 */
     IM.conversationType = {};
-    /** 消息方向 */
-    IM.messageDirection = {};
-    /** 收取状态 */
-    IM.receivedStatus = {};
     /** 搜索类型 */
     IM.searchType = {};
     /** 发送状态 */
@@ -1354,17 +1435,17 @@ var NexTalkWebIM = function() {
     IM.presence = {};
     (function(pre) {
         /** 在线 */
-        pre[pre["AVAILABLE"] = 1] = "AVAILABLE";
+        pre[pre["AVAILABLE"] = "available"] = "AVAILABLE";
         /** 忙碌 */
-        pre[pre["DND"] = 2] = "DND";
+        pre[pre["DND"] = "dnd"] = "DND";
         /** 离开 */
-        pre[pre["AWAY"] = 3] = "AWAY";
+        pre[pre["AWAY"] = "away"] = "AWAY";
         /** 隐身 */
-        pre[pre["INVISIBLE"] = 4] = "INVISIBLE";
+        pre[pre["INVISIBLE"] = "invisible"] = "INVISIBLE";
         /** 聊天中 */
-        pre[pre["CHAT"] = 5] = "CHAT";
+        pre[pre["CHAT"] = "CHAT"] = "chat";
         /** 离线 */
-        pre[pre["UNAVAILALE"] = 6] = "UNAVAILALE";
+        pre[pre["UNAVAILALE"] = "unavailale"] = "UNAVAILALE";
     })(IM.presence);
 
     /** 消息类型 */
@@ -1383,6 +1464,15 @@ var NexTalkWebIM = function() {
         ProfileNotificationMessage : "ProfileNotificationMessage",
         CommandNotificationMessage : "CommandNotificationMessage",
         CommandMessage : "CommandMessage"
+    };
+
+    /** 默认配置信息 */
+    IM.DEFAULTS = {
+        // 消息管道类型
+        // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
+        channelType : Channel.type.WEBSOCKET,
+        isJsonp : true,
+        path : "/"
     };
 
     // 实例化NexTalkWebIM类对象----------------
@@ -1424,30 +1514,40 @@ var NexTalkWebIM = function() {
          * serverTime 服务器运行时间戳 
          * connection 连接信息 
          * currUser 当前登入用户信息 
-         * buiddies 联系人列表 
+         * buddies 联系人列表 
          * rooms 房间列表
          */
         _dataAccess : {},
+        /** 连接状态 */
+        connStatus : IM.connStatus.DISCONNECTED,
 
         _serverTime : function(time) {
             this._dataAccess.serverTime = time;
         },
 
         _connection : function(connInfo) {
-            this._dataAccess.connection = connInfo || {};
+            this._dataAccess.connection = this._dataAccess.connection || {};
+            extend(this._dataAccess.connection, connInfo);
         },
 
         _currUser : function(user) {
             this._dataAccess.currUser = this._dataAccess.currUser || {};
             extend(this._dataAccess.currUser, user);
         },
+        
+        _show : function(presence) {
+            var user = this.getCurrUser();
+            extend(user, {show : presence});
+        },
 
-        _buiddies : function(buiddies) {
-            this._dataAccess.buiddies = buiddies;
+        _buddies : function(buddies) {
+            this._dataAccess.buddies = this._dataAccess.buddies || [];
+            extend(this._dataAccess.buddies, buddies);
         },
 
         _rooms : function(rooms) {
-            this._dataAccess.rooms = rooms;
+            this._dataAccess.rooms = this._dataAccess.rooms || [];
+            extend(this._dataAccess.rooms, rooms);
         },
 
         getServerTime : function() {
@@ -1455,19 +1555,25 @@ var NexTalkWebIM = function() {
         },
 
         getConnection : function() {
+            this._dataAccess.connection = this._dataAccess.connection || {};
             return this._dataAccess.connection;
         },
 
         getCurrUser : function() {
+            this._dataAccess.currUser = this._dataAccess.currUser || {};
             return this._dataAccess.currUser;
         },
 
         getShow : function() {
-            return this._dataAccess.currUser.show;
+            var currUser = this.getCurrUser();
+            if (!currUser.show) {
+                currUser.show = IM.presence.UNAVAILALE;
+            }
+            return currUser.show;
         },
 
-        getBuiddies : function() {
-            return this._dataAccess.buiddies;
+        getBuddies : function() {
+            return this._dataAccess.buddies;
         },
 
         getRooms : function() {
@@ -1479,9 +1585,9 @@ var NexTalkWebIM = function() {
      * 初始化NexTalkWebIM
      */
     IM.prototype._init = function(appId, options) {
-        var self = this;
-        self.appId = appId;
-        options = self.options = extend({}, IM.DEFAULTS, options || {});
+        var _this = this;
+        _this._appId = appId;
+        options = _this.options = extend({}, IM.DEFAULTS, options || {});
         ajax.setup({
             dataType : options.isJsonp ? "jsonp" : "json"
         });
@@ -1492,57 +1598,182 @@ var NexTalkWebIM = function() {
             dataType : ajax.settings.dataType
         });
         
-        self.status = new IM.Status();
-        self.setting = new IM.Setting();
-        //self.models['presence'] = new webim.presence();
-        self.buddy = new IM.Buddy();
-        self.room = new IM.Room();
-        self.history = new IM.History();
+        _this.status = new IM.Status();
+        _this.setting = new IM.Setting();
+        //_this.presence = new IM.Presence();
+        _this.buddy = new IM.Buddy();
+        _this.room = new IM.Room();
+        _this.history = new IM.History();
         
-        return self;
+        _this._initListener();
+        _this._initTimerTask();
+        return _this;
+    };
+
+    /** 绑定WebIM客户端存在的各种事件监听 */
+    IM.prototype._initListener = function() {
+        var _this = this;
+        // 连接状态监听器
+        _this.connStatusListener = {
+             onConnecting : function(ev, data) {
+                 console.log("connecting:" + JSON.stringify(data));
+             },
+             onConnected : function(ev, data) {
+                 console.log("connected:" + JSON.stringify(data));
+             },
+             onDisconnected : function(ev, data) {
+                 console.log("disconnected:" + JSON.stringify(data));
+             },
+             onNetworkUnavailable : function(ev, data) {
+                 console.log("networkUnavailable:" + JSON.stringify(data));
+             }
+        };
+        // 消息接收监听器
+        _this.receiveMsgListener = {
+            onMessage : function(ev, data) {
+                console.log("message:" + JSON.stringify(data));
+            },
+            onPresences : function(ev, data) {
+                console.log("presence:" + JSON.stringify(data));
+            },
+            onStatus : function(ev, data) {
+                console.log("status:" + JSON.stringify(data));
+            }
+        };
+
+        // 正在连接
+        _this.bind("connecting", function(ev, data) {
+            if (_this.connStatus != IM.connStatus.CONNECTING) {
+                _this.connStatus = IM.connStatus.CONNECTING;
+                _this.connStatusListener.onConnecting(ev, data);
+            }
+        });
+        // 连接成功
+        _this.bind("connected", function(ev, data) {
+            if (_this.connStatus != IM.connStatus.CONNECTED) {
+                _this.connStatus = IM.connStatus.CONNECTED;
+                if (_this.status.get("s") == IM.presence.UNAVAILALE) {
+                    _this.status.set("s", IM.presence.AVAILALE);
+                }
+                _this._show(_this.status.get("s"));
+                _this.connStatusListener.onConnected(ev, data);
+            }
+        });
+        // 断开连接
+        _this.bind("disconnected", function(ev, data) {
+            if (_this.connStatus != IM.connStatus.DISCONNECTED) {
+                _this.connStatus = IM.connStatus.DISCONNECTED;
+                _this._show(IM.presence.UNAVAILALE);
+                _this.connStatusListener.onDisconnected(ev, data);
+            }
+        });
+        // 网络不可用
+        _this.bind("networkUnavailable", function(ev, data) {
+            if (_this.connStatus != IM.connStatus.NETWORK_UNAVAILABLE) {
+                _this.connStatus = IM.connStatus.NETWORK_UNAVAILABLE;
+                _this._show(IM.presence.UNAVAILALE);
+                _this.connStatusListener.onNetworkUnavailable(ev, data);
+            }
+        });
+
+        _this.bind("event", function(ev, data) {
+            console.log("event:" + JSON.stringify(date));
+        });
+
+        // 接收消息
+        _this.bind("message", function(ev, data) {
+            _this.receiveMsgListener.onMessage(ev, data);
+        });
+        // 现场变更
+        _this.bind("presences", function(ev, data) {
+            _this.receiveMsgListener.onPresences(ev, data);
+        });
+        // 输入状态
+        _this.bind("status", function(ev, data) {
+            _this.receiveMsgListener.onStatus(ev, data);
+        });
+
+    };
+
+    /**
+     * 定义或开启部分定时任务
+     */
+    IM.prototype._initTimerTask = function() {
+        //var _this = this;
+        // 设置网络是否可用实时检测
+        // ???
+        //_this.trigger("networkUnavailable", [ data ]);
     };
 
     /**
      * 设置连接状态监听器
      */
-    IM.prototype.setConnStatusListener = function() {
-
+    IM.prototype.setConnStatusListener = function(listener) {
+        extend(this.connStatusListener, listener || {});
     };
 
     /**
      * 设置消息接收监听器
      */
-    IM.prototype.setOnReceiveMessageListener = function() {
-
+    IM.prototype.setReceiveMsgListener = function(listener) {
+        extend(this.receiveMsgListener, listener || {});
     };
 
     /**
      * 连接服务器
      */
-    IM.prototype.connectServer = function() {
-        var self = this, options = self.options;
-        var conn = self.getConnection();
-
-        self.channel = options.channelType == IM.channelType.WEBSOCKET
-                && conn.websocket && socket.enable ? new socket(conn.websocket,
-                conn) : new comet(conn.server + (/\?/.test(url) ? "&" : "?")
-                + ajax.param({
-                    ticket : conn.ticket,
-                    domain : conn.domain
-                }));
-
-        self.channel.bind("connect", function(e, data) {
-            
-        }).bind("message", function(e, data) {
-            self.handle(data);
-        }).bind("error", function(e, data) {
-            self._stop("connect", "Connect Error");
-        }).bind("close", function(e, data) {
-            self._stop("connect", "Disconnect");
+    IM.prototype.connectServer = function(params) {
+        var _this = this, options = _this.options;
+        // 如果服务器已经连上
+        if (_this.connStatus == IM.connStatus.CONNECTED) {
+            return;
+        }
+        
+        _this.trigger("connecting", [ _this._dataAccess ]);
+        // 连接前准备工作
+        _this._ready(params, function() {
+            // 准备成功，开始连接
+            _this._connectServer();
         });
+    }
+
+    IM.prototype._connectServer = function() {
+        var _this = this, options = _this.options;
+        var conn = _this.getConnection();
+        
+        _this.trigger("connecting", [ _this._dataAccess ]);
+        // 创建通信管道
+        var ops = extend({type: options.channelType}, conn);
+        _this.channel = new Channel(ops);
+
+        // 给管道注册事件监听器
+        _this.channel.onConnected = function(ev, data) {
+            _this.trigger("connected", [ data ]);
+        };
+        _this.channel.onDisconnected = function(ev, data) {
+            _this.trigger("disconnected", [ data ]);
+        }
+        _this.channel.onError = function(ev, data) {
+            // 可能是网络不可用，或者其他原因???
+            _this.trigger("networkUnavailable", [ data ]);
+        };
+        _this.channel.onMessage = function(ev, data) {
+            _this.handle(data);
+        };
+        
+        // 发起管道连接
+        _this.channel.connect();
+        // options.channelType = _this.channel.type;
+    };
+    
+    IM.prototype._disconnectServer = function() {
+        var _this = this, options = _this.options;
+        if (_this.connStatus == IM.connStatus.CONNECTED) {
+            _this.channel.close();
+        }
     };
 
-    IM.prototype._stop = function(type, msg) {
+    IM.prototype._go = function() {
     };
 
     IM.prototype.handle = function(data) {
@@ -1559,12 +1790,11 @@ var NexTalkWebIM = function() {
                     msgs.push(msg);
                 }
             }
-            ;
             msgs.length && self.trigger("message", [ msgs ]);
             events.length && self.trigger("event", [ events ]);
         }
         data.presences && data.presences.length
-                && self.trigger("presence", [ data.presences ]);
+                && self.trigger("presences", [ data.presences ]);
         data.statuses && data.statuses.length
                 && self.trigger("status", [ data.statuses ]);
     };
@@ -1572,13 +1802,10 @@ var NexTalkWebIM = function() {
     extend(IM.prototype,
             {
                 /**
-                 * 用户上线
+                 * 连接前的准备工作
                  */
-                online : function(params, callback) {
-                    var self = this, status = self.status;
-                    if (self.getShow() !== IM.presence.UNAVAILALE) {
-                        return;
-                    }
+                _ready : function(params, callback) {
+                    var _this = this, status = _this.status;
 
                     var buddy_ids = [], room_ids = [], tabs = status
                             .get("tabs"), tabIds = status.get("tabIds");
@@ -1591,12 +1818,11 @@ var NexTalkWebIM = function() {
                         });
                     }
                     params = extend({
-                        // chatlink_ids: self.chatlink_ids.join(","),
+                        // chatlink_ids: _this.chatlink_ids.join(","),
                         buddy_ids : buddy_ids.join(","),
                         room_ids : room_ids.join(","),
                         show : status.get("s") || "available"
                     }, params);
-                    self._ready(params);
                     // set auto open true
                     status.set("o", false);
                     status.set("s", params.show);
@@ -1604,48 +1830,71 @@ var NexTalkWebIM = function() {
                     var api = IM.WebApi.getInstance();
                     api.online(params, function(ret, err) {
                         if (ret) {
-                            if (!ret.success) {
-                                self._stop("online", ret.error_msg);
-                            } else {
-                                self._serverTime(ret.serverTime);
-                                self._connection(ret.connection);
-                                self._currUser(ret.user);
-                                self._buiddies(ret.buiddies);
-                                self._rooms(ret.rooms);
+                            if (ret.success) {
+                                _this._serverTime(ret.server_time);
+                                _this._connection(ret.connection);
+                                _this._currUser(ret.user);
+                                _this._buddies(ret.buddies);
+                                _this._rooms(ret.rooms);
                                 if (typeof callback == "function") {
                                     callback();
                                 }
+                            } else {
+                                _this.trigger("disconnected", [ ret.error_msg ]);
                             }
                         } else {
-                            self._stop("online", "Not Found");
+                            // 可能是网络不可用，或者其他原因???
+                            _this.trigger("networkUnavailable", "Network error");
                         }
                     });
                 },
+                
+                online : function(presence) {
+                    var self = this;
+                    if (presence == IM.presence.UNAVAILALE) {
+                        return new Error("IM.presence.UNAVAILALE is error.");
+                    }
+                    
+                    self._sendPresence({show : presence}, null);
+                    // 检查一下管道连接
+                    if (self.connStatus != IM.connStatus.CONNECTED) {
+                        self._connectServer();
+                    }
+                },
 
                 offline : function() {
-                    var self = this, data = self.data;
-                    if (self.state === webim.OFFLINE) {
+                    var self = this, connection = self.getConnection();
+                    if (self.connStatus == IM.connStatus.DISCONNECTED) {
                         return;
                     }
-                    self.status.set("o", true);
-                    self.connection.close();
-                    self._stop("offline", "offline");
-
+                    
+                    self._sendPresence({show : IM.presence.UNAVAILALE}, null);
                     var api = IM.WebApi.getInstance();
                     var params = {
                         status : 'offline',
-                        csrf_token : webim.csrf_token,
-                        ticket : data.connection.ticket
+                        ticket : connection.ticket
                     };
-                    api.offline(params, function(ret, err) {
+                    api.offline(params, null);
+                    
+                    // 断开连接
+                    self._disconnectServer();
+                },
+                
+                _sendPresence : function(msg, callback) {
+                    var self = this;
+                    msg.ticket = self.getConnection().ticket;
+                    // save show status
+                    self._currUser({show : msg.show});
+                    self.status.set("s", msg.show);
 
-                    });
+                    var api = IM.WebApi.getInstance();
+                    var params = extend({}, msg);
+                    api.presence(params, callback);
                 },
 
                 sendMessage : function(msg, callback) {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
-                    self.trigger("sendMessage", [ msg ]);
 
                     var api = IM.WebApi.getInstance();
                     var params = extend({}, msg);
@@ -1655,24 +1904,10 @@ var NexTalkWebIM = function() {
                 sendStatus : function(msg, callback) {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
-                    self.trigger("sendStatus", [ msg ]);
 
                     var api = IM.WebApi.getInstance();
                     var params = extend({}, msg);
                     api.status(params, callback);
-                },
-
-                sendPresence : function(msg, callback) {
-                    var self = this;
-                    msg.ticket = self.getConnection().ticket;
-                    // save show status
-                    self._currUser({show : msg.show});
-                    self.status.set("s", msg.show);
-                    self.trigger("sendPresence", [ msg ]);
-
-                    var api = IM.WebApi.getInstance();
-                    var params = extend({}, msg);
-                    api.presence(params, callback);
                 },
 
                 _deactivate : function() {
@@ -1685,7 +1920,7 @@ var NexTalkWebIM = function() {
                         ticket : self.getConnection().ticket
                     };
                     api.deactivate(params, null, {
-                        type : "get"
+                        method : "get"
                     });
                 }
             });
@@ -1697,14 +1932,12 @@ var NexTalkWebIM = function() {
             self.options = extend({}, M.DEFAULTS, options);
             isFunction(self._init) && self._init();
         }
-        ;
         M.DEFAULTS = defaults;
 
         ClassEvent.on(M);
         extend(M.prototype, proto);
         IM[name] = M;
     }
-    ;
 
     /**
      * 配置(数据库永久存储)
@@ -1919,7 +2152,7 @@ var NexTalkWebIM = function() {
                                 self.set(ret);
                             }
                         }, {
-                            type : "get",
+                            method : "get",
                             context : self
                         });
                     }
@@ -2305,10 +2538,12 @@ var NexTalkWebIM = function() {
     (function(WebApi) {
         var API = WebApi;
         API.DEFAULTS = {
+            callback : null,
             path : "/",
             method : "POST",
             cashe : false,
-            dataType : "json"
+            dataType : "json",
+            context : null
         };
 
         API.ROUTE = {
@@ -2336,14 +2571,12 @@ var NexTalkWebIM = function() {
             // upload files
             upload : "upload.do"
         };
-        API.route = function(ob, val) {
+        API.route = function(ob) {
             var options = ob;
             if (typeof ob == "string") {
-                options[ob] = val;
-                if (val === undefined)
-                    return route[ob];
+                return API.route[ob];
             }
-            extend(route, options);
+            extend(API.route, options);
         };
         API.route(API.ROUTE);
 
@@ -2364,28 +2597,27 @@ var NexTalkWebIM = function() {
             if (!API._instance) {
                 API._instance = new API(options);
             }
-            return API.getInsstance();
+            return API.getInstance();
         };
 
         var methods = {
             // var callback = function(ret, err) {};
             _ajax : function(apiId, data, callback, ajaxInfo) {
-                var _self = this, options = _self.options;
+                var _this = this, options = _this.options;
                 var info = {
                     type : options.method,
                     url : options.path + API.route(apiId),
                     data : data,
                     dataType : options.dataType,
                     cache : options.cashe,
+                    context : options.context,
                     success : function(ret) {
-                        if (typeof ret == "object" && ret.status == "failure") {
-                            callback(undefined, ret);
-                        } else {
+                        if (typeof callback == "function") {
                             callback(ret, undefined);
                         }
                         // API成功返回结果后回调
-                        if (options._callback) {
-                            options._callback();
+                        if (typeof options.callback == "function") {
+                            options.callback();
                         }
                     },
                     error : function(err) {
