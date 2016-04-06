@@ -2887,5 +2887,5 @@ input.mzen-counter-input {
 	background-color: #f4f4f4;
 }
 .mzen-up-hover:hover {
-    background-color: #f4f4f4;
+    cursor: pointer;
 }

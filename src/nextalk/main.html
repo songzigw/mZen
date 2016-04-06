@@ -6,38 +6,12 @@
         <title>Chat</title>
         <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webim.css" />
-        <style>
-        #main-footer:before {
-            border-top: 1px solid #c8c7cc;
-            display: block;
-            position: absolute;
-            -webkit-transform-origin: 0 0;
-            transform-origin: 0.0;
-            -webkit-transform: scale(1);
-            transform: scale(1);
-            pointer-events: none;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            content: "";
-        }
-        /*设置图标变大*/
-        #main-footer ul li span.mzen-iconfont {
-            display: block;
-            font-size: 28px;
-            height: 35px;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-        }
-        </style>
     </head>
     <body>
         <div class="mzen-content">
         <!--头部集合 BEGIN-->
         <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
-            <a class="mzen-pull-left mzen-img mzen-tap-active im-user">
+            <a class="mzen-pull-left mzen-img mzen-tap-active nextalk-user">
             <img class="mzen-img-object" src="../imgs/head_def.png">
             </a>
             <div class="mzen-title">
@@ -48,7 +22,7 @@
         
         <div id="main-content">
         
-        <div class="mzen-content main-wrap message">
+        <div class="mzen-content nextalk-main-wrap message">
             <div class="mzen-searchbar-wrap demo" id="search">
 			    <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
 			        <i class="mzen-iconfont mzen-icon-search"></i>
@@ -65,7 +39,7 @@
 			
             <ul class="mzen-list-view">
                 
-                <li class="mzen-list-view-cell mzen-img mzen-tap-active" onclick="goReceiveFavorite();">
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover" onclick="goReceiveFavorite();">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">
                     <a class="mzen-arrow-right font-line-height">系统通知
                     <span class="mzen-badge mzen-badge-danger">12</span></a>
@@ -134,19 +108,6 @@
     <script type="text/javascript" src="../script/jquery.min.js"></script>
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
     <script type="text/javascript">
-        // 初始化
-        var imClient = NexTalkWebIM.init("123", {
-            path: "http://127.0.0.1/nextalk-webim-song/"
-            });
-        // 登入
-        imClient.online(null, function() {
-            // 设置连接状态监听器
-            imClient.setConnStatusListener();
-            // 设置消息接收监听器
-            imClient.setReceiveMsgListener();
-            // 连接服务器
-            imClient.connectServer();
-        });
-        {}
+        
     </script>
 </html>

@@ -12,17 +12,6 @@ html, body {
     -wekbit-box-shadow: 0 1px 10px #cfcfcf;
     box-shadow: 0 1px 10px #cfcfcf;
 }
-.mzen-bar-nav .im-user {
-	height: 45px;
-	line-height: 45px !important;
-	padding-right: 10px;
-}
-.mzen-bar-nav .im-user img {
-  height: 38px !important;
-  width: 38px !important;
-  border-radius: 50%;
-  margin-top: 3px;
-}
 
 .mzen-btn-block {
     display: block;
@@ -112,7 +101,45 @@ html, body {
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.main-wrap {
+.mzen-bar-nav .nextalk-user {
+    height: 45px;
+    line-height: 45px !important;
+    padding-right: 10px;
+}
+
+.mzen-bar-nav .nextalk-user img {
+  height: 38px !important;
+  width: 38px !important;
+  border-radius: 50%;
+  margin-top: 3px;
+}
+
+#main-footer:before {
+    border-top: 1px solid #c8c7cc;
+    display: block;
+    position: absolute;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0.0;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    pointer-events: none;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: "";
+}
+/*设置图标变大*/
+#main-footer ul li span.mzen-iconfont {
+    display: block;
+    font-size: 28px;
+    height: 35px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.nextalk-main-wrap {
     padding: 0.313em 0;
     display: -webkit-box;
     display: -webkit-flex;
