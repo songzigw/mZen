@@ -73,9 +73,9 @@ var NexTalkWebUI = function() {
      * 初始化NexTalkWebUI，在整个应用全局只需要调用一次。
      * 
      * @param {string}
-     *            appKey 开发者的AppKey
+     *                appKey 开发者的AppKey
      * @param {object}
-     *            options
+     *                options
      * @example NexTalkWebUI.init("app_key");
      */
     UI.init = function(appKey, options) {
@@ -96,7 +96,7 @@ var NexTalkWebUI = function() {
 
         // 初始化NexTalkWebIM
         // this.webim = IM.init(appId, options);
-        
+
         // 界面元素定义
         var els = _this.els = {};
         els.$body = $('body');
@@ -104,19 +104,58 @@ var NexTalkWebUI = function() {
         els.$mainHeader = $('header', els.$pageMain);
         els.$mainFooter = $('footer', els.$pageMain);
         els.$mainContent = $('#nextalk_content_main', els.$pageMain);
+        
+        els.wrapMessage = $('#message_wrap', els.$pageMain).hide();
+        els.wrapBuddies = $('#buddies_wrap', els.$pageMain).hide();
+        els.wrapSettings = $('#settings_wrap', els.$pageMain).hide();
+        
+        $('#set_version', els.wrapSettings).text(UI.v);
 
-        var wh = $(window).height();
-        //els.$pageMain.height(wh);
-        
-        var hh = els.$mainHeader.height();
-        var fh = els.$mainFooter.height();
-        //els.$mainContent.height(wh- hh - fh);
-        
-        $(window).resize(function() {
-            
+        $('ul.mzen-bar-tab>li', els.$mainFooter).each(function(i, el) {
+            $(el).css({cursor: 'pointer'}).click(function() {
+                els.wrapMessage.hide();
+                els.wrapBuddies.hide();
+                els.wrapSettings.hide();
+                $('ul.mzen-bar-tab>li', els.$mainFooter).each(function() {
+                    $(this).removeClass('active');
+                });
+                
+                var tog = $(this).attr('data-toggle');
+                if (tog == 'message') {
+                    $(this).addClass('active');
+                    els.wrapMessage.show();
+                } else if (tog == 'buddies') {
+                    $(this).addClass('active');
+                    els.wrapBuddies.show();
+                } else if (tog == 'settings') {
+                    $(this).addClass('active');
+                    els.wrapSettings.show();
+                }
+            });
         });
         
+        autoLayout(els);
+        $(window).resize(function() {
+            autoLayout(els);
+        });
+
         return _this;
     };
+
+    function autoLayout(els) {
+        var wh = $(window).height();
+
+        var hh = els.$mainHeader.height();
+        var fh = els.$mainFooter.height();
+        els.$mainContent.height(wh - hh - fh);
+
+        if ($.isFunction($.fn.perfectScrollbar)) {
+            setTimeout(function() {
+                els.$mainContent.perfectScrollbar({
+                    wheelPropagation : false
+                });
+            }, 1);
+        }
+    }
 
 })(NexTalkWebUI, NexTalkWebIM);

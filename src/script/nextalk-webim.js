@@ -11,7 +11,7 @@ var NexTalkWebIM = function() {
 (function(NexTalkWebIM, undefined) {
 
     // -------------------------
-    "use strict";
+    //"use strict";
 
     var JSON = window.JSON
             || (function() {
