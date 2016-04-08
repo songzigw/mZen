@@ -3,27 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport"
-	content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
 <title>Demo Chat</title>
+<style type="text/css">
+.nextalk-btn {
+    position: fixed;
+    box-sizing: content-box;
+    height: 38px;
+    bottom: 0px;
+    right: 100px;
+    padding: 0px 20px;
+    border-radius: 2px 2px 0px 0px;
+    transition: all 0.3s ease-in-out 0.1s;
+    -webkit-transition: all 0.3s ease-in-out 0.1s;
+    background: rgb(15, 146, 237);
+}
+
+.nextalk-btn .nextalk-a {
+    text-decoration: none;
+    outline: none;
+    font-family: Microsoft Yahei, Arial, Helvetica;
+    color: #fff;
+    font-size: 16px;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 38px;
+    float: none;
+    cursor: pointer;
+}
+
+.nextalk-a .nextalk-ico {
+    vertical-align: middle;
+    width: 29px;
+    height: 25px;
+    border: none;
+    margin: -5px 10px 0 0;
+    float: none;
+    position: static;
+}
+
+.nextalk-btn>.nextalk-alert {
+    min-height: 25px;
+    min-width: 25px;
+    line-height: 180%;
+    border-radius: 11px;
+    background-color: red;
+    color: #FFFFFF;
+    text-align: center;
+    color: #fff;
+    font-size: 14px; margin : 0; padding : 0; position : absolute; right :
+    -10px;
+    top: -3px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: -10px;
+}
+
+.nextalk-iframe {
+    display: none;
+    width: 320px;
+    height: 530px;
+    position: fixed;
+    bottom: 0px;
+    border-radius: 3px 3px 0px 0px;
+    overflow: hidden;
+    z-index: 2147483583;
+    box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 5px 2px;
+    right: 50px;
+    transition: all 0.3s ease-in-out 0.1s;
+    -webkit-transition: all 0.3s ease-in-out 0.1s;
+}
+
+.nextalk-iframe iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
 </head>
 <body>
-	<div id="nextalk-btn"
-		style="position: fixed; z-index: 2147483583; box-sizing: content-box; height: 43px; bottom: 0px; padding: 0px 20px; border-radius: 4px 4px 0px 0px; right: 100px; transition: all 0.3s ease-in-out 0.1s; -webkit-transition: all 0.3s ease-in-out 0.1s; background: rgb(15, 146, 237);">
-		<a
-			style="text-decoration: none; outline: none; font-family: Microsoft Yahei, Arial, Helvetica; color: #fff; font-size: 16px; display: inline-block; margin: 0; padding: 0; border: none; line-height: 43px; float: none;"><img
-			style="vertical-align: middle; width: 31px; border: none; margin: -4px 10px 0 0; float: none; position: static; height: 27px;"
-			src="http://www.sobot.com/chat/pc/img/zhichichatBtnBg.png"><span
-			style="font-family: Microsoft Yahei, Arial, Helvetica; color: #fff; font-size: 16px; margin: 0; padding: 0;">聊天</span></a><span
-			style="height: 30px; width: 30px; line-height: 30px; border: 1px solid #FFFFFF; border-radius: 50%; background-color: red; color: #FFFFFF; text-align: center; display: none; position: absolute; right: -15px; top: -15px;"></span>
-	</div>
-	<div id="nextalk-iframe"
-		style="width: 320px; height: 530px; position: fixed; bottom: 0px; border-radius: 5px 5px 0px 0px; overflow: hidden; z-index: 2147483583; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 5px 2px; right: 50px; transition: all 0.3s ease-in-out 0.1s; -webkit-transition: all 0.3s ease-in-out 0.1s;">
-		<iframe src="main.html" name="zhichiIframe"
-			frameborder="no" scrolling="no"
-			style="width: 100%; height: 100%; border: 0;"></iframe>
-	</div>
+    <div class="nextalk-btn">
+        <a class="nextalk-a"><img class="nextalk-ico"
+            src="http://www.sobot.com/chat/pc/img/zhichichatBtnBg.png" /><span>聊天</span></a>
+        <span class="nextalk-alert">5</span>
+    </div>
+    <div class="nextalk-iframe">
+        <iframe src="main.html" name="nextalk_iframe" frameborder="no"
+            scrolling="no"></iframe>
+    </div>
 </body>
 <script type="text/javascript">
-    
+    function abc() {
+        //document.getElementsByClassName("nextalk-btn")
+        alert("");
+    }
 </script>
 </html>
