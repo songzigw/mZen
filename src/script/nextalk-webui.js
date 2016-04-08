@@ -15,7 +15,9 @@ var NexTalkWebUI = function() {
     
     var top = window.top;
     if (top != window.self) {
-        
+        var nkMain = $('#nextalk_main', top.document);
+        var nkIframe = $('#nextalk_iframe', top.document);
     }
+
 
 })(NexTalkWebUI, NexTalkWebIM);

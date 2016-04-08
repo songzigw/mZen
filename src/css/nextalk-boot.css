@@ -1,76 +1,94 @@
-.nextalk-btn {
-    position: fixed;
-    box-sizing: content-box;
-    height: 38px;
-    bottom: 0px;
-    right: 100px;
-    padding: 0px 20px;
-    border-radius: 2px 2px 0px 0px;
-    transition: all 0.3s ease-in-out 0.1s;
-    -webkit-transition: all 0.3s ease-in-out 0.1s;
-    background: rgb(15, 146, 237);
-}
-
-.nextalk-btn .nextalk-a {
-    text-decoration: none;
-    outline: none;
-    font-family: Microsoft Yahei, Arial, Helvetica;
-    color: #fff;
-    font-size: 16px;
-    display: inline-block;
-    margin: 0;
+.nextalk-alert {
+    position: absolute; margin : 0;
     padding: 0;
-    border: none;
-    line-height: 38px;
-    float: none;
-    cursor: pointer;
+    position: absolute;
+    font-size: 14px;;
+    right: -10px;
+    margin: 0;
 }
 
-.nextalk-a .nextalk-ico {
-    vertical-align: middle;
-    width: 29px;
-    height: 25px;
-    border: none;
-    margin: -5px 10px 0 0;
-    float: none;
-    position: static;
+.nextalk-main {
+	position: fixed;
+	box-sizing: content-box;
+	height: 38px;
+	bottom: 0px;
+	right: 100px;
+	padding: 0px 20px;
+	border-radius: 2px 2px 0px 0px;
+	transition: all 0.3s ease-in-out 0.1s;
+	-webkit-transition: all 0.3s ease-in-out 0.1s;
+	background: rgb(15, 146, 237);
 }
 
-.nextalk-btn>.nextalk-alert {
+.nextalk-main .nextalk-btn {
+	text-decoration: none;
+	outline: none;
+	font-family: Microsoft Yahei, Arial, Helvetica;
+	color: #fff;
+	font-size: 16px;
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	border: none;
+	line-height: 38px;
+	float: none;
+	cursor: pointer;
+}
+
+.nextalk-btn .nextalk-ico {
+	vertical-align: middle;
+	width: 29px;
+	height: 25px;
+	border: none;
+	margin: -5px 10px 0 0;
+	float: none;
+	position: static;
+}
+
+.nextalk-main>.nextalk-alert {
+	min-height: 25px;
+	min-width: 25px;
+	line-height: 180%;
+	border-radius: 11px;
+	background-color: red;
+	color: #FFFFFF;
+	text-align: center;
+	color: #fff;
+	right: -10px;
+	top: -3px;
+}
+
+.nextalk-iframe {
+	/*display: none;*/
+	width: 320px;
+	height: 530px;
+	position: fixed;
+	bottom: 0px;
+	border-radius: 3px 3px 0px 0px;
+	overflow: hidden;
+	z-index: 2147483583;
+	box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 5px 2px;
+	right: 50px;
+	transition: all 0.3s ease-in-out 0.1s;
+	-webkit-transition: all 0.3s ease-in-out 0.1s;
+}
+
+.nextalk-iframe iframe {
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+.nextalk-iframe>.nextalk-alert {
     min-height: 25px;
-    min-width: 25px;
+    min-width: 150px;
     line-height: 180%;
     border-radius: 11px;
     background-color: red;
     color: #FFFFFF;
     text-align: center;
     color: #fff;
-    font-size: 14px; margin : 0; padding : 0; position : absolute; right :
-    -10px;
-    top: -3px;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    right: -10px;
-}
-
-.nextalk-iframe {
-    display: none;
-    width: 320px;
-    height: 530px;
-    position: fixed;
-    bottom: 0px;
-    border-radius: 3px 3px 0px 0px;
-    overflow: hidden;
-    z-index: 2147483583;
-    box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 5px 2px;
-    right: 50px;
-    transition: all 0.3s ease-in-out 0.1s;
-    -webkit-transition: all 0.3s ease-in-out 0.1s;
-}
-
-.nextalk-iframe iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
+    right: 0px;
+    top: -25px;
+    cursor: pointer;
 }
