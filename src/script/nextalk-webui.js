@@ -9,7 +9,7 @@
 var NexTalkWebUI = function() {
 };
 
-(function(WebUI, IM, undefined) {
+(function(UI, IM, undefined) {
 
     "use strict";
     
