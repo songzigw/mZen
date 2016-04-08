@@ -8,6 +8,7 @@
 }
 
 .nextalk-main {
+	display: none;
 	position: fixed;
 	box-sizing: content-box;
 	height: 38px;
@@ -51,7 +52,6 @@
 	line-height: 180%;
 	border-radius: 11px;
 	background-color: red;
-	color: #FFFFFF;
 	text-align: center;
 	color: #fff;
 	right: -10px;
@@ -59,7 +59,7 @@
 }
 
 .nextalk-iframe {
-	/*display: none;*/
+	display: none;
 	width: 320px;
 	height: 530px;
 	position: fixed;
@@ -80,15 +80,14 @@
 }
 
 .nextalk-iframe>.nextalk-alert {
-    min-height: 25px;
-    min-width: 150px;
-    line-height: 180%;
-    border-radius: 11px;
-    background-color: red;
-    color: #FFFFFF;
+    min-height: 45px;
+    min-width: 50px;
+    line-height: 45px;
+    border-radius: 0px;
+    background: rgb(15, 146, 237);
     text-align: center;
     color: #fff;
     right: 0px;
-    top: -25px;
+    top: 0px;
     cursor: pointer;
 }

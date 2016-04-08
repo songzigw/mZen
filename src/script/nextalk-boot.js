@@ -14,8 +14,8 @@ var nextalkBtnHTML = '<div class="nextalk-main" id="nextalk_main">'
         + '<img class="nextalk-ico" src="http://www.sobot.com/chat/pc/img/zhichichatBtnBg.png" />'
         + '<span>聊天</span></a>' + '<span class="nextalk-alert">5</span></div>';
 var nextalkIfrHTML = '<div class="nextalk-iframe" id="nextalk_iframe">'
+        + '<a class="nextalk-alert">最小化</a>'
         + '<iframe src="main.html" name="nextalk_iframe" frameborder="no" scrolling="no"/>'
-        + '<a class="nextalk-alert">最小化<a/>'
         + '</div>';
 
 document.write(nextalkBtnHTML);
