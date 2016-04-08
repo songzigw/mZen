@@ -103,6 +103,10 @@ html, body {
 	background-color: #EDEDED;
 }
 
+.nextalk-page {
+    overflow: hidden;
+}
+
 .mzen-bar-nav .nextalk-user {
     height: 45px;
     line-height: 45px !important;
@@ -145,7 +149,7 @@ html, body {
     background-size: contain;
 }
 
-.nextalk-main-wrap {
+.nextalk-wrap {
     padding: 0.313em 0;
     display: -webkit-box;
     display: -webkit-flex;

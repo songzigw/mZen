@@ -9,7 +9,7 @@
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body>
-        <div class="nextalk-page">
+        <div class="nextalk-page" id="nextalk_page_main">
         <!--头部集合 BEGIN-->
         <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
             <a class="mzen-pull-left mzen-img mzen-tap-active nextalk-user">
@@ -21,9 +21,9 @@
         </header>
         <!--头部集合 END-->
         
-        <div id="main-content">
+        <div class="nextalk-content" id="nextalk_content_main">
         
-        <div class="mzen-content nextalk-main-wrap message">
+        <div class="mzen-content nextalk-wrap message">
             <div class="mzen-searchbar-wrap demo" id="search">
 			    <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
 			        <i class="mzen-iconfont mzen-icon-search"></i>
@@ -118,6 +118,6 @@
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
     <script type="text/javascript" src="../script/nextalk-webui.js"></script>
     <script type="text/javascript">
-        
+        NexTalkWebUI.init();
     </script>
 </html>
