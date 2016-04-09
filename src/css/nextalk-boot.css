@@ -13,7 +13,7 @@
 	box-sizing: content-box;
 	height: 38px;
 	bottom: 0px;
-	right: 100px;
+	right: 50px;
 	padding: 0px 20px;
 	border-radius: 2px 2px 0px 0px;
 	transition: all 0.3s ease-in-out 0.1s;
@@ -68,7 +68,7 @@
 	overflow: hidden;
 	z-index: 2147483583;
 	box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 5px 2px;
-	right: 50px;
+	right: 20px;
 	transition: all 0.3s ease-in-out 0.1s;
 	-webkit-transition: all 0.3s ease-in-out 0.1s;
 }
