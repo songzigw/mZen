@@ -118,14 +118,26 @@ var NexTalkWebUI = function() {
         toggleMain(els);
         toggleChatbox(els);
 
+        // 初始化监听器
+        _this._initLisenters();
+
         $(window).resize(function() {
-            autoLayout(els);
+            _this.trigger('nextalk.resizeable', []);
         });
 
         return _this;
     };
+    
+    UI.prototype._initLisenters = function() {
+        var _this = this;
+        
+        _this.bind('nextalk.resizeable', function(ev, data) {
+            resizeableMain(_this.els);
+            resizeableChatbox(_this.els);
+        });
+    };
 
-    function autoLayout(els) {
+    function resizeableMain(els) {
         var wh = $(window).height();
 
         var hh = els.$mainHeader.height();
@@ -135,6 +147,24 @@ var NexTalkWebUI = function() {
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
                 els.$mainContent.perfectScrollbar({
+                    wheelPropagation : false
+                });
+            }, 1);
+        }
+    }
+    
+    function resizeableChatbox(els) {
+        var $chatboxPage = els.$chatboxPage;
+        var wh = $(window).height();
+
+        var hh = $('header', $chatboxPage).height();
+        var fh = $('footer', $chatboxPage).height();
+        var $chatboxContent = $('#nextalk_content_chatbox', $chatboxPage);
+        $chatboxContent.height(wh - hh - fh);
+        
+        if ($.isFunction($.fn.perfectScrollbar)) {
+            setTimeout(function() {
+                $chatboxContent.perfectScrollbar({
                     wheelPropagation : false
                 });
             }, 1);
@@ -170,25 +200,30 @@ var NexTalkWebUI = function() {
                 }
             });
         });
-        autoLayout(els);
+        resizeableMain(els);
 
         // message
-        toggleMainMessage(els, els.$frameMessage);
+        toggleMainMessage(els);
         // buddies
         // settings
         $('#set_version', els.frameSettings).text(UI.v);
     }
     
-    function toggleMainMessage(els, $frameMessage) {
+    function toggleMainMessage(els) {
+        var $frameMessage = els.$frameMessage;
         $('.nextalk-message-items', $frameMessage).each(function(i, el) {
             $(el).click(function() {
                 els.$chatboxPage.show();
+                resizeableChatbox(els.$chatboxPage);
             });
         });
     }
 
     function toggleChatbox(els) {
-
+        var $chatboxPage = els.$chatboxPage;
+        $('header>a:first', $chatboxPage).click(function() {
+            $chatboxPage.hide();
+        });
     }
 
 })(NexTalkWebUI, NexTalkWebIM);
