@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body>
-        <div class="chatbox mzen-flex-row">
+        <div class="nextalk-page chatbox" id="nextalk_page_chatbox">
         <div class="mzen-col-xs-3 mzen-border-r">
             <div class="mzen-content">
             <div class="mzen-searchbar-wrap" id="search">
@@ -86,9 +86,9 @@
 		            </div>
 		        </header>
 		        <!--头部集合 END-->
-		        <div class="mzen-content">
-		            <div class="mzen-content-padded" id="chatbox-content">
-	                    <p class="mzen-text-center history-date">5-21 20:00</p>
+		        <div class="mzen-content nextalk-content" id="nextalk_content_chatbox">
+		            <div class="mzen-content-padded">
+	                    <p class="mzen-text-center">5-21 20:00</p>
 	                    <div class="mzen-chat-sender">
 	                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
 	                        <div class="mzen-chat-sender-cont">
@@ -117,7 +117,7 @@
 	                            <span>你好！</span>
 	                        </div>
 	                    </div>
-	                    <p class="mzen-text-center history-date">8-16 20:00</p>
+	                    <p class="mzen-text-center">8-16 20:00</p>
 	                    <div class="mzen-chat-receiver">
 	                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
 	                        <div class="mzen-chat-receiver-cont">
@@ -126,8 +126,9 @@
 	                        </div>
 	                    </div>
 	                </div>
-	                <!-- 聊天输入筐 -->
 		        </div>
+		        <!-- 聊天输入筐BEGIN -->
+                <!-- 聊天输入筐END -->
             </div>
         </div>
         </div>

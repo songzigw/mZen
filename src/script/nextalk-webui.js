@@ -105,7 +105,7 @@ var NexTalkWebUI = function() {
         els.$mainFooter = $('footer', els.$pageMain);
         els.$mainContent = $('#nextalk_content_main', els.$pageMain);
         
-        els.wrapMessage = $('#message_wrap', els.$pageMain).hide();
+        els.wrapMessage = $('#message_wrap', els.$pageMain).show();
         els.wrapBuddies = $('#buddies_wrap', els.$pageMain).hide();
         els.wrapSettings = $('#settings_wrap', els.$pageMain).hide();
         
