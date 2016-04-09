@@ -1073,7 +1073,7 @@ input[type="time"] {
 }
 .mzen-user-view-cell {
 	position: relative;
-	padding: 11px 15px;
+	padding: 7px 15px;
 	overflow: hidden;
 }
 .mzen-user-view-cell:after {

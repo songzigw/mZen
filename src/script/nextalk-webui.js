@@ -205,18 +205,25 @@ var NexTalkWebUI = function() {
         // message
         toggleMainMessage(els);
         // buddies
+        toggleMainBuddies(els);
         // settings
         $('#set_version', els.frameSettings).text(UI.v);
     }
     
     function toggleMainMessage(els) {
         var $frameMessage = els.$frameMessage;
+        
         $('.nextalk-message-items', $frameMessage).each(function(i, el) {
             $(el).click(function() {
                 els.$chatboxPage.show();
                 resizeableChatbox(els.$chatboxPage);
             });
         });
+    }
+    function toggleMainBuddies(els) {
+        var $frameBuddies = els.$frameBuddies;
+        var $nextalkSearch = $('#nextalk_search', $frameBuddies);
+        new SearchUI($nextalkSearch);
     }
 
     function toggleChatbox(els) {
@@ -225,5 +232,49 @@ var NexTalkWebUI = function() {
             $chatboxPage.hide();
         });
     }
+    
+    function SearchUI($search, callback) {
+        var _this = this;
+        _this.$search = $search;
+        $('.mzen-searchbar', $search).click(function() {
+            _this.doSearch();
+        }); 
+        $('.mzen-searchbar-cancel', $search).click(function() {
+            _this.cancelSearch();
+        });
+        $('.mzen-icon-roundclosefill', $search).click(function() {
+            _this.clearSearch();
+        });
+        $('.mzen-searchbar-input>form', $search).submit(function() {
+            return false;
+        });
+        $('.mzen-searchbar-input input', $search).change(function() {
+            _this.search();
+        });
+    }
+    
+    SearchUI.prototype.search = function() {
+        
+    };
+    
+    SearchUI.prototype.doSearch = function() {
+        var _this = this;
+        var $search = _this.$search;
+        $search.addClass('focus');
+        $('.mzen-searchbar-input input', $search).focus();
+    };
+    
+    SearchUI.prototype.clearSearch = function() {
+        var _this = this;
+        var $search = _this.$search;
+        $('.mzen-searchbar-input input', $search).val('');
+    };
+    
+    SearchUI.prototype.cancelSearch = function() {
+        var _this = this;
+        var $search = _this.$search;
+        $('.mzen-searchbar-input input', $search).blur().val('');
+        $search.removeClass('focus');
+    };
 
 })(NexTalkWebUI, NexTalkWebIM);

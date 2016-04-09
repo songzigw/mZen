@@ -254,10 +254,6 @@ html, body {
   margin-top: 3px;
 }
 
-#main-footer {
-    position: relative;
-}
-
 #main-footer:before {
     border-top: 1px solid #c8c7cc;
     display: block;
@@ -313,6 +309,18 @@ html, body {
     box-shadow: 0 0 6px #D6D6D6;
     z-index: 6;
     margin-bottom: 0;
+}
+
+.buddies .mzen-user-view-cell .mzen-img-object {
+	width: 40px !important;
+	height: 40px !important;
+	min-height: 40px !important;
+	min-width: 40px !important;
+	line-height: 40px;
+}
+
+.buddies .mzen-user-view-cell .mzen-img-body span {
+	line-height: 38px;
 }
 
 .gender {

@@ -24,19 +24,6 @@
         <div class="nextalk-overflow" id="nextalk_content_main">
         
         <div class="mzen-content nextalk-wrap message" id="message_wrap">
-            <div class="mzen-searchbar-wrap demo" id="search">
-			    <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
-			        <i class="mzen-iconfont mzen-icon-search"></i>
-			        <div class="mzen-searchbar-text">请输入搜索内容</div>
-			        <div class="mzen-searchbar-input">
-			            <form action="javascript:search();">
-			            <input type="search" placeholder="请输入搜索内容" id="search-input">
-			            </form>
-			        </div>
-			        <i class="mzen-iconfont mzen-icon-roundclosefill" onclick="clearInput()"></i>
-			    </div>
-			    <div class="mzen-searchbar-cancel mzen-text-info" onclick="cancelSearch()">取消</div>
-			</div>
 			
             <ul class="mzen-list-view nextalk-message-items">
                 
@@ -85,62 +72,26 @@
             
         </div>
         
-        <div class="mzen-content nextalk-wrap" id="buddies_wrap" style="display: none;">
-            <div class="mzen-searchbar-wrap demo" id="search">
-                <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
+        <div class="mzen-content nextalk-wrap buddies" id="buddies_wrap" style="display: none;">
+            <div class="mzen-searchbar-wrap" id="nextalk_search">
+                <div class="mzen-searchbar mzen-border-radius">
                     <i class="mzen-iconfont mzen-icon-search"></i>
                     <div class="mzen-searchbar-text">请输入搜索内容</div>
                     <div class="mzen-searchbar-input">
-                        <form action="javascript:search();">
-                        <input type="search" placeholder="请输入搜索内容" id="search-input">
+                        <form>
+                        <input type="text" placeholder="请输入搜索内容" id="nexalk_search_input"/>
                         </form>
                     </div>
-                    <i class="mzen-iconfont mzen-icon-roundclosefill" onclick="clearInput()"></i>
+                    <i class="mzen-iconfont mzen-icon-roundclosefill"></i>
                 </div>
-                <div class="mzen-searchbar-cancel mzen-text-info" onclick="cancelSearch()">取消</div>
+                <div class="mzen-searchbar-cancel mzen-text-info">取消</div>
             </div>
             
             <ul class="mzen-user-view">
                 <li class="mzen-user-view-cell mzen-img">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/head_def.png">
                     <div class="mzen-img-body mzen-arrow-right">
-                        <span>...
-                        <i class="gender male"><i class="icon-agree"></i>...</i>
-                        </span>
-                        <p class="mzen-ellipsis-1">
-                            ......
-                        </p>
-                    </div>
-                </li>
-                <li class="mzen-user-view-cell mzen-img">
-                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_a.jpg">
-                    <div class="mzen-img-body mzen-arrow-right">
-                        <span>...
-                        <i class="gender female"><i class="icon-agree"></i>...</i>
-                        <em>11.1KM</em></span>
-                        <p class="mzen-ellipsis-1">
-                            ......
-                        </p>
-                    </div>
-                </li>
-                <li class="mzen-user-view-cell mzen-img">
-                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_def.png">
-                    <div class="mzen-img-body mzen-arrow-right">
                         <span>...</span>
-                        <p class="mzen-ellipsis-1">
-                            ......
-                        </p>
-                    </div>
-                </li>
-                <li class="mzen-user-view-cell mzen-img">
-                    <img class="mzen-img-object mzen-pull-left" src="../imgs/head_b.jpg">
-                    <div class="mzen-img-body mzen-arrow-right">
-                        <span>...
-                        <i class="gender female"><i class="icon-agree"></i>...</i>
-                        <em>11.1KM</em></span>
-                        <p class="mzen-ellipsis-1">
-                            ......
-                        </p>
                     </div>
                 </li>
             </ul>
