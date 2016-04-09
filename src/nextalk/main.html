@@ -205,7 +205,7 @@
         <!--底部导航 END-->
         </div>
         
-        <div class="nextalk-page nextalk-screen" id="nextalk_page_chatbox" style="display: none;">
+        <div class="nextalk-page nextalk-screen chatbox" id="nextalk_page_chatbox" style="display: none;">
             <!--头部集合 BEGIN-->
             <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
                 <a tapmode="tap-active" class="mzen-pull-left mzen-tap-active">
@@ -257,21 +257,12 @@
                 </div>
             </div>
             <!-- 聊天输入筐BEGIN -->
-            <footer class="mzen-nav" id="main-footer">
-	            <ul class="mzen-bar-tab">
-	                <li data-toggle="message" class="active">
-	                    <span class="mzen-iconfont mzen-icon-message"></span>
-	                    <p>消息</p>
-	                </li>
-	                <li data-toggle="buddies">
-	                    <span class="mzen-iconfont mzen-icon-friend"></span>
-	                    <p>联系人</p>
-	                </li>
-	                <li data-toggle="settings">
-	                    <span class="mzen-iconfont mzen-icon-settings"></span>
-	                    <p>设置</p>
-	                </li>
-	            </ul>
+            <footer>
+	            <form class="mzen-form">
+	            <div class="mzen-input-row">
+                    <input type="text" class="mzen-input" placeholder="输入消息内容..."/>
+                </div>
+	            </form>
 	        </footer>
             <!-- 聊天输入筐END -->
         </div>

@@ -508,3 +508,6 @@ html, body {
 	-wekbit-box-shadow: 0 0px 0px #cfcfcf;
     box-shadow: 0 0px 0px #cfcfcf;
 }
+.chatbox .mzen-input-row:last-child:after {
+	border-bottom: 0px;
+}
