@@ -229,6 +229,14 @@ html, body {
 	background-color: #EDEDED;
 }
 
+.nextalk-page.nextalk-screen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 .nextalk-content {
     overflow: hidden;
 }

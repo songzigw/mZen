@@ -38,9 +38,9 @@
 			    <div class="mzen-searchbar-cancel mzen-text-info" onclick="cancelSearch()">取消</div>
 			</div>
 			
-            <ul class="mzen-list-view">
+            <ul class="mzen-list-view nextalk-message-items">
                 
-                <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover" onclick="goReceiveFavorite();">
+                <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">
                     <a class="mzen-arrow-right font-line-height">系统通知
                     <span class="mzen-badge mzen-badge-danger">12</span></a>
@@ -232,12 +232,11 @@
         <!--底部导航 END-->
         </div>
         
-        <div class="nextalk-page" id="nextalk_page_chatbox">
+        <div class="nextalk-page nextalk-screen" id="nextalk_page_chatbox" style="display: none;">
             <!--头部集合 BEGIN-->
             <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
-                <a class="mzen-pull-left mzen-img mzen-tap-active nextalk-user">
-                <img class="mzen-img-object" src="../imgs/head_def.png">
-                </a>
+                <a tapmode="tap-active" class="mzen-pull-left mzen-tap-active">
+                <span class="mzen-iconfont mzen-icon-left"></span></a>
                 <div class="mzen-title">
                     张三
                 </div>
@@ -285,6 +284,22 @@
                 </div>
             </div>
             <!-- 聊天输入筐BEGIN -->
+            <footer class="mzen-nav" id="main-footer">
+	            <ul class="mzen-bar-tab">
+	                <li data-toggle="message" class="active">
+	                    <span class="mzen-iconfont mzen-icon-message"></span>
+	                    <p>消息</p>
+	                </li>
+	                <li data-toggle="buddies">
+	                    <span class="mzen-iconfont mzen-icon-friend"></span>
+	                    <p>联系人</p>
+	                </li>
+	                <li data-toggle="settings">
+	                    <span class="mzen-iconfont mzen-icon-settings"></span>
+	                    <p>设置</p>
+	                </li>
+	            </ul>
+	        </footer>
             <!-- 聊天输入筐END -->
         </div>
     </body>

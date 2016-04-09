@@ -99,42 +99,25 @@ var NexTalkWebUI = function() {
 
         // 界面元素定义
         var els = _this.els = {};
+        // 元素根节点body
         els.$body = $('body');
-        els.$pageMain = $('#nextalk_page_main', els.$body);
-        els.$mainHeader = $('header', els.$pageMain);
-        els.$mainFooter = $('footer', els.$pageMain);
-        els.$mainContent = $('#nextalk_content_main', els.$pageMain);
-        
-        els.wrapMessage = $('#message_wrap', els.$pageMain).show();
-        els.wrapBuddies = $('#buddies_wrap', els.$pageMain).hide();
-        els.wrapSettings = $('#settings_wrap', els.$pageMain).hide();
-        
-        $('#set_version', els.wrapSettings).text(UI.v);
 
-        $('ul.mzen-bar-tab>li', els.$mainFooter).each(function(i, el) {
-            $(el).css({cursor: 'pointer'}).click(function() {
-                els.wrapMessage.hide();
-                els.wrapBuddies.hide();
-                els.wrapSettings.hide();
-                $('ul.mzen-bar-tab>li', els.$mainFooter).each(function() {
-                    $(this).removeClass('active');
-                });
-                
-                var tog = $(this).attr('data-toggle');
-                if (tog == 'message') {
-                    $(this).addClass('active');
-                    els.wrapMessage.show();
-                } else if (tog == 'buddies') {
-                    $(this).addClass('active');
-                    els.wrapBuddies.show();
-                } else if (tog == 'settings') {
-                    $(this).addClass('active');
-                    els.wrapSettings.show();
-                }
-            });
-        });
-        
-        autoLayout(els);
+        // 主要界面入口mainPage
+        els.$mainPage = $('#nextalk_page_main', els.$body);
+        els.$mainHeader = $('header', els.$mainPage);
+        els.$mainFooter = $('footer', els.$mainPage);
+        els.$mainContent = $('#nextalk_content_main', els.$mainPage);
+        // 主界面frame
+        els.$frameMessage = $('#message_wrap', els.$mainPage).show();
+        els.$frameBuddies = $('#buddies_wrap', els.$mainPage).hide();
+        els.$frameSettings = $('#settings_wrap', els.$mainPage).hide();
+
+        // 聊天盒子界面chatboxPage（这只是一个模板）
+        els.$chatboxPage = $('#nextalk_page_chatbox', els.$body);
+
+        toggleMain(els);
+        toggleChatbox(els);
+
         $(window).resize(function() {
             autoLayout(els);
         });
@@ -156,6 +139,56 @@ var NexTalkWebUI = function() {
                 });
             }, 1);
         }
+    }
+
+    function toggleMain(els) {
+        $('ul.mzen-bar-tab>li', els.$mainFooter).each(function(i, el) {
+            $(el).css({
+                cursor : 'pointer'
+            }).click(function() {
+                els.$frameMessage.hide();
+                els.$frameBuddies.hide();
+                els.$frameSettings.hide();
+                $('ul.mzen-bar-tab>li', els.$mainFooter).each(function() {
+                    $(this).removeClass('active');
+                });
+
+                var tit = $('.mzen-title', els.$mainHeader);
+                var tog = $(this).attr('data-toggle');
+                if (tog == 'message') {
+                    $(this).addClass('active');
+                    tit.text('消息');
+                    els.$frameMessage.show();
+                } else if (tog == 'buddies') {
+                    $(this).addClass('active');
+                    tit.text('联系人');
+                    els.$frameBuddies.show();
+                } else if (tog == 'settings') {
+                    $(this).addClass('active');
+                    tit.text('设置');
+                    els.$frameSettings.show();
+                }
+            });
+        });
+        autoLayout(els);
+
+        // message
+        toggleMainMessage(els, els.$frameMessage);
+        // buddies
+        // settings
+        $('#set_version', els.frameSettings).text(UI.v);
+    }
+    
+    function toggleMainMessage(els, $frameMessage) {
+        $('.nextalk-message-items', $frameMessage).each(function(i, el) {
+            $(el).click(function() {
+                els.$chatboxPage.show();
+            });
+        });
+    }
+
+    function toggleChatbox(els) {
+
     }
 
 })(NexTalkWebUI, NexTalkWebIM);

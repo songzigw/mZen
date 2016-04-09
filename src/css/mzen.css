@@ -1401,7 +1401,6 @@ input[type="time"] {
 	top: 0;
 	right: 0;
 	left: 0;
-	z-index: 10;
 	width: 100%;
 	background-color: #3498db;
 	color: #ffffff;
@@ -1456,6 +1455,9 @@ input[type="time"] {
   color: #333;
 }
 .mzen-bar-white a {
+    color: #333;
+}
+.mzen-bar-white.mzen-bar .mzen-iconfont {
 	color: #333;
 }
 
@@ -1469,6 +1471,7 @@ input[type="time"] {
 }
 .mzen-bar .mzen-pull-left {
 	padding-left: 10px;
+	padding-right: 10px;
 	font-size: 16px;
 	font-weight: 400;
 }
@@ -1509,7 +1512,6 @@ input[type="time"] {
 	right: 0;
 	left: 0;
 	bottom: 0;
-	z-index: 10;
 	width: 100%;
 	height: 55px;
 	background-color: #fff;
