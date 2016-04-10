@@ -246,9 +246,10 @@ var NexTalkWebUI = function() {
 
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
-                els.$mainContent.perfectScrollbar({
-                    wheelPropagation : false
-                });
+//                els.$mainContent.perfectScrollbar({
+//                    wheelPropagation : false
+//                });
+                els.$mainContent.css('overflow', 'auto');
             }, 1);
         }
     }
@@ -263,9 +264,10 @@ var NexTalkWebUI = function() {
         
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
-                $chatboxContent.perfectScrollbar({
-                    wheelPropagation : false
-                });
+//                $chatboxContent.perfectScrollbar({
+//                    wheelPropagation : false
+//                });
+                $chatboxContent.css('overflow', 'auto');
             }, 1);
         }
     }
