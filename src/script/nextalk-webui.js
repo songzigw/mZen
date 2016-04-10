@@ -84,9 +84,13 @@ var NexTalkWebUI = function() {
         els.$chatboxPage = $('#nextalk_page_chatbox', els.$body);
 
         toggleMain(els);
-        toggleChatbox(els);
         // 界面渲染完成
-        // -----------
+        // -----------------------------------------------------
+
+        // 定义聊天盒子存储空间
+        _this.chatBoxUIs = {};
+        // 系统消息盒子
+        _this.chatBoxUIs['SYS_MSG'] = new ChatBoxUI(ChatBoxUI.SYS_MSG);
 
         // 初始化监听器
         _this._initLisenters();
@@ -130,7 +134,6 @@ var NexTalkWebUI = function() {
         
         _this.bind('nextalk.resizeable', function(ev, data) {
             resizeableMain(_this.els);
-            resizeableChatbox(_this.els);
         });
     };
     
@@ -148,10 +151,10 @@ var NexTalkWebUI = function() {
         onConnected : function(ev, data) {
             var _this = this;
             var els = _this.els;
-            showMsgBox(els.$msgBox, '连接成功...', 'mzen-tips-info');
+            showMsgBox(els.$msgBox, '连接成功...', 'mzen-tips-success');
             setTimeout(function() {
                 els.$msgBox.hide();
-            }, 2000);
+            }, 3000);
             
             // 加载联系人列表
             var $frameBuddies = els.$frameBuddies;
@@ -165,6 +168,7 @@ var NexTalkWebUI = function() {
             } else {
                 $('.mzen-tips-warning', $frameBuddies).show();
             }
+            toggleConversation($('>li', $items));
             
             // 加载好友列表
         },
@@ -190,11 +194,11 @@ var NexTalkWebUI = function() {
             
         }
     });
-    
 
     function getBuddyHtml(u) {
-        var path = NexTalkWebIM.getInstance().options.path;
-        var html = '<li class="mzen-user-view-cell mzen-img">'
+        var path = IM.getInstance().options.path;
+        var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
+                + 'data-toggle="user-msg" data-id="' + u.id + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>'
@@ -204,22 +208,22 @@ var NexTalkWebUI = function() {
     }
     
     function showHtml(u) {
-        if (u.show == IM.presence.AVAILABLE) {
+        if (u.show == IM.show.AVAILABLE) {
             return '<i class="nextalk-show available"></i>';
         }
-        if (u.show == IM.presence.DND) {
+        if (u.show == IM.show.DND) {
             return '<i class="nextalk-show dnd"></i>';
         }
-        if (u.show == IM.presence.AWAY) {
+        if (u.show == IM.show.AWAY) {
             return '<i class="nextalk-show away"></i>';
         }
-        if (u.show == IM.presence.INVISIBLE) {
+        if (u.show == IM.show.INVISIBLE) {
             return '<i class="nextalk-show invisible"></i>';
         }
-        if (u.show == IM.presence.CHAT) {
+        if (u.show == IM.show.CHAT) {
             return '<i class="nextalk-show chat"></i>';
         }
-        if (u.show == IM.presence.UNAVAILABLE) {
+        if (u.show == IM.show.UNAVAILABLE) {
             return '<i class="nextalk-show unavailable"></i>';
         }
     }
@@ -227,6 +231,7 @@ var NexTalkWebUI = function() {
     function showMsgBox($msgBox, msg, addClass) {
         $msgBox.removeClass('mzen-tips-danger');
         $msgBox.removeClass('mzen-tips-info');
+        $msgBox.removeClass('mzen-tips-success');
         $msgBox.addClass(addClass);
         $('span', $msgBox).text(msg);
         $msgBox.show();
@@ -248,8 +253,7 @@ var NexTalkWebUI = function() {
         }
     }
     
-    function resizeableChatbox(els) {
-        var $chatboxPage = els.$chatboxPage;
+    function resizeableChatbox($chatboxPage) {
         var wh = $(window).height();
 
         var hh = $('header', $chatboxPage).height();
@@ -304,31 +308,100 @@ var NexTalkWebUI = function() {
         // settings
         $('#set_version', els.frameSettings).text(UI.v);
     }
-    
+
     function toggleMainMessage(els) {
         var $frameMessage = els.$frameMessage;
-        
-        $('.nextalk-message-items', $frameMessage).each(function(i, el) {
-            $(el).click(function() {
-                els.$chatboxPage.show();
-                resizeableChatbox(els.$chatboxPage);
-            });
-        });
+        var $items = $('ul.nextalk-message-items>li', $frameMessage);
+        toggleConversation($items);
     }
+
     function toggleMainBuddies(els) {
         var $frameBuddies = els.$frameBuddies;
         var $nextalkSearch = $('#nextalk_search', $frameBuddies);
         new SearchUI($nextalkSearch);
+        
+        var $items = $('ul.mzen-user-view>li', $frameBuddies);
+        toggleConversation($items);
     }
 
-    function toggleChatbox(els) {
-        var $chatboxPage = els.$chatboxPage;
+    function toggleConversation($items) {
+        var els = UI.getInstance().els;
+        $items.each(function(i, el) {
+            var item = $(el);
+            // 点击启动一个新的聊天盒子
+            item.click(function() {
+                var webui = UI.getInstance();
+                if (item.attr('data-toggle') == 'sys-msg') {
+                    webui.chatBoxUIs['SYS_MSG'].show();
+                    return;
+                }
+                var dataId = item.attr('data-id');
+                if (!dataId || dataId == '') {
+                    return;
+                }
+                if (item.attr('data-toggle') == 'room-msg') {
+                    if (!webui.chatBoxUIs['ROOM_MSG_' + dataId]) {
+                        webui.chatBoxUIs['ROOM_MSG_' + dataId] =
+                            new ChatBoxUI(ChatBoxUI.ROOM_MSG_, dataId);
+                    }
+                    webui.chatBoxUIs['ROOM_MSG_' + dataId].show();
+                    return;
+                }
+                if (item.attr('data-toggle') == 'user-msg') {
+                    if (!webui.chatBoxUIs['USER_MSG_' + dataId]) {
+                        webui.chatBoxUIs['USER_MSG_' + dataId] =
+                            new ChatBoxUI(ChatBoxUI.USER_MSG, dataId);
+                    }
+                    webui.chatBoxUIs['USER_MSG_' + dataId].show();
+                    return;
+                }
+            });
+        });
+    }
+
+    var ChatBoxUI = function(type, id) {
+        var _this = this;
+        _this.type = type;
+        if (id) {
+            _this.id = id;
+        }
+        
+        var els = UI.getInstance().els;
+        var $cbPage = els.$chatboxPage.clone();
+        _this.$cbPage = $cbPage;
+        if (type == ChatBoxUI['SYS_MSG']) {
+            $cbPage.attr('id', 'SYS_MSG');
+        } else if (type == ChatBoxUI['USER_MSG']) {
+            $cbPage.attr('id', 'USER_MSG_' + id);
+        } else if (type == ChatBoxUI['ROOM_MSG']) {
+            $cbPage.attr('id', 'ROOM_MSG_' + id);
+        }
+        
+        toggleChatbox($cbPage);
+        resizeableChatbox($cbPage);
+        
+        $cbPage.appendTo(els.$body);
+        
+        UI.getInstance().bind('nextalk.resizeable',
+                function(ev, data) {
+                    resizeableChatbox($cbPage);
+        });
+    };
+    ChatBoxUI['SYS_MSG'] = 0;
+    ChatBoxUI['USER_MSG'] = 1;
+    ChatBoxUI['ROOM_MSG'] = 2;
+    ChatBoxUI.prototype.show = function() {
+        var _this = this;
+        _this.$cbPage.show();
+    };
+
+    function toggleChatbox($chatboxPage) {
         $('header>a:first', $chatboxPage).click(function() {
             $chatboxPage.hide();
         });
     }
-    
-    function SearchUI($search, callback) {
+
+    var SearchUI = function($search, callback) {
         var _this = this;
         _this.$search = $search;
         $('.mzen-searchbar', $search).click(function() {
@@ -347,24 +420,24 @@ var NexTalkWebUI = function() {
             _this.search();
         });
     }
-    
+
     SearchUI.prototype.search = function() {
         
     };
-    
+
     SearchUI.prototype.doSearch = function() {
         var _this = this;
         var $search = _this.$search;
         $search.addClass('focus');
         $('.mzen-searchbar-input input', $search).focus();
     };
-    
+
     SearchUI.prototype.clearSearch = function() {
         var _this = this;
         var $search = _this.$search;
         $('.mzen-searchbar-input input', $search).val('');
     };
-    
+
     SearchUI.prototype.cancelSearch = function() {
         var _this = this;
         var $search = _this.$search;

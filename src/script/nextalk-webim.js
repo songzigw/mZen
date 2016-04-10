@@ -1432,21 +1432,21 @@ var NexTalkWebIM = function() {
     })(IM.errCode);
 
     /** 现场状态 */
-    IM.presence = {};
-    (function(pre) {
+    IM.show = {};
+    (function(show) {
         /** 在线 */
-        pre[pre["AVAILABLE"] = "available"] = "AVAILABLE";
+        show[show["AVAILABLE"] = "available"] = "AVAILABLE";
         /** 忙碌 */
-        pre[pre["DND"] = "dnd"] = "DND";
+        show[show["DND"] = "dnd"] = "DND";
         /** 离开 */
-        pre[pre["AWAY"] = "away"] = "AWAY";
+        show[show["AWAY"] = "away"] = "AWAY";
         /** 隐身 */
-        pre[pre["INVISIBLE"] = "invisible"] = "INVISIBLE";
+        show[show["INVISIBLE"] = "invisible"] = "INVISIBLE";
         /** 聊天中 */
-        pre[pre["CHAT"] = "chat"] = "CHAT";
+        show[show["CHAT"] = "chat"] = "CHAT";
         /** 离线 */
-        pre[pre["UNAVAILABLE"] = "unavailable"] = "UNAVAILABLE";
-    })(IM.presence);
+        show[show["UNAVAILABLE"] = "unavailable"] = "UNAVAILABLE";
+    })(IM.show);
 
     /** 消息类型 */
     IM.MessageType = {
@@ -1535,9 +1535,9 @@ var NexTalkWebIM = function() {
             extend(this._dataAccess.currUser, user);
         },
         
-        _show : function(presence) {
+        _show : function(show) {
             var user = this.getCurrUser();
-            extend(user, {show : presence});
+            extend(user, {show : show});
         },
 
         _buddies : function(buddies) {
@@ -1567,7 +1567,7 @@ var NexTalkWebIM = function() {
         getShow : function() {
             var currUser = this.getCurrUser();
             if (!currUser.show) {
-                currUser.show = IM.presence.UNAVAILABLE;
+                currUser.show = IM.show.UNAVAILABLE;
             }
             return currUser.show;
         },
@@ -1634,7 +1634,7 @@ var NexTalkWebIM = function() {
                 console.log("message:" + JSON.stringify(data));
             },
             onPresences : function(ev, data) {
-                console.log("presence:" + JSON.stringify(data));
+                console.log("presences:" + JSON.stringify(data));
             },
             onStatus : function(ev, data) {
                 console.log("status:" + JSON.stringify(data));
@@ -1652,8 +1652,8 @@ var NexTalkWebIM = function() {
         _this.bind("connected", function(ev, data) {
             if (_this.connStatus != IM.connStatus.CONNECTED) {
                 _this.connStatus = IM.connStatus.CONNECTED;
-                if (_this.status.get("s") == IM.presence.UNAVAILABLE) {
-                    _this.status.set("s", IM.presence.AVAILALE);
+                if (_this.status.get("s") == IM.show.UNAVAILABLE) {
+                    _this.status.set("s", IM.show.AVAILALE);
                 }
                 _this._show(_this.status.get("s"));
                 _this.connStatusListener.onConnected(ev, data);
@@ -1663,7 +1663,7 @@ var NexTalkWebIM = function() {
         _this.bind("disconnected", function(ev, data) {
             if (_this.connStatus != IM.connStatus.DISCONNECTED) {
                 _this.connStatus = IM.connStatus.DISCONNECTED;
-                _this._show(IM.presence.UNAVAILABLE);
+                _this._show(IM.show.UNAVAILABLE);
                 _this.connStatusListener.onDisconnected(ev, data);
             }
         });
@@ -1671,7 +1671,7 @@ var NexTalkWebIM = function() {
         _this.bind("networkUnavailable", function(ev, data) {
             if (_this.connStatus != IM.connStatus.NETWORK_UNAVAILABLE) {
                 _this.connStatus = IM.connStatus.NETWORK_UNAVAILABLE;
-                _this._show(IM.presence.UNAVAILABLE);
+                _this._show(IM.show.UNAVAILABLE);
                 _this.connStatusListener.onNetworkUnavailable(ev, data);
             }
         });
@@ -1849,13 +1849,13 @@ var NexTalkWebIM = function() {
                     });
                 },
                 
-                online : function(presence) {
+                online : function(show) {
                     var self = this;
-                    if (presence == IM.presence.UNAVAILABLE) {
-                        return new Error("IM.presence.UNAVAILABLE is error.");
+                    if (show == IM.show.UNAVAILABLE) {
+                        return new Error("IM.show.UNAVAILABLE is error.");
                     }
                     
-                    self._sendPresence({show : presence}, null);
+                    self._sendPresence({show : show}, null);
                     // 检查一下管道连接
                     if (self.connStatus != IM.connStatus.CONNECTED) {
                         self._connectServer();
@@ -1868,7 +1868,7 @@ var NexTalkWebIM = function() {
                         return;
                     }
                     
-                    self._sendPresence({show : IM.presence.UNAVAILABLE}, null);
+                    self._sendPresence({show : IM.show.UNAVAILABLE}, null);
                     var api = IM.WebApi.getInstance();
                     var params = {
                         status : 'offline',
