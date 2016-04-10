@@ -228,7 +228,7 @@ html, body {
 .nextalk-msg-box {
 	z-index: 12;
 	position: fixed;
-    top: 48px;
+    bottom: 55px;
     left: 0;
     right: 0;
 }
@@ -243,11 +243,12 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 3;
+    z-index: 5;
 }
 
 .nextalk-overflow {
     overflow: hidden;
+    margin-top: 1px;
 }
 
 .mzen-bar-nav .nextalk-user {

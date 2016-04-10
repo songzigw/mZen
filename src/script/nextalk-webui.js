@@ -107,7 +107,7 @@ var NexTalkWebUI = function() {
                 _this.onDisconnected(ev, data);
             },
             onNetworkUnavailable : function(ev, data) {
-                _this.NetworkUnavailable(ev, data);
+                _this.onNetworkUnavailable(ev, data);
             }
         });
         _this.webim.setReceiveMsgListener({
@@ -152,6 +152,21 @@ var NexTalkWebUI = function() {
             setTimeout(function() {
                 els.$msgBox.hide();
             }, 2000);
+            
+            // 加载联系人列表
+            var $frameBuddies = els.$frameBuddies;
+            var $items = $('ul.mzen-user-view', $frameBuddies).empty();
+            var buddies = _this.webim.getBuddies();
+            if (buddies && buddies.length > 0) {
+                $('.mzen-tips-warning', $frameBuddies).hide();
+                for (var i = 0; i < buddies.length; i++) {
+                    $items.append(getBuddyHtml(buddies[i]));
+                }
+            } else {
+                $('.mzen-tips-warning', $frameBuddies).show();
+            }
+            
+            // 加载好友列表
         },
         onDisconnected : function(ev, data) {
             var _this = this;
@@ -175,6 +190,16 @@ var NexTalkWebUI = function() {
             
         }
     });
+    
+
+    function getBuddyHtml(u) {
+        var path = NexTalkWebIM.getInstance().options.path;
+        var html = '<li class="mzen-user-view-cell mzen-img">'
+                + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
+                + '<div class="mzen-img-body mzen-arrow-right">'
+                + '<span>'+u.nick+'</span></div></li>';
+        return html;
+    }
     
     function showMsgBox($msgBox, msg, addClass) {
         $msgBox.removeClass('mzen-tips-danger');
