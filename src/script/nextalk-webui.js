@@ -41,16 +41,16 @@ var NexTalkWebUI = function() {
      * 初始化NexTalkWebUI，在整个应用全局只需要调用一次。
      * 
      * @param {string}
-     *                appKey 开发者的AppKey
+     *                appId 开发者的appId
      * @param {object}
      *                options
-     * @example NexTalkWebUI.init("app_key");
+     * @example NexTalkWebUI.init("app_id");
      */
-    UI.init = function(appKey, options) {
+    UI.init = function(appId, options) {
         if (!UI._instance) {
             UI._instance = new UI();
         }
-        UI.getInstance()._init(appKey, options);
+        UI.getInstance()._init(appId, options);
         return UI.getInstance();
     };
 
@@ -62,15 +62,14 @@ var NexTalkWebUI = function() {
     UI.prototype._init = function(appId, options) {
         var _this = this;
 
-        // 初始化NexTalkWebIM
-        this.webim = IM.init(appId, options);
-        
-
         // 界面元素定义
         var els = _this.els = {};
         // 元素根节点body
         els.$body = $('body');
-
+        // 消息通知框
+        els.$msgBox = $('.mzen-tips.nextalk-msg-box', els.$body).hide();
+        // 初始化页面
+        els.$initPage = $('#nextalk_page_init', els.$body);
         // 主要界面入口mainPage
         els.$mainPage = $('#nextalk_page_main', els.$body);
         els.$mainHeader = $('header', els.$mainPage);
@@ -86,14 +85,43 @@ var NexTalkWebUI = function() {
 
         toggleMain(els);
         toggleChatbox(els);
+        // 界面渲染完成
+        // -----------
 
         // 初始化监听器
         _this._initLisenters();
-
         $(window).resize(function() {
             _this.trigger('nextalk.resizeable', []);
         });
 
+        // 初始化NexTalkWebIM
+        _this.webim = IM.init(appId, options);
+        _this.webim.setConnStatusListener({
+            onConnecting : function(ev, data) {
+                _this.onConnecting(ev, data);
+            },
+            onConnected : function(ev, data) {
+                _this.onConnected(ev, data);
+            },
+            onDisconnected : function(ev, data) {
+                _this.onDisconnected(ev, data);
+            },
+            onNetworkUnavailable : function(ev, data) {
+                _this.NetworkUnavailable(ev, data);
+            }
+        });
+        _this.webim.setReceiveMsgListener({
+            onMessage : function(ev, data) {
+                _this.onMessage();
+            },
+            onPresences : function(ev, data) {
+                _this.onPresences();
+            },
+            onStatus : function(ev, data) {
+                _this.onStatus();
+            }
+        });
+        
         return _this;
     };
     
@@ -105,6 +133,56 @@ var NexTalkWebUI = function() {
             resizeableChatbox(_this.els);
         });
     };
+    
+    UI.prototype.connectServer = function(uid) {
+        this.webim.connectServer({uid : uid});
+    };
+    
+    $.extend(UI.prototype, {
+        onConnecting : function(ev, data) {
+            var _this = this;
+            var els = _this.els;
+            els.$initPage.hide();
+            showMsgBox(els.$msgBox, '正在连接中...', 'mzen-tips-info');
+        },
+        onConnected : function(ev, data) {
+            var _this = this;
+            var els = _this.els;
+            showMsgBox(els.$msgBox, '连接成功...', 'mzen-tips-info');
+            setTimeout(function() {
+                els.$msgBox.hide();
+            }, 2000);
+        },
+        onDisconnected : function(ev, data) {
+            var _this = this;
+            var els = _this.els;
+            // 连接未成功断开
+            showMsgBox(els.$msgBox, '连接失败...', 'mzen-tips-danger');
+            // 连接成功后断开
+        },
+        onNetworkUnavailable : function(ev, data) {
+            var _this = this;
+            var els = _this.els;
+            showMsgBox(els.$msgBox, '网络不可用...', 'mzen-tips-danger');
+        },
+        onMessage : function(ev, data) {
+            
+        },
+        onPresences : function(ev, data) {
+            
+        },
+        onStatus : function(ev, data) {
+            
+        }
+    });
+    
+    function showMsgBox($msgBox, msg, addClass) {
+        $msgBox.removeClass('mzen-tips-danger');
+        $msgBox.removeClass('mzen-tips-info');
+        $msgBox.addClass(addClass);
+        $('span', $msgBox).text(msg);
+        $msgBox.show();
+    }
 
     function resizeableMain(els) {
         var wh = $(window).height();

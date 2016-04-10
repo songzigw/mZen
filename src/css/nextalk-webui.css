@@ -225,6 +225,14 @@ html, body {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.nextalk-msg-box {
+	z-index: 12;
+	position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+}
+
 .nextalk-page {
 	background-color: #EDEDED;
 }
@@ -235,6 +243,7 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 3;
 }
 
 .nextalk-overflow {
@@ -290,9 +299,9 @@ html, body {
     margin-bottom: 0;
 }
 
-.mzen-content-empty {
+.nextalk-content-empty {
     padding: 0;
-    background: url(../res/no_content_grey.png);
+    background: url(../imgs/no_content_grey.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 90%;

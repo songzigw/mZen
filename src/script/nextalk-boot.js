@@ -7,8 +7,10 @@
  */
 
 (function(win, undefined) {
-    var boot = {};
 
+    "use strict";
+
+    var boot = {};
     boot.path = '/';
     boot.apiPath = '/';
 
@@ -21,8 +23,7 @@
     boot._getBtnHTML = function() {
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
-                + this.path + 'imgs/chat.png" />'
-                + '<span>聊天</span></a>'
+                + this.path + 'imgs/chat.png" />' + '<span>聊天</span></a>'
                 + '<span class="nextalk-alert">5</span></div>';
         return btnHTML;
     }

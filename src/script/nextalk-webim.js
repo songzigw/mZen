@@ -1493,16 +1493,16 @@ var NexTalkWebIM = function() {
      * 初始化NexTalkWebIM，在整个应用全局只需要调用一次。
      * 
      * @param {string}
-     *                appKey 开发者的AppKey
+     *                appId 开发者的appId
      * @param {object}
      *                options
-     * @example NexTalkWebIM.init("app_key");
+     * @example NexTalkWebIM.init("app_id");
      */
-    IM.init = function(appKey, options) {
+    IM.init = function(appId, options) {
         if (!IM._instance) {
             IM._instance = new IM();
         }
-        IM.getInstance()._init(appKey, options);
+        IM.getInstance()._init(appId, options);
         return IM.getInstance();
     };
 

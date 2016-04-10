@@ -9,6 +9,22 @@
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body style="overflow: hidden;">
+        <div class="mzen-tips nextalk-msg-box mzen-tips-info">
+            <div class="mzen-tips-content mzen-ellipsis-1">
+                <i class="mzen-iconfont mzen-icon-warnfill"></i>
+                <span>正在连接中...</span>
+                <i class="mzen-iconfont mzen-icon-roundclosefill"></i>
+            </div>
+        </div>
+        
+        <div class="nextalk-page nextalk-screen" id="nextalk_page_init">
+            <div class="mzen-content mzen-flex-middle mzen-flex-center"
+            style="width: 100%;height: 100%;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 350px;">未登入</div>
+        </div>
+        
         <div class="nextalk-page" id="nextalk_page_main">
         <!--头部集合 BEGIN-->
         <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
@@ -267,5 +283,6 @@
     }
 
     NexTalkWebUI.init(appId, options);
+    //NexTalkWebUI.getInstance().connectServer(1);
     </script>
 </html>
