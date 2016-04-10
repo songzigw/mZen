@@ -10,6 +10,7 @@
     var boot = {};
 
     boot.path = '/';
+    boot.apiPath = '/';
 
     boot._getCss = function() {
         var cssLink = '<link rel="stylesheet" type="text/css" href="'
