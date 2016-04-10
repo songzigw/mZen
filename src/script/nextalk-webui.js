@@ -380,8 +380,6 @@ var NexTalkWebUI = function() {
         }
         
         toggleChatbox($cbPage);
-        resizeableChatbox($cbPage);
-        
         $cbPage.appendTo(els.$body);
         
         UI.getInstance().bind('nextalk.resizeable',
@@ -395,6 +393,7 @@ var NexTalkWebUI = function() {
     ChatBoxUI.prototype.show = function() {
         var _this = this;
         _this.$cbPage.show();
+        resizeableChatbox(_this.$cbPage);
     };
 
     function toggleChatbox($chatboxPage) {

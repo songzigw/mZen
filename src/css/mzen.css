@@ -1409,7 +1409,7 @@ input[type="time"] {
 	line-height: 45px;
 	font-size: 18px;
 	text-align: center;
-	z-index: 3px;
+	z-index: 3;
 }
 .mzen-title {
 	position: absolute;
@@ -1516,7 +1516,7 @@ input[type="time"] {
 	width: 100%;
 	height: 55px;
 	background-color: #fff;
-	z-index: 3px;
+	z-index: 3;
 }
 .mzen-nav .mzen-bar-tab {
 	width: 100%;
