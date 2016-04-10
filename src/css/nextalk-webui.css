@@ -234,7 +234,11 @@ html, body {
 }
 
 .nextalk-page {
-	background-color: #EDEDED;
+	background-color: #f8f8f8;
+}
+
+.mzen-searchbar-wrap {
+	background-color: #f8f8f8;
 }
 
 .nextalk-page.nextalk-screen {
