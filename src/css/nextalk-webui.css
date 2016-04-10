@@ -225,6 +225,48 @@ html, body {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.nextalk-show {
+  display: inline-block;
+  background: #b7b7b7;
+  margin-right: 5px;
+  width: 8px;
+  height: 8px;
+  -webkit-border-radius: 8px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 8px;
+  -moz-background-clip: padding;
+  border-radius: 8px;
+  background-clip: padding-box;
+  -webkit-transition: all 220ms ease-in-out;
+  -moz-transition: all 220ms ease-in-out;
+  -o-transition: all 220ms ease-in-out;
+  transition: all 220ms ease-in-out;
+  
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.nextalk-show.available {
+  background-color: #5cb85c;
+}
+.nextalk-show.dnd {
+  background-color: #d9534f;
+}
+.nextalk-show.away {
+  background-color: blue;
+}
+.nextalk-show.invisible {
+  background-color: #f0ad4e;
+}
+.nextalk-show.chat {
+  background-color: #d9534f;
+}
+.nextalk-show.unavailable {
+  background-color: #b7b7b7;
+}
+
 .nextalk-msg-box {
 	z-index: 12;
 	position: fixed;

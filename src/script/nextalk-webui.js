@@ -197,8 +197,31 @@ var NexTalkWebUI = function() {
         var html = '<li class="mzen-user-view-cell mzen-img">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
-                + '<span>'+u.nick+'</span></div></li>';
+                + '<span>'+u.nick+'</span>'
+                + showHtml(u)
+                +' </div></li>';
         return html;
+    }
+    
+    function showHtml(u) {
+        if (u.show == IM.presence.AVAILABLE) {
+            return '<i class="nextalk-show available"></i>';
+        }
+        if (u.show == IM.presence.DND) {
+            return '<i class="nextalk-show dnd"></i>';
+        }
+        if (u.show == IM.presence.AWAY) {
+            return '<i class="nextalk-show away"></i>';
+        }
+        if (u.show == IM.presence.INVISIBLE) {
+            return '<i class="nextalk-show invisible"></i>';
+        }
+        if (u.show == IM.presence.CHAT) {
+            return '<i class="nextalk-show chat"></i>';
+        }
+        if (u.show == IM.presence.UNAVAILABLE) {
+            return '<i class="nextalk-show unavailable"></i>';
+        }
     }
     
     function showMsgBox($msgBox, msg, addClass) {
