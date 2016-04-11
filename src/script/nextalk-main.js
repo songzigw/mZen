@@ -39,25 +39,25 @@
             slideUp(nkMain, nkMainHeight);
         });
 
-        function slideUp($el, offset) {
-            $el.css({
-                bottom : offset + 'px'
-            });
-            $el.show();
-            var timerTask = window.setTimeout(function() {
-                $el.css({
-                    bottom : '0px'
-                });
-                window.clearTimeout(timerTask);
-            }, 5);
-        }
-
         // 获取父窗体中的引导程序
         var boot = top.nextalkBoot;
         nextalkConfig.uid = boot.uid;
         nextalkConfig.appId = boot.appId;
         nextalkConfig.apiPath = boot.apiPath;
         nextalkConfig.route = boot.route;
+    }
+
+    function slideUp($el, offset) {
+        $el.css({
+            bottom : offset + 'px'
+        });
+        $el.show();
+        var timerTask = window.setTimeout(function() {
+            $el.css({
+                bottom : '0px'
+            });
+            window.clearTimeout(timerTask);
+        }, 5);
     }
 
     IM.WebApi.route(nextalkConfig.route);
