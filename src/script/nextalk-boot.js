@@ -11,8 +11,15 @@
     "use strict";
 
     var boot = {};
-    boot.path = '/';
+    // 登入用户ID
+    boot.uid = '';
+    boot.appId = '';
+    // API根路径
     boot.apiPath = '/';
+    // API路由
+    boot.route = {};
+    // 引导程序导入依赖文件需要的根路径
+    boot.path = '/src/';
 
     boot._getCss = function() {
         var cssLink = '<link rel="stylesheet" type="text/css" href="'

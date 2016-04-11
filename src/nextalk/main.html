@@ -223,51 +223,5 @@
     <script type="text/javascript" src="../script/joinable.js"></script>
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
     <script type="text/javascript" src="../script/nextalk-webui.js"></script>
-    <script type="text/javascript">
-    // NexTalkWebUI初始化参数
-    var appId = 'app_id_main';
-    var options = {path : '/nextalk-webim-song/'};
-
-    var top = window.top;
-    if (top != window.self) {
-        // 父窗口中的页面元素
-        var nkMain = $('#nextalk_main', top.document);
-        var nkIframe = $('#nextalk_iframe', top.document);
-
-        var nkMainHeight = -42;
-        var nkIframeHeight = -530;
-        slideUp(nkMain, nkMainHeight);
-
-        nkMain.find('a').click(function() {
-            nkMain.hide();
-            slideUp(nkIframe, nkIframeHeight);
-        });
-        nkIframe.find('a').click(function() {
-            nkIframe.hide();
-            slideUp(nkMain, nkMainHeight);
-        });
-
-        function slideUp($el, offset) {
-            $el.css({
-                bottom : offset + 'px'
-            });
-            $el.show();
-            var timerTask = window.setTimeout(function() {
-                $el.css({
-                    bottom : '0px'
-                });
-                window.clearTimeout(timerTask);
-            }, 5);
-        }
-
-        // 获取父窗体中的引导程序
-        var boot = top.nextalkBoot;
-        appId = boot.appId;
-        options.path = boot.apiPath;
-        NexTalkWebIM.WebApi.route(boot.route);
-    }
-
-    NexTalkWebUI.init(appId, options);
-    NexTalkWebUI.getInstance().connectServer(1);
-    </script>
+    <script type="text/javascript" src="../script/nextalk-main.js"></script>
 </html>

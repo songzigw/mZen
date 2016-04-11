@@ -1,19 +1,11 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport"
-    content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
-<title>Demo Chat</title>
-</head>
-<body>
-    <!-- NexTalkWebIM here -->
-    <script type="text/javascript" src="../script/nextalk-boot.js"></script>
-    <script type="text/javascript">
-        nextalkBoot.uid = '1';
-        nextalkBoot.appId = 'app_id';
-        nextalkBoot.apiPath = '/';
-        nextalkBoot.route = {
+<script type="text/javascript" src="../script/jquery.min.js"></script>
+<script type="text/javascript">
+    // NexTalkWebUI配置参数
+    window.nextalkConfig = {
+        uid : '1',
+        appId : 'app_id',
+        apiPath : '/',
+        route : {
             online : "online.do",
             offline : "offline.do",
             buddies : "buddies.do",
@@ -37,12 +29,14 @@
             notifications : "notifications.do",
             // upload files
             upload : "upload.do"
-        };
-
-        // 引导程序导入依赖文件需要的根路径
-        nextalkBoot.path = '/';
-
-        nextalkBoot.start();
-    </script>
-</body>
-</html>
+        }
+    };
+    $.ajax({
+        type : 'GET',
+        url : 'main.html',
+        dataType : 'html',
+        success : function(ret) {
+            document.write(ret);
+        }
+    });
+</script>
