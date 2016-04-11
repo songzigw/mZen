@@ -157,6 +157,10 @@ var NexTalkWebUI = function() {
                 els.$msgBox.hide();
             }, 3000);
             
+            //var u = _this.webim.getCurrUser();
+            //$('.mzen-title', els.$mainHeader)
+            //    .html('<span>'+u.nick+'</span>'+showHTML(u));
+            
             // 加载联系人列表
             var $frameBuddies = els.$frameBuddies;
             var $items = $('ul.mzen-user-view', $frameBuddies).empty();
