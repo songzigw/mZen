@@ -1,5 +1,5 @@
 /*!
- * nextalk-boot.js
+ * nextalk-boot.js v1.0.0
  * http://nextalk.im/
  *
  * Copyright (c) 2014 NexTalk
@@ -52,4 +52,5 @@
     }
 
     win.nextalkBoot = boot;
+
 })(window);
