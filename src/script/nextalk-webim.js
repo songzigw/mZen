@@ -1609,7 +1609,7 @@ var NexTalkWebIM = function() {
         // 初始化Web业务服务API
         IM.WebApi.init({
             path : options.path,
-            dataType : ajax.settings.dataType
+            dataType : 'json'
         });
         
         _this.status = new IM.Status();
@@ -1786,9 +1786,6 @@ var NexTalkWebIM = function() {
         }
     };
 
-    IM.prototype._go = function() {
-    };
-
     IM.prototype.handle = function(data) {
         var self = this;
         if (data.messages && data.messages.length) {
@@ -1871,7 +1868,8 @@ var NexTalkWebIM = function() {
                     self._sendPresence({show : show}, null);
                     // 检查一下管道连接
                     if (self.connStatus != IM.connStatus.CONNECTED) {
-                        self._connectServer();
+                        // self._connectServer();
+                        self.connectServer();
                     }
                 },
 
@@ -1907,10 +1905,11 @@ var NexTalkWebIM = function() {
 
                 sendMessage : function(msg, callback) {
                     var self = this;
-                    msg.ticket = self.getConnection().ticket;
 
                     var api = IM.WebApi.getInstance();
-                    var params = extend({}, msg);
+                    var params = extend({
+                        ticket : self.getConnection().ticket
+                    }, msg);
                     api.message(params, callback);
                 },
 
@@ -2554,7 +2553,7 @@ var NexTalkWebIM = function() {
             callback : null,
             path : "/",
             method : "POST",
-            cashe : false,
+            cache : false,
             dataType : "json",
             context : null
         };
@@ -2622,7 +2621,7 @@ var NexTalkWebIM = function() {
                     url : options.path + API.route(apiId),
                     data : data,
                     dataType : options.dataType,
-                    cache : options.cashe,
+                    cache : options.cache,
                     context : options.context,
                     success : function(ret) {
                         if (typeof callback == "function") {
@@ -2643,6 +2642,10 @@ var NexTalkWebIM = function() {
 
             online : function(params, callback) {
                 this._ajax("online", params, callback);
+            },
+            
+            message : function(params, callback) {
+                this._ajax("message", params, callback);
             }
         };
         extend(API.prototype, methods);

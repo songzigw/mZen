@@ -61,6 +61,7 @@ var NexTalkWebUI = function() {
      */
     UI.prototype._init = function(appId, options) {
         var _this = this;
+        options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
 
         // 界面元素定义
         var els = _this.els = {};
@@ -90,7 +91,7 @@ var NexTalkWebUI = function() {
         // 定义聊天盒子存储空间
         _this.chatBoxUIs = {};
         // 系统消息盒子
-        _this.chatBoxUIs['SYS_MSG'] = new ChatBoxUI(ChatBoxUI.SYS_MSG);
+        _this.chatBoxUIs[ChatBoxUI.SYS_MSG] = new ChatBoxUI(ChatBoxUI.SYS_MSG);
 
         // 初始化监听器
         _this._initLisenters();
@@ -185,9 +186,12 @@ var NexTalkWebUI = function() {
         onMessage : function(ev, data) {
             console.log('Message: ' + IM.JSON.stringify(data));
             var _this = this;
-            var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.USER_MSG + data.from];
-            if (chatBoxUI) {
-                chatBoxUI.receive(data);
+            for (var i = 0; i < data.length; i++) {
+                var msg = data[i];
+                var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.USER_MSG + msg.from];
+                if (chatBoxUI) {
+                    chatBoxUI.receive(msg);
+                }
             }
         },
         onStatus : function(ev, data) {
@@ -201,7 +205,7 @@ var NexTalkWebUI = function() {
     function getBuddyHTML(u) {
         var path = IM.getInstance().options.path;
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
-                + 'data-toggle="user-msg" data-id="' + u.id + '">'
+                + 'data-toggle="user_msg" data-id="' + u.id + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>'
@@ -375,11 +379,12 @@ var NexTalkWebUI = function() {
         var $cbPage = els.$chatboxPage.clone();
         _this.$cbPage = $cbPage;
         
-        var $box = $('#nextalk_content_chatbox>.nextalk-wrap',
-                $cbPage).empty();
-        
+        _this.$boxBody = $('#nextalk_content_chatbox>.nextalk-wrap', $cbPage);
+        _this.$boxBody.empty();
+
         if (type == ChatBoxUI.SYS_MSG) {
             $cbPage.attr('id', ChatBoxUI.SYS_MSG);
+            $('footer', $cbPage).hide();
             _this.avatar = '';
             _this.name = '系统通知';
         } else if (type == ChatBoxUI.ROOM_MSG) {
@@ -390,10 +395,11 @@ var NexTalkWebUI = function() {
             $cbPage.attr('id', ChatBoxUI.USER_MSG + id);
             _this.avatar = IM.getInstance().getBuddy(id).avatar;
             _this.name = IM.getInstance().getBuddy(id).nick;
+            _this.nickname = _this.name;
         }
         $('header>.mzen-title', $cbPage).text(_this.name);
         
-        toggleChatbox($cbPage);
+        _this.handleHTML();
         $cbPage.appendTo(els.$body);
         
         UI.getInstance().bind('nextalk.resizeable',
@@ -414,24 +420,59 @@ var NexTalkWebUI = function() {
     };
     ChatBoxUI.prototype.receive = function(msg) {
         var _this = this;
+        var ops = UI.getInstance().options;
         var html = '<div class="mzen-chat-receiver">'+
                 '<div class="mzen-chat-receiver-avatar">'+
-                '<img src="../imgs/head_b.jpg"></div>'+
+                '<img src="' + ops.path + _this.avatar + '"></div>'+
                 '<div class="mzen-chat-receiver-cont">'+
                 '   <div class="mzen-chat-left-triangle"></div>'+
                 '   <span>' + msg.body + '</span>'+
                 '</div></div>';
-        _this.$cbPage.append(html);
+        _this.$boxBody.append(html);
     };
-    ChatBoxUI.prototype.send = function(msg) {
+    ChatBoxUI.prototype._send = function(body) {
+        var _this = this;
+        var webim = IM.getInstance();
+        var ops = webim.options;
+        var currUser = webim.getCurrUser();
         
+        var html = '<div class="mzen-chat-sender">'
+            + '<div class="mzen-chat-sender-avatar">'
+            + '<img src="' + ops.path + currUser.avatar + '"></div>'
+            + '<div class="mzen-chat-sender-cont">'
+            + '    <div class="mzen-chat-right-triangle"></div>'
+            + '    <span>' + body + '</span>'
+            + '</div>'
+            + '</div>';
+        _this.$boxBody.append(html);
+        
+        var msg = {
+            type : 'chat',
+            from : currUser.id,
+            to : _this.id,
+            nick : currUser.nick,
+            to_nick : _this.nickname,
+            body : body,
+            timestamp : IM.now()
+        };
+        webim.sendMessage(msg);
     };
-
-    function toggleChatbox($chatboxPage) {
+    ChatBoxUI.prototype.handleHTML = function() {
+        var _this = this;
+        var $chatboxPage = _this.$cbPage;
+        
         $('header>a:first', $chatboxPage).click(function() {
             $chatboxPage.hide();
         });
-    }
+        $('footer form', $chatboxPage).submit(function() {
+            var input = $('input', $(this));
+            if ($.trim(input.val()) != '') {
+                _this._send(input.val());
+            }
+            input.val('');
+            return false;
+        });
+    };
 
     var SearchUI = function($search, callback) {
         var _this = this;
