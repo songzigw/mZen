@@ -1647,11 +1647,11 @@ var NexTalkWebIM = function() {
             onMessage : function(ev, data) {
                 console.log("message:" + JSON.stringify(data));
             },
-            onPresences : function(ev, data) {
-                console.log("presences:" + JSON.stringify(data));
-            },
             onStatus : function(ev, data) {
                 console.log("status:" + JSON.stringify(data));
+            },
+            onPresences : function(ev, data) {
+                console.log("presences:" + JSON.stringify(data));
             }
         };
 
@@ -1698,15 +1698,14 @@ var NexTalkWebIM = function() {
         _this.bind("message", function(ev, data) {
             _this.receiveMsgListener.onMessage(ev, data);
         });
-        // 现场变更
-        _this.bind("presences", function(ev, data) {
-            _this.receiveMsgListener.onPresences(ev, data);
-        });
         // 输入状态
         _this.bind("status", function(ev, data) {
             _this.receiveMsgListener.onStatus(ev, data);
         });
-
+        // 现场变更
+        _this.bind("presences", function(ev, data) {
+            _this.receiveMsgListener.onPresences(ev, data);
+        });
     };
 
     /**
