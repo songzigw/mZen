@@ -116,13 +116,13 @@ var NexTalkWebUI = function() {
         });
         _this.webim.setReceiveMsgListener({
             onMessage : function(ev, data) {
-                _this.onMessage();
+                _this.onMessage(ev, data);
             },
             onPresences : function(ev, data) {
-                _this.onPresences();
+                _this.onPresences(ev, data);
             },
             onStatus : function(ev, data) {
-                _this.onStatus();
+                _this.onStatus(ev, data);
             }
         });
         
@@ -185,13 +185,19 @@ var NexTalkWebUI = function() {
             showMsgBox(els.$msgBox, '网络不可用...', 'mzen-tips-danger');
         },
         onMessage : function(ev, data) {
+            console.log('Message: ' + IM.JSON.stringify(data));
+            var _this = this;
             
+            //if (_this.chatBoxUIs['USER_MSG_' + data.from]) {
+                _this.chatBoxUIs['USER_MSG_' + '1']
+                    .trigger('receive.messsage_', [data]);
+            //}
         },
         onPresences : function(ev, data) {
-            
+            console.log('Presences: ' + IM.JSON.stringify(data));
         },
         onStatus : function(ev, data) {
-            
+            console.log('Status: ' + IM.JSON.stringify(data));
         }
     });
 
@@ -371,13 +377,27 @@ var NexTalkWebUI = function() {
         var els = UI.getInstance().els;
         var $cbPage = els.$chatboxPage.clone();
         _this.$cbPage = $cbPage;
+        
+        var $box = $('#nextalk_content_chatbox>.nextalk-wrap', $cbPage);
+        $box.html('');
+        
         if (type == ChatBoxUI['SYS_MSG']) {
             $cbPage.attr('id', 'SYS_MSG');
+            _this.avatar = '';
+            _this.name = '系统通知';
         } else if (type == ChatBoxUI['USER_MSG']) {
             $cbPage.attr('id', 'USER_MSG_' + id);
+            _this.avatar = IM.getInstance().getBuddy(id).avatar;
+            _this.name = IM.getInstance().getBuddy(id).nick;
+            _this.bind('receive.messsage_', function(ev, data) {
+                $box.append(_this.receiveMsgHTML(data));
+            });
         } else if (type == ChatBoxUI['ROOM_MSG']) {
             $cbPage.attr('id', 'ROOM_MSG_' + id);
+            _this.avatar = '';
+            _this.name = '我的房间';
         }
+        $('header>.mzen-title', $cbPage).text(_this.name);
         
         toggleChatbox($cbPage);
         $cbPage.appendTo(els.$body);
@@ -387,6 +407,7 @@ var NexTalkWebUI = function() {
                     resizeableChatbox($cbPage);
         });
     };
+    IM.ClassEvent.on(ChatBoxUI);
     ChatBoxUI['SYS_MSG'] = 0;
     ChatBoxUI['USER_MSG'] = 1;
     ChatBoxUI['ROOM_MSG'] = 2;
@@ -395,6 +416,16 @@ var NexTalkWebUI = function() {
         _this.$cbPage.show();
         resizeableChatbox(_this.$cbPage);
     };
+    ChatBoxUI.prototype.receiveMsgHTML = function(data) {
+        var _this = this;
+        var html = '<div class="mzen-chat-receiver">'+
+            '<div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>'+
+            '<div class="mzen-chat-receiver-cont">'+
+            '   <div class="mzen-chat-left-triangle"></div>'+
+            '   <span>' + data.body + '</span>'+
+            '</div></div>';
+        return html;
+    }
 
     function toggleChatbox($chatboxPage) {
         $('header>a:first', $chatboxPage).click(function() {

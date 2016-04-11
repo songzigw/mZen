@@ -1575,6 +1575,20 @@ var NexTalkWebIM = function() {
         getBuddies : function() {
             return this._dataAccess.buddies;
         },
+        
+        getBuddy : function(uid) {
+            if (!this.getBuddies()) {
+                return undefined;
+            }
+            var bs = this.getBuddies();
+            for (var i = 0; i < bs.length; i++) {
+                var b = bs[i];
+                if (b.id == uid) {
+                    return b;
+                }
+            }
+            return undefined;
+        },
 
         getRooms : function() {
             return this._dataAccess.rooms;
