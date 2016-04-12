@@ -1848,7 +1848,8 @@ var NexTalkWebIM = function() {
         // 检查一下管道连接
         if (self.connStatus != IM.connStatus.CONNECTED) {
             // self._connectServer();
-            self.connectServer();
+            var id = self.getCurrUser().id;
+            self.connectServer({uid : id});
         }
     },
 
@@ -1899,27 +1900,29 @@ var NexTalkWebIM = function() {
                     _this.trigger("login", [ params ]);
                     var api = IM.WebApi.getInstance();
                     api.online(params, function(ret, err) {
-                        if (ret) {
-                            if (ret.success) {
-                                _this._serverTime(ret.server_time);
-                                _this._connection(ret.connection);
-                                _this._currUser(ret.user);
-                                _this._buddies(ret.buddies);
-                                _this._rooms(ret.rooms);
-                                if (typeof callback == "function") {
-                                    callback();
+                        window.setTimeout(function() {
+                            if (ret) {
+                                if (ret.success) {
+                                    _this._serverTime(ret.server_time);
+                                    _this._connection(ret.connection);
+                                    _this._currUser(ret.user);
+                                    _this._buddies(ret.buddies);
+                                    _this._rooms(ret.rooms);
+                                    if (typeof callback == "function") {
+                                        callback();
+                                    }
+                                    // 触发登入成功事件
+                                    _this.trigger("login.win", [ ret.error_msg ]);
+                                } else {
+                                    // 触发登入失败事件
+                                    _this.trigger("login.fail", [ ret.error_msg ]);
                                 }
-                                // 触发登入成功事件
-                                _this.trigger("login.win", [ ret.error_msg ]);
                             } else {
                                 // 触发登入失败事件
-                                _this.trigger("login.fail", [ ret.error_msg ]);
-                            }
-                        } else {
-                            // 触发登入失败事件
-                            // 可能是网络不可用，或者其他原因???
-                            _this.trigger("login.fail", [ err ]);
-                        }
+                                // 可能是网络不可用，或者其他原因???
+                                _this.trigger("login.fail", [ err ]);
+                            } 
+                        }, 3000);
                     });
                 },
                 

@@ -70,7 +70,11 @@ var NexTalkWebUI = function() {
         // 消息通知框
         els.$msgBox = $('.mzen-tips.nextalk-msg-box', els.$body).hide();
         // 初始化页面
-        els.$initPage = $('#nextalk_page_init', els.$body);
+        els.$initPage = $('#nextalk_page_init', els.$body).show();
+        // 登入页面
+        els.$loginPage = $('#nextalk_page_login', els.$body).hide();
+        els.$loginP = $('.mzen-content p', els.$loginPage);
+        els.$loginBtn = $('.mzen-content .mzen-btn', els.$loginPage).hide();
         // 主要界面入口mainPage
         els.$mainPage = $('#nextalk_page_main', els.$body);
         els.$mainHeader = $('header', els.$mainPage);
@@ -85,6 +89,10 @@ var NexTalkWebUI = function() {
         els.$chatboxPage = $('#nextalk_page_chatbox', els.$body);
 
         toggleMain(els);
+        els.$loginBtn.click(function() {
+            _this.onLogin();
+            _this.connectServer(_this._uid);
+        });
         // 界面渲染完成
         // -----------------------------------------------------
 
@@ -95,6 +103,7 @@ var NexTalkWebUI = function() {
 
         // 初始化监听器
         _this._initLisenters();
+        _this._initTimerTask();
         $(window).resize(function() {
             _this.trigger('nextalk.resizeable', []);
         });
@@ -141,6 +150,42 @@ var NexTalkWebUI = function() {
         return _this;
     };
     
+    /**
+     * 定义或开启部分定时任务
+     */
+    UI.prototype._initTimerTask = function() {
+        var _this = this, els = _this.els;
+        
+        // 正在登入的动画效果
+        _this.loginTask = {
+            _interval : null,
+            
+            start : function() {
+                window.clearInterval(this._interval);
+                
+                var $p = els.$loginP;
+                var text = '正在登入中......';
+                var point = '......';
+                $p.html(text);
+
+                var i = 0;
+                var n = point.length + 1;
+                var index = text.indexOf(point);
+                this._interval = window.setInterval(function() {
+                    $p.html(text.substring(0, index + i));
+                    i++;
+                    if (i == n) {
+                        i = 0;
+                    }
+                }, 600);
+            },
+            
+            stop : function() {
+                window.clearInterval(this._interval);
+            }
+        };
+    };
+    
     UI.prototype._initLisenters = function() {
         var _this = this;
         
@@ -150,26 +195,37 @@ var NexTalkWebUI = function() {
     };
     
     UI.prototype.connectServer = function(uid) {
-        this.webim.connectServer({uid : uid});
+        var _this = this;
+        _this._uid = uid;
+        window.setTimeout(function() {
+            _this.els.$initPage.hide();
+            _this.webim.connectServer({uid : uid});
+        }, 3000);
     };
     
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
             var _this = this, els = _this.els;
-            els.$initPage.show();
+            els.$loginBtn.hide();
+            _this.loginTask.start();
+            els.$loginPage.show();
         },
         onLoginWin : function(ev, data) {
             var _this = this, els = _this.els;
-            els.$initPage.hide();
+            _this.loginTask.stop();
+            els.$loginPage.hide();
         },
         onLoginFail : function(ev, data) {
             var _this = this, els = _this.els;
-            els.$initPage.show();
+            _this.loginTask.stop();
+            els.$loginP.html('登入失败');
+            els.$loginPage.show();
             // 界面上出现重新登入按钮
+            els.$loginBtn.show();
         },
         onConnecting : function(ev, data) {
             var _this = this, els = _this.els;
-            showMsgBox(els.$msgBox, '连接中...', 'mzen-tips-info');
+            showMsgBox(els.$msgBox, '正在连接...', 'mzen-tips-info');
         },
         onConnected : function(ev, data) {
             var _this = this, els = _this.els;

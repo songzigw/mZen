@@ -14,11 +14,25 @@
             </div>
         </div>
         
-        <div class="nextalk-page nextalk-screen" id="nextalk_page_init">
+        <div class="nextalk-page nextalk-screen nextalk-page-login"
+            id="nextalk_page_init">
             <div class="mzen-content
                 mzen-flex-col mzen-flex-middle
-                mzen-flex-row mzen-flex-center"
-            style="width: 100%;height: 100%;"><span>正在登入中...</span></div>
+                mzen-flex-row mzen-flex-center">
+            <img alt="logo" src="../imgs/logo.png"/>
+            <p>欢迎来聊天</p></div>
+        </div>
+        
+        <div class="nextalk-page nextalk-screen nextalk-page-login"
+            id="nextalk_page_login"
+            style="display: none;">
+            <div class="mzen-content
+                mzen-flex-col mzen-flex-middle
+                mzen-flex-row mzen-flex-center">
+            <img alt="logo" src="../imgs/logo.png"/>
+            <p>正在登入中...</p>
+            <button class="mzen-btn mzen-btn-danger">重新登入</button>
+            </div>
         </div>
         
         <div class="nextalk-page" id="nextalk_page_main">
