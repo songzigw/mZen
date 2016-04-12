@@ -1627,33 +1627,56 @@ var NexTalkWebIM = function() {
     /** 绑定WebIM客户端存在的各种事件监听 */
     IM.prototype._initListener = function() {
         var _this = this;
+        // 登入状态监听器
+        _this.loginStatusListener = {
+            onLogin : function(ev, data) {
+                console.log("login: " + JSON.stringify(data));
+            },
+            onLoginFail : function(ev, data) {
+                console.log("login.fail: " + JSON.stringify(data));
+            },
+            onLoginWin : function(ev, data) {
+                console.log("login.win: " + JSON.stringify(data));
+            }
+        };
         // 连接状态监听器
         _this.connStatusListener = {
              onConnecting : function(ev, data) {
-                 console.log("connecting:" + JSON.stringify(data));
+                 console.log("connecting: " + JSON.stringify(data));
              },
              onConnected : function(ev, data) {
-                 console.log("connected:" + JSON.stringify(data));
+                 console.log("connected: " + JSON.stringify(data));
              },
              onDisconnected : function(ev, data) {
-                 console.log("disconnected:" + JSON.stringify(data));
+                 console.log("disconnected: " + JSON.stringify(data));
              },
              onNetworkUnavailable : function(ev, data) {
-                 console.log("networkUnavailable:" + JSON.stringify(data));
+                 console.log("network.unavailable: " + JSON.stringify(data));
              }
         };
         // 消息接收监听器
         _this.receiveMsgListener = {
             onMessage : function(ev, data) {
-                console.log("message:" + JSON.stringify(data));
+                console.log("message: " + JSON.stringify(data));
             },
             onStatus : function(ev, data) {
-                console.log("status:" + JSON.stringify(data));
+                console.log("status: " + JSON.stringify(data));
             },
             onPresences : function(ev, data) {
-                console.log("presences:" + JSON.stringify(data));
+                console.log("presences: " + JSON.stringify(data));
             }
         };
+
+        // 正在登入中
+        _this.bind("login", function(ev, data) {
+            _this.loginStatusListener.onLogin(ev, data);
+        });
+        _this.bind("login.win", function(ev, data) {
+            _this.loginStatusListener.onLoginWin(ev, data);
+        });
+        _this.bind("login.fail", function(ev, data) {
+            _this.loginStatusListener.onLoginFail(ev, data);
+        });
 
         // 正在连接
         _this.bind("connecting", function(ev, data) {
@@ -1682,7 +1705,7 @@ var NexTalkWebIM = function() {
             }
         });
         // 网络不可用
-        _this.bind("networkUnavailable", function(ev, data) {
+        _this.bind("network.unavailable", function(ev, data) {
             if (_this.connStatus != IM.connStatus.NETWORK_UNAVAILABLE) {
                 _this.connStatus = IM.connStatus.NETWORK_UNAVAILABLE;
                 _this._show(IM.show.UNAVAILABLE);
@@ -1691,7 +1714,7 @@ var NexTalkWebIM = function() {
         });
 
         _this.bind("event", function(ev, data) {
-            console.log("event:" + JSON.stringify(date));
+            console.log("event: " + JSON.stringify(date));
         });
 
         // 接收消息
@@ -1715,7 +1738,14 @@ var NexTalkWebIM = function() {
         //var _this = this;
         // 设置网络是否可用实时检测
         // ???
-        //_this.trigger("networkUnavailable", [ data ]);
+        //_this.trigger("network.unavailable", [ data ]);
+    };
+    
+    /**
+     * 设置登入状态监听器
+     */
+    IM.prototype.setLoginStatusListener = function(listener) {
+        extend(this.loginStatusListener, listener || {});
     };
 
     /**
@@ -1741,10 +1771,9 @@ var NexTalkWebIM = function() {
         if (_this.connStatus == IM.connStatus.CONNECTED) {
             return;
         }
-        
-        _this.trigger("connecting", [ _this._dataAccess ]);
-        // 连接前准备工作
-        _this._ready(params, function() {
+
+        // 连接前请先登入成功
+        _this.login(params, function() {
             // 准备成功，开始连接
             _this._connectServer();
         });
@@ -1768,7 +1797,7 @@ var NexTalkWebIM = function() {
         }
         _this.channel.onError = function(ev, data) {
             // 可能是网络不可用，或者其他原因???
-            _this.trigger("networkUnavailable", [ data ]);
+            _this.trigger("network.unavailable", [ data ]);
         };
         _this.channel.onMessage = function(ev, data) {
             _this.handle(data);
@@ -1808,13 +1837,42 @@ var NexTalkWebIM = function() {
         data.statuses && data.statuses.length
                 && self.trigger("status", [ data.statuses ]);
     };
+    
+    IM.prototype.online = function(show) {
+        var self = this;
+        if (show == IM.show.UNAVAILABLE) {
+            return new Error("IM.show.UNAVAILABLE is error.");
+        }
+        
+        self._sendPresence({show : show}, null);
+        // 检查一下管道连接
+        if (self.connStatus != IM.connStatus.CONNECTED) {
+            // self._connectServer();
+            self.connectServer();
+        }
+    },
+
+    IM.prototype.offline = function() {
+        var self = this, connection = self.getConnection();
+        if (self.connStatus == IM.connStatus.DISCONNECTED) {
+            return;
+        }
+        
+        self._sendPresence({show : IM.show.UNAVAILABLE}, null);
+        var api = IM.WebApi.getInstance();
+        var params = {
+            status : 'offline',
+            ticket : connection.ticket
+        };
+        api.offline(params, null);
+        
+        // 断开连接
+        self._disconnectServer();
+    };
 
     extend(IM.prototype,
             {
-                /**
-                 * 连接前的准备工作
-                 */
-                _ready : function(params, callback) {
+                login : function(params, callback) {
                     var _this = this, status = _this.status;
 
                     var buddy_ids = [], room_ids = [], tabs = status
@@ -1837,6 +1895,8 @@ var NexTalkWebIM = function() {
                     status.set("o", false);
                     status.set("s", params.show);
 
+                    // 触发正在登入事件
+                    _this.trigger("login", [ params ]);
                     var api = IM.WebApi.getInstance();
                     api.online(params, function(ret, err) {
                         if (ret) {
@@ -1849,46 +1909,18 @@ var NexTalkWebIM = function() {
                                 if (typeof callback == "function") {
                                     callback();
                                 }
+                                // 触发登入成功事件
+                                _this.trigger("login.win", [ ret.error_msg ]);
                             } else {
-                                _this.trigger("disconnected", [ ret.error_msg ]);
+                                // 触发登入失败事件
+                                _this.trigger("login.fail", [ ret.error_msg ]);
                             }
                         } else {
+                            // 触发登入失败事件
                             // 可能是网络不可用，或者其他原因???
-                            _this.trigger("networkUnavailable", "Network error");
+                            _this.trigger("login.fail", [ err ]);
                         }
                     });
-                },
-                
-                online : function(show) {
-                    var self = this;
-                    if (show == IM.show.UNAVAILABLE) {
-                        return new Error("IM.show.UNAVAILABLE is error.");
-                    }
-                    
-                    self._sendPresence({show : show}, null);
-                    // 检查一下管道连接
-                    if (self.connStatus != IM.connStatus.CONNECTED) {
-                        // self._connectServer();
-                        self.connectServer();
-                    }
-                },
-
-                offline : function() {
-                    var self = this, connection = self.getConnection();
-                    if (self.connStatus == IM.connStatus.DISCONNECTED) {
-                        return;
-                    }
-                    
-                    self._sendPresence({show : IM.show.UNAVAILABLE}, null);
-                    var api = IM.WebApi.getInstance();
-                    var params = {
-                        status : 'offline',
-                        ticket : connection.ticket
-                    };
-                    api.offline(params, null);
-                    
-                    // 断开连接
-                    self._disconnectServer();
                 },
                 
                 _sendPresence : function(msg, callback) {

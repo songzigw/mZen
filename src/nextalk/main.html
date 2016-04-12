@@ -4,25 +4,21 @@
         <meta charset="utf-8">
         <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
         <title>Chat</title>
-        <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
-        <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
-        <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body style="overflow: hidden;">
-        <div class="mzen-tips nextalk-msg-box mzen-tips-info">
+        <div class="mzen-tips nextalk-msg-box mzen-tips-info" style="display: none;">
             <div class="mzen-tips-content mzen-ellipsis-1">
                 <i class="mzen-iconfont mzen-icon-warnfill"></i>
-                <span>正在连接中...</span>
+                <span>...</span>
                 <i class="mzen-iconfont mzen-icon-roundclosefill"></i>
             </div>
         </div>
         
         <div class="nextalk-page nextalk-screen" id="nextalk_page_init">
-            <div class="mzen-content mzen-flex-middle mzen-flex-center"
-            style="width: 100%;height: 100%;
-            vertical-align: middle;
-            text-align: center;
-            line-height: 350px;">正在连接中...</div>
+            <div class="mzen-content
+                mzen-flex-col mzen-flex-middle
+                mzen-flex-row mzen-flex-center"
+            style="width: 100%;height: 100%;"><span>正在登入中...</span></div>
         </div>
         
         <div class="nextalk-page" id="nextalk_page_main">
@@ -219,6 +215,9 @@
             <!-- 聊天输入筐END -->
         </div>
     </body>
+    <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
+    <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
+    <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     <script type="text/javascript" src="../script/jquery.min.js"></script>
     <script type="text/javascript" src="../script/joinable.js"></script>
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
