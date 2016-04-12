@@ -78,6 +78,7 @@ var NexTalkWebUI = function() {
         // 主要界面入口mainPage
         els.$mainPage = $('#nextalk_page_main', els.$body);
         els.$mainHeader = $('header', els.$mainPage);
+        els.$mainCurrUser = $('.mzen-pull-right.nextalk-user', els.$mainHeader);
         els.$mainFooter = $('footer', els.$mainPage);
         els.$mainContent = $('#nextalk_content_main', els.$mainPage);
         // 主界面frame
@@ -234,9 +235,11 @@ var NexTalkWebUI = function() {
                 els.$msgBox.hide();
             }, 5000);
             
-            //var u = _this.webim.getCurrUser();
-            //$('.mzen-title', els.$mainHeader)
-            //    .html('<span>'+u.nick+'</span>'+showHTML(u));
+            var u = _this.webim.getCurrUser();
+            var path = _this.options.path;
+            els.$mainCurrUser.attr('title', u.nick);
+            els.$mainCurrUser.find('img').attr('src', path + u.avatar);
+            els.$mainCurrUser.find('img').attr('alt', u.nick);
             
             // 加载联系人列表
             var $frameBuddies = els.$frameBuddies;
@@ -328,7 +331,7 @@ var NexTalkWebUI = function() {
 
         var hh = els.$mainHeader.height();
         var fh = els.$mainFooter.height();
-        els.$mainContent.height(wh - hh - fh);
+        els.$mainContent.height(wh - hh - fh - 1);
 
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {

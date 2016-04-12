@@ -327,6 +327,10 @@ html, body {
   margin-top: 3px;
 }
 
+.mzen-bar-nav .nextalk-logo img {
+    border-radius: 0px;
+}
+
 #main-footer:before {
     border-top: 1px solid #c8c7cc;
     display: block;
