@@ -805,12 +805,12 @@
 }
 
 /*图标*/
-@font-face {font-family: "auiicon";
-    src: url('../fonts/aui_iconfont.ttf') format('truetype');
+@font-face {font-family: "gay-icon";
+    src: url('../fonts/gly_iconfont.ttf') format('truetype');
 }
 .mzen-iconfont {
     position: relative;
-    font-family:"auiicon" !important;
+    font-family:"gay-icon" !important;
     font-size:16px;
     font-style:normal;
     -webkit-font-smoothing: antialiased;
