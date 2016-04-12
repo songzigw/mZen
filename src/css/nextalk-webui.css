@@ -318,6 +318,43 @@ html, body {
     height: 45px;
     line-height: 45px !important;
     padding-right: 10px;
+    position: relative;
+}
+
+.mzen-bar-nav .nextalk-user:after {
+    clear: both;
+}
+
+.nextalk-user .dropdown-menu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  right: 3px;
+  z-index: 2;
+  float: left;
+  min-width: 110px;
+  padding: 0 0;
+  margin: 0 0;
+  font-size: 16px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 5px;
+  -webkit-box-shadow: 0 3px 12px rgba(0,0,0,.175);
+  box-shadow: 0 3px 12px rgba(0,0,0,.175);
+}
+
+.nextalk-user .dropdown-menu li {
+	position: relative;
+	padding-left: 8px;
+	height: 30px;
+	line-height: 30px;
+}
+.nextalk-user .dropdown-menu li:hover {
+    background-color: #ddd;
 }
 
 .mzen-bar-nav .nextalk-user img {
