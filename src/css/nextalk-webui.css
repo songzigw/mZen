@@ -255,7 +255,7 @@ html, body {
   background-color: #d9534f;
 }
 .nextalk-show.away {
-  background-color: blue;
+  background-color: rgb(15, 146, 237);
 }
 .nextalk-show.invisible {
   background-color: #f0ad4e;
@@ -314,11 +314,16 @@ html, body {
     margin-top: 1px;
 }
 
+.mzen-bar-nav .nextalk-logo,
 .mzen-bar-nav .nextalk-user {
     height: 45px;
     line-height: 45px !important;
-    padding-right: 10px;
     position: relative;
+}
+.mzen-bar-nav .nextalk-logo img {
+    height: 38px !important;
+    width: 38px !important;
+    margin-top: 3px;
 }
 
 .mzen-bar-nav .nextalk-user:after {
@@ -326,7 +331,7 @@ html, body {
 }
 
 .nextalk-user .dropdown-menu {
-  display: block;
+  display: none;
   position: absolute;
   top: 100%;
   right: 3px;
@@ -349,7 +354,7 @@ html, body {
 
 .nextalk-user .dropdown-menu li {
 	position: relative;
-	padding-left: 23px;
+	padding-left: 28px;
 	height: 35px;
 	line-height: 35px;
 	cursor: pointer;
@@ -372,15 +377,44 @@ html, body {
     background-color: #ddd;
 }
 
-.mzen-bar-nav .nextalk-user img {
-  height: 38px !important;
-  width: 38px !important;
-  border-radius: 3px;
-  margin-top: 3px;
+.mzen-bar-nav .nextalk-user a {
+	display: block;
+	height: 40px !important;
+    width: 40px !important;
+    margin-top: 3px;
+    border-radius: 5px;
+	border: 1px solid #f9f9f9;
 }
 
-.mzen-bar-nav .nextalk-logo img {
-    border-radius: 0px;
+.mzen-bar-nav .nextalk-user img {
+    height: 38px !important;
+    width: 38px !important;
+    border-radius: 50%;
+}
+
+.mzen-bar-nav .nextalk-user a.available {
+  border: 1px solid #5cb85c;
+  background-color: #5cb85c;
+}
+.mzen-bar-nav .nextalk-user a.dnd {
+  border: 1px solid #d9534f;
+  background-color: #d9534f;
+}
+.mzen-bar-nav .nextalk-user a.away {
+  border: 1px solid rgb(15, 146, 237);
+  background-color: rgb(15, 146, 237);
+}
+.mzen-bar-nav .nextalk-user a.invisible {
+  border: 1px solid #f0ad4e;
+  background-color: #f0ad4e;
+}
+.mzen-bar-nav .nextalk-user a.chat {
+  border: 1px solid #d9534f;
+  background-color: #d9534f;
+}
+.mzen-bar-nav .nextalk-user a.unavailable {
+  border: 1px solid #b7b7b7;
+  background-color: #b7b7b7;
 }
 
 #main-footer:before {

@@ -184,6 +184,44 @@ var NexTalkWebUI = function() {
                 window.clearInterval(this._interval);
             }
         };
+        
+        // 现场状态切换动画
+        _this.showTask = {
+            _interval : null,
+            colors : ['available', 'dnd', 'away',
+                          'invisible', 'chat', 'unavailable'],
+            
+            start : function() {
+                window.clearInterval(this._interval);
+                
+                var $avatar = $('a', els.$mainCurrUser);
+                var colors = this.colors;
+                var num = colors.length;
+                var i = 0;
+                this._interval = window.setInterval(function() {
+                    for (var k = 0; k < num; k++) {
+                        $avatar.removeClass(colors[k]);
+                    }
+                    $avatar.addClass(colors[i]);
+                    i++;
+                    if (i == num) {
+                        i = 0;
+                    }
+                }, 1000);
+            },
+            
+            stop : function() {
+                window.clearInterval(this._interval);
+                
+                var $avatar = $('a', els.$mainCurrUser);
+                var colors = this.colors;
+                for (var k = 0; k < colors.length; k++) {
+                    $avatar.removeClass(colors[k]);
+                }
+            }
+        };
+        // 启动
+        _this.showTask.start();
     };
     
     UI.prototype._initLisenters = function() {
@@ -202,7 +240,7 @@ var NexTalkWebUI = function() {
             //_this.els.$initPage.hide();
             //_this.onLogin();
             //_this.onLoginWin();
-        }, 3000);
+        }, 1100);
     };
     
     UI.prototype._connectServer = function(uid) {
@@ -242,11 +280,8 @@ var NexTalkWebUI = function() {
                 els.$msgBox.hide();
             }, 5000);
             
-            var u = _this.webim.getCurrUser();
-            var path = _this.options.path;
-            els.$mainCurrUser.attr('title', u.nick);
-            els.$mainCurrUser.find('img').attr('src', path + u.avatar);
-            els.$mainCurrUser.find('img').attr('alt', u.nick);
+            // 处理avatar
+            _this.handlerAvatar();
             
             // 加载联系人列表
             var $frameBuddies = els.$frameBuddies;
@@ -288,6 +323,32 @@ var NexTalkWebUI = function() {
         },
         onPresences : function(ev, data) {
             console.log('presences: ' + IM.JSON.stringify(data));
+        }
+    });
+    
+    /**
+     * 各种UI元素的处理方法
+     */
+    $.extend(UI.prototype, {
+        handlerAvatar : function() {
+            var _this = this, els = _this.els;
+            var u = _this.webim.getCurrUser();
+            var show = _this.webim.getShow();
+            var path = _this.options.path;
+
+            _this.showTask.stop();
+            $('img', els.$mainCurrUser).attr('src', path + u.avatar);
+            $('img', els.$mainCurrUser).attr('alt', u.nick);
+            $('a', els.$mainCurrUser).attr('title', u.nick);
+            $('a', els.$mainCurrUser).addClass(show);
+            
+            $('ul li', els.$mainCurrUser).each(function(i, el) {
+                var $el = $(el);
+                $('.mzen-iconfont', $el).remove();
+                if ($el.attr('value') == show) {
+                    $(el).append('<i class="mzen-iconfont mzen-icon-check"></i>');
+                }
+            });
         }
     });
 
@@ -369,6 +430,18 @@ var NexTalkWebUI = function() {
     }
 
     function toggleMain(els) {
+        els.$mainCurrUser.click(function() {
+            $('.dropdown-menu', $(this)).slideToggle();
+        });
+        $('.dropdown-menu li', els.$mainCurrUser).each(function(i, el) {
+            $(el).click(function() {
+                var show = $(el).attr('value');
+                UI.getInstance().showTask.start();
+                window.setTimeout(function() {
+                    UI.getInstance().handlerAvatar();
+                }, 5000);
+            });
+        });
         $('ul.mzen-bar-tab>li', els.$mainFooter).each(function(i, el) {
             $(el).css({
                 cursor : 'pointer'

@@ -39,8 +39,7 @@
         <div class="nextalk-page" id="nextalk_page_main">
         <!--头部集合 BEGIN-->
         <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
-            <a class="mzen-pull-left mzen-img nextalk-user
-                    nextalk-logo">
+            <a class="mzen-pull-left mzen-img nextalk-logo">
             <img class="mzen-img-object" src="../imgs/webim.72x72.png" />
             </a>
             <div class="mzen-title">
@@ -52,11 +51,22 @@
             <img class="mzen-img-object" src="../imgs/head_def.png" />
             </a>
             <ul class="dropdown-menu">
-            <li>在线<i class="mzen-iconfont mzen-icon-check"></i><i class="nextalk-show available"></i></li>
-            <li>忙碌<i class="nextalk-show dnd"></i></li>
-            <li>离开<i class="nextalk-show away"></i></li>
-            <li>隐身<i class="nextalk-show invisible"></i></li>
-            <li>离线<i class="nextalk-show unavailable"></i></li>
+            <li value="available">在线
+                <i class="nextalk-show available"></i>
+            </li>
+            <li value="dnd">忙碌
+                <i class="nextalk-show dnd"></i>
+            </li>
+            <li value="away">离开
+                <i class="nextalk-show away"></i>
+            </li>
+            <li value="invisible">隐身
+                <i class="nextalk-show invisible"></i>
+            </li>
+            <li value="unavailable">离线
+                <i class="nextalk-show unavailable"></i>
+                <i class="mzen-iconfont mzen-icon-check"></i>
+            </li>
             </ul>
             </div>
         </header>
