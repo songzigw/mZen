@@ -335,25 +335,40 @@ html, body {
   min-width: 110px;
   padding: 0 0;
   margin: 0 0;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   list-style: none;
   background-color: #fff;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,.15);
-  border-radius: 5px;
-  -webkit-box-shadow: 0 3px 12px rgba(0,0,0,.175);
-  box-shadow: 0 3px 12px rgba(0,0,0,.175);
+  border-radius: 3px;
+  -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.175);
+  box-shadow: 0 3px 9px rgba(0,0,0,.175);
 }
 
 .nextalk-user .dropdown-menu li {
 	position: relative;
-	padding-left: 8px;
+	padding-left: 23px;
 	height: 30px;
 	line-height: 30px;
+	cursor: pointer;
+}
+.nextalk-user .dropdown-menu i.mzen-icon-check {
+    line-height: 30px;
+    color: red;
+    font-size: 14px;
+    margin-right: 8px;
+    float: right;
+}
+.nextalk-user .dropdown-menu .nextalk-show {
+	right: auto;
+	left: 9px;
 }
 .nextalk-user .dropdown-menu li:hover {
+    background-color: #ddd;
+}
+.nextalk-user .dropdown-menu li:active {
     background-color: #ddd;
 }
 

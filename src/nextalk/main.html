@@ -4,6 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
         <title>Chat</title>
+        <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
+        <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
+        <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body style="overflow: hidden;">
         <div class="mzen-tips nextalk-msg-box mzen-tips-info" style="display: none;">
@@ -17,8 +20,7 @@
         <div class="nextalk-page nextalk-screen nextalk-page-login"
             id="nextalk_page_init">
             <div class="mzen-content
-                mzen-flex-col
-                mzen-flex-row mzen-flex-center">
+                mzen-flex-col mzen-flex-center">
             <img alt="logo" src="../imgs/logo.png"/>
             <p>一起来聊聊</p></div>
         </div>
@@ -27,8 +29,7 @@
             id="nextalk_page_login"
             style="display: none;">
             <div class="mzen-content
-                mzen-flex-col
-                mzen-flex-row mzen-flex-center">
+                mzen-flex-col mzen-flex-center">
             <img alt="logo" src="../imgs/logo.png"/>
             <p>正在登入中...</p>
             <button class="mzen-btn mzen-btn-danger">重新登入</button>
@@ -45,17 +46,19 @@
             <div class="mzen-title">
                 消息
             </div>
-            <a class="mzen-pull-right mzen-img mzen-tap-active
-                    mzen-up-hover nextalk-user">
+            <div class="mzen-pull-right nextalk-user">
+            <a class="mzen-img mzen-tap-active
+                    mzen-up-hover">
             <img class="mzen-img-object" src="../imgs/head_def.png" />
+            </a>
             <ul class="dropdown-menu">
-            <li>在线<i class="nextalk-show available"></i></li>
+            <li>在线<i class="mzen-iconfont mzen-icon-check"></i><i class="nextalk-show available"></i></li>
             <li>忙碌<i class="nextalk-show dnd"></i></li>
             <li>离开<i class="nextalk-show away"></i></li>
             <li>隐身<i class="nextalk-show invisible"></i></li>
             <li>离线<i class="nextalk-show unavailable"></i></li>
             </ul>
-            </a>
+            </div>
         </header>
         <!--头部集合 END-->
         
@@ -241,9 +244,6 @@
             <!-- 聊天输入筐END -->
         </div>
     </body>
-    <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
-    <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
-    <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     <script type="text/javascript" src="../script/jquery.min.js"></script>
     <script type="text/javascript" src="../script/joinable.js"></script>
     <script type="text/javascript" src="../script/nextalk-webim.js"></script>
