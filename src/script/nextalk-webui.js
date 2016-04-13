@@ -217,7 +217,7 @@ var NexTalkWebUI = function() {
                     if (i == num) {
                         i = 0;
                     }
-                }, 600);
+                }, 500);
             },
             
             stop : function() {
