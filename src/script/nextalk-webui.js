@@ -203,6 +203,10 @@ var NexTalkWebUI = function() {
                 var $avatar = $('a', els.$mainCurrUser);
                 var colors = this.colors;
                 var num = colors.length;
+                for (var k = 0; k < num; k++) {
+                    $avatar.removeClass(colors[k]);
+                }
+                
                 var i = 0;
                 this._interval = window.setInterval(function() {
                     for (var k = 0; k < num; k++) {
@@ -213,7 +217,7 @@ var NexTalkWebUI = function() {
                     if (i == num) {
                         i = 0;
                     }
-                }, 1000);
+                }, 600);
             },
             
             stop : function() {
@@ -227,7 +231,7 @@ var NexTalkWebUI = function() {
             }
         };
         // 启动现场状态切换动画
-        _this.showTask.start();
+        //_this.showTask.start();
     };
     
     UI.prototype._initLisenters = function() {
@@ -309,11 +313,13 @@ var NexTalkWebUI = function() {
             var _this = this, els = _this.els;
             showMsgBox(els.$msgBox, '连接断开...', 'mzen-tips-danger');
             _this.stopAllTask();
+            _this.handlerAvatar();
         },
         onNetworkUnavailable : function(ev, data) {
             var _this = this, els = _this.els;
             showMsgBox(els.$msgBox, '网络不可用...', 'mzen-tips-danger');
             _this.stopAllTask();
+            _this.handlerAvatar();
         },
         onMessage : function(ev, data) {
             console.log('message: ' + IM.JSON.stringify(data));
