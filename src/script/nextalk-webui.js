@@ -198,10 +198,10 @@ var NexTalkWebUI = function() {
         var _this = this;
         _this._uid = uid;
         window.setTimeout(function() {
-            //_this._connectServer(uid);
-            _this.els.$initPage.hide();
-            _this.onLogin();
-            _this.onLoginWin();
+            _this._connectServer(uid);
+            //_this.els.$initPage.hide();
+            //_this.onLogin();
+            //_this.onLoginWin();
         }, 3000);
     };
     
