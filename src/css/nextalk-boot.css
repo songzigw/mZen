@@ -68,6 +68,7 @@
 	right: 20px;
 	transition: all 0.3s ease-in-out 0.1s;
 	-webkit-transition: all 0.3s ease-in-out 0.1s;
+	background-color: #f9f9f9;
 }
 
 .nextalk-iframe iframe {
