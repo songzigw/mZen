@@ -21,6 +21,11 @@
     // 引导程序导入依赖文件需要的根路径
     boot.path = '/src/';
 
+    boot.panel = {
+        width : 320,
+        height : 530
+    };
+
     boot._getCss = function() {
         var cssLink = '<link rel="stylesheet" type="text/css" href="'
                 + this.path + 'css/nextalk-boot.css" />';
@@ -35,13 +40,16 @@
         return btnHTML;
     }
 
+    var h = 20;
     boot._getIfrHTML = function() {
-        var ifrHTML = '<div class="nextalk-iframe" id="nextalk_iframe">'
-                + '<a class="nextalk-alert">最小化</a>'
+        var ifrHTML = '<div class="nextalk-iframe" id="nextalk_iframe" '
+                + 'style="width:'+ this.panel.width + 'px;height:' + this.panel.height + 'px;">'
+                + '<div style="width:100%;heigth:' + h + ';"><a class="nextalk-minimize">最小化</a></div>'
+                + '<div style="width:100%;height:' + (this.panel.height - h) + 'px;">'
                 + '<iframe src="'
                 + this.path
                 + 'nextalk/main.html" name="nextalk_iframe" frameborder="no" scrolling="no"/>'
-                + '</div>';
+                + '</div></div>';
         return ifrHTML;
     };
 

@@ -25,9 +25,11 @@
         // 父窗口中的页面元素
         var nkMain = $('#nextalk_main', top.document);
         var nkIframe = $('#nextalk_iframe', top.document);
+        // 获取父窗体中的引导程序
+        var boot = top.nextalkBoot;
 
         var nkMainHeight = -42;
-        var nkIframeHeight = -530;
+        var nkIframeHeight = -(boot.panel.height);
         slideUp(nkMain, nkMainHeight);
 
         nkMain.find('a').click(function() {
@@ -39,8 +41,6 @@
             slideUp(nkMain, nkMainHeight);
         });
 
-        // 获取父窗体中的引导程序
-        var boot = top.nextalkBoot;
         nextalkConfig.uid = boot.uid;
         nextalkConfig.appId = boot.appId;
         nextalkConfig.apiPath = boot.apiPath;

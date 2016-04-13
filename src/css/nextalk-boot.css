@@ -60,8 +60,6 @@
 
 .nextalk-iframe {
 	display: none;
-	width: 320px;
-	height: 530px;
 	position: fixed;
 	bottom: 0px;
 	border-radius: 3px 3px 0px 0px;
@@ -78,14 +76,7 @@
 	border: 0;
 }
 
-.nextalk-iframe>.nextalk-alert {
-    min-height: 45px;
-    min-width: 50px;
-    line-height: 45px;
-    border-radius: 0px;
-    text-align: center;
-    color: #333;
-    right: 0px;
-    top: 0px;
+.nextalk-iframe>.nextalk-minimize {
+    
     cursor: pointer;
 }
