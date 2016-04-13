@@ -156,6 +156,12 @@ var NexTalkWebUI = function() {
     UI.prototype._initTimerTask = function() {
         var _this = this, els = _this.els;
         
+        // 关闭所有定时任务
+        _this.stopAllTask = function() {
+            _this.loginTask.stop();
+            _this.showTask.stop();
+        };
+        
         // 正在登入的动画效果
         _this.loginTask = {
             _interval : null,
@@ -220,7 +226,7 @@ var NexTalkWebUI = function() {
                 }
             }
         };
-        // 启动
+        // 启动现场状态切换动画
         _this.showTask.start();
     };
     
@@ -263,7 +269,7 @@ var NexTalkWebUI = function() {
         },
         onLoginFail : function(ev, data) {
             var _this = this, els = _this.els;
-            _this.loginTask.stop();
+            _this.stopAllTask();
             els.$loginP.html('登入失败');
             els.$loginPage.show();
             // 界面上出现重新登入按钮
@@ -302,10 +308,12 @@ var NexTalkWebUI = function() {
         onDisconnected : function(ev, data) {
             var _this = this, els = _this.els;
             showMsgBox(els.$msgBox, '连接断开...', 'mzen-tips-danger');
+            _this.stopAllTask();
         },
         onNetworkUnavailable : function(ev, data) {
             var _this = this, els = _this.els;
             showMsgBox(els.$msgBox, '网络不可用...', 'mzen-tips-danger');
+            _this.stopAllTask();
         },
         onMessage : function(ev, data) {
             console.log('message: ' + IM.JSON.stringify(data));
@@ -386,9 +394,13 @@ var NexTalkWebUI = function() {
     }
     
     function showMsgBox($msgBox, msg, addClass) {
-        $msgBox.removeClass('mzen-tips-danger');
-        $msgBox.removeClass('mzen-tips-info');
-        $msgBox.removeClass('mzen-tips-success');
+        var tips = ['mzen-tips-danger',
+                    'mzen-tips-info',
+                    'mzen-tips-success'];
+        for (var i = 0; i < tips.length; i++) {
+            $msgBox.removeClass(tips[i]);
+        }
+        
         $msgBox.addClass(addClass);
         $('span', $msgBox).text(msg);
         $msgBox.show();
