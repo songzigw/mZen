@@ -91,8 +91,7 @@ var NexTalkWebUI = function() {
 
         toggleMain(els);
         els.$loginBtn.click(function() {
-            _this.onLogin();
-            _this.connectServer(_this._uid);
+            _this._connectServer(_this._uid);
         });
         // 界面渲染完成
         // -----------------------------------------------------
@@ -199,10 +198,15 @@ var NexTalkWebUI = function() {
         var _this = this;
         _this._uid = uid;
         window.setTimeout(function() {
-            _this.els.$initPage.hide();
-            _this.webim.connectServer({uid : uid});
+            _this._connectServer(uid);
         }, 3000);
     };
+    
+    UI.prototype._connectServer = function(uid) {
+        var _this = this;
+        _this.els.$initPage.hide();
+        _this.webim.connectServer({uid : uid});
+    }
     
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
