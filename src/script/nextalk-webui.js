@@ -170,8 +170,8 @@ var NexTalkWebUI = function() {
                 window.clearInterval(this._interval);
                 
                 var $p = els.$loginP;
-                var text = '正在登入中......';
-                var point = '......';
+                var text = '正在登入中...';
+                var point = '...';
                 $p.html(text);
 
                 var i = 0;
@@ -262,6 +262,7 @@ var NexTalkWebUI = function() {
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
             var _this = this, els = _this.els;
+            els.$msgBox.hide();
             els.$loginBtn.hide();
             _this.loginTask.start();
             els.$loginPage.show();
@@ -344,7 +345,6 @@ var NexTalkWebUI = function() {
      */
     $.extend(UI.prototype, {
         handlerAvatar : function() {
-            _this.showTask.stop();
             var _this = this, els = _this.els;
             var show = _this.webim.getShow();
             var path = _this.options.path;
@@ -356,6 +356,7 @@ var NexTalkWebUI = function() {
                 $('a', els.$mainCurrUser).attr('title', u.nick);
             }
             
+            _this.showTask.stop();
             $('a', els.$mainCurrUser).addClass(show);
             
             $('ul li', els.$mainCurrUser).each(function(i, el) {
@@ -525,7 +526,8 @@ var NexTalkWebUI = function() {
         var els = UI.getInstance().els;
         $items.each(function(i, el) {
             var item = $(el);
-            if (item.data('events')['click'])
+            if (item.data('events') &&
+                    item.data('events')['click'])
                 return;
 
             // 点击启动一个新的聊天盒子

@@ -1812,7 +1812,7 @@ var NexTalkWebIM = function() {
     
     IM.prototype._disconnectServer = function() {
         var _this = this;
-        _this.channel.close();
+        _this.channel.disconnect();
     };
 
     IM.prototype.handle = function(data) {
@@ -1865,15 +1865,19 @@ var NexTalkWebIM = function() {
             return;
         }
         
-        self._sendPresence({show : IM.show.UNAVAILABLE}, null);
         var api = IM.WebApi.getInstance();
         var params = {
             ticket : connection.ticket
         };
-        api.offline(params, callback);
-        
-        // 断开连接
-        self._disconnectServer();
+        api.offline(params, function(ret, err) {
+            if (ret == "ok") {
+                // 断开连接
+                self._disconnectServer();
+                callback();
+            } else {
+                callback();
+            }
+        });
     };
 
     extend(IM.prototype,
@@ -1891,11 +1895,14 @@ var NexTalkWebIM = function() {
                                 room_ids.push(k.slice(2));
                         });
                     }
+                    if (status.get("s") 
+                            && status.get("s") == IM.show.UNAVAILABLE) {
+                        status.set("s", IM.show.AVAILABLE);
+                    } 
                     params = extend({
-                        // chatlink_ids: _this.chatlink_ids.join(","),
                         buddy_ids : buddy_ids.join(","),
                         room_ids : room_ids.join(","),
-                        show : status.get("s") || "available"
+                        show : status.get("s") || IM.show.AVAILABLE
                     }, params);
                     // set auto open true
                     status.set("o", false);
@@ -2698,7 +2705,7 @@ var NexTalkWebIM = function() {
                 this._ajax("message", params, callback);
             },
             
-            presence : function(presence, callback) {
+            presence : function(params, callback) {
                 this._ajax("presence", params, callback);
             }
         };
