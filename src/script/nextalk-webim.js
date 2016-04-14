@@ -73,7 +73,7 @@ var NexTalkWebIM = function() {
                 }
             })();
 
-    function now() {
+    function nowStamp() {
         return (new Date).getTime();
     }
 

@@ -645,7 +645,7 @@ var NexTalkWebUI = function() {
             nick : currUser.nick,
             to_nick : _this.nickname,
             body : body,
-            timestamp : IM.now()
+            timestamp : IM.nowStamp()
         };
         webim.sendMessage(msg);
     };
