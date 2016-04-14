@@ -247,9 +247,6 @@ var NexTalkWebUI = function() {
         _this._uid = uid;
         window.setTimeout(function() {
             _this._connectServer(uid);
-            //_this.els.$initPage.hide();
-            //_this.onLogin();
-            //_this.onLoginWin();
         }, 1100);
     };
     
@@ -263,6 +260,11 @@ var NexTalkWebUI = function() {
         onLogin : function(ev, data) {
             var _this = this, els = _this.els;
             els.$msgBox.hide();
+            
+            if (_this.webim.loginTime > 0) {
+                return;
+            }
+            
             els.$loginBtn.hide();
             _this.loginTask.start();
             els.$loginPage.show();

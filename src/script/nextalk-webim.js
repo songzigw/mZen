@@ -1522,6 +1522,21 @@ var NexTalkWebIM = function() {
         _dataAccess : {},
         /** 连接状态 */
         connStatus : IM.connStatus.DISCONNECTED,
+        /** 消息存储 */
+        messageAccess : {
+            // 未读消息总数
+            notTotal : 0,
+            
+            // 聊天室消息
+            roomMsg : {
+                notRead : 0
+            },
+            
+            // 私聊消息
+            privateMsg : {
+                notRead : 0
+            }
+        },
 
         _serverTime : function(time) {
             this._dataAccess.serverTime = time;
@@ -1614,6 +1629,7 @@ var NexTalkWebIM = function() {
             dataType : 'json'
         });
         
+        _this.loginTime = 0;
         _this.status = new IM.Status();
         _this.setting = new IM.Setting();
         //_this.presence = new IM.Presence();
@@ -1655,11 +1671,12 @@ var NexTalkWebIM = function() {
             _this.loginStatusListener.onLogin(ev, data);
         });
         _this.bind("login.win", function(ev, data) {
-            console.log("login.fail: " + JSON.stringify(data));
+            console.log("login.win: " + JSON.stringify(data));
+            _this.loginTime++;
             _this.loginStatusListener.onLoginWin(ev, data);
         });
         _this.bind("login.fail", function(ev, data) {
-            console.log("login.win: " + JSON.stringify(data));
+            console.log("login.fail: " + JSON.stringify(data));
             _this.loginStatusListener.onLoginFail(ev, data);
         });
 
@@ -1914,7 +1931,7 @@ var NexTalkWebIM = function() {
                                         callback();
                                     }
                                     // 触发登入成功事件
-                                    _this.trigger("login.win", [ ret.error_msg ]);
+                                    _this.trigger("login.win", [ ret ]);
                                 } else {
                                     // 触发登入失败事件
                                     _this.trigger("login.fail", [ ret.error_msg ]);
