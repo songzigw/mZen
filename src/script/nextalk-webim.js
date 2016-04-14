@@ -1631,57 +1631,41 @@ var NexTalkWebIM = function() {
         var _this = this;
         // 登入状态监听器
         _this.loginStatusListener = {
-            onLogin : function(ev, data) {
-                console.log("login: " + JSON.stringify(data));
-            },
-            onLoginFail : function(ev, data) {
-                console.log("login.fail: " + JSON.stringify(data));
-            },
-            onLoginWin : function(ev, data) {
-                console.log("login.win: " + JSON.stringify(data));
-            }
+            onLogin : function(ev, data) {},
+            onLoginFail : function(ev, data) {},
+            onLoginWin : function(ev, data) {}
         };
         // 连接状态监听器
         _this.connStatusListener = {
-             onConnecting : function(ev, data) {
-                 console.log("connecting: " + JSON.stringify(data));
-             },
-             onConnected : function(ev, data) {
-                 console.log("connected: " + JSON.stringify(data));
-             },
-             onDisconnected : function(ev, data) {
-                 console.log("disconnected: " + JSON.stringify(data));
-             },
-             onNetworkUnavailable : function(ev, data) {
-                 console.log("network.unavailable: " + JSON.stringify(data));
-             }
+             onConnecting : function(ev, data) {},
+             onConnected : function(ev, data) {},
+             onDisconnected : function(ev, data) {},
+             onNetworkUnavailable : function(ev, data) {}
         };
         // 消息接收监听器
         _this.receiveMsgListener = {
-            onMessage : function(ev, data) {
-                console.log("message: " + JSON.stringify(data));
-            },
-            onStatus : function(ev, data) {
-                console.log("status: " + JSON.stringify(data));
-            },
-            onPresences : function(ev, data) {
-                console.log("presences: " + JSON.stringify(data));
-            }
+            onMessage : function(ev, data) {},
+            onStatus : function(ev, data) {},
+            onPresences : function(ev, data) {}
         };
 
         // 正在登入中
         _this.bind("login", function(ev, data) {
+            console.log("login: " + JSON.stringify(data));
             _this.loginStatusListener.onLogin(ev, data);
         });
         _this.bind("login.win", function(ev, data) {
+            console.log("login.fail: " + JSON.stringify(data));
             _this.loginStatusListener.onLoginWin(ev, data);
         });
         _this.bind("login.fail", function(ev, data) {
+            console.log("login.win: " + JSON.stringify(data));
             _this.loginStatusListener.onLoginFail(ev, data);
         });
 
         // 正在连接
         _this.bind("connecting", function(ev, data) {
+            console.log("connecting: " + JSON.stringify(data));
             if (_this.connStatus != IM.connStatus.CONNECTING) {
                 _this.connStatus = IM.connStatus.CONNECTING;
                 _this.connStatusListener.onConnecting(ev, data);
@@ -1689,6 +1673,7 @@ var NexTalkWebIM = function() {
         });
         // 连接成功
         _this.bind("connected", function(ev, data) {
+            console.log("connected: " + JSON.stringify(data));
             if (_this.connStatus != IM.connStatus.CONNECTED) {
                 _this.connStatus = IM.connStatus.CONNECTED;
                 if (_this.status.get("s") == IM.show.UNAVAILABLE) {
@@ -1700,6 +1685,7 @@ var NexTalkWebIM = function() {
         });
         // 断开连接
         _this.bind("disconnected", function(ev, data) {
+            console.log("disconnected: " + JSON.stringify(data));
             if (_this.connStatus != IM.connStatus.DISCONNECTED) {
                 _this.connStatus = IM.connStatus.DISCONNECTED;
                 _this._show(IM.show.UNAVAILABLE);
@@ -1708,6 +1694,7 @@ var NexTalkWebIM = function() {
         });
         // 网络不可用
         _this.bind("network.unavailable", function(ev, data) {
+            console.log("network.unavailable: " + JSON.stringify(data));
             if (_this.connStatus != IM.connStatus.NETWORK_UNAVAILABLE) {
                 _this.connStatus = IM.connStatus.NETWORK_UNAVAILABLE;
                 _this._show(IM.show.UNAVAILABLE);
@@ -1721,14 +1708,17 @@ var NexTalkWebIM = function() {
 
         // 接收消息
         _this.bind("message", function(ev, data) {
+            console.log("message: " + JSON.stringify(data));
             _this.receiveMsgListener.onMessage(ev, data);
         });
         // 输入状态
         _this.bind("status", function(ev, data) {
+            console.log("status: " + JSON.stringify(data));
             _this.receiveMsgListener.onStatus(ev, data);
         });
         // 现场变更
         _this.bind("presences", function(ev, data) {
+            console.log("presences: " + JSON.stringify(data));
             _this.receiveMsgListener.onPresences(ev, data);
         });
     };
@@ -1850,7 +1840,7 @@ var NexTalkWebIM = function() {
         
         // 检查一下管道连接
         if (self.connStatus != IM.connStatus.CONNECTED) {
-            // self._connectServer();
+            self.status.set("s", show);
             var id = self.getCurrUser().id;
             self.connectServer({uid : id});
         } else {
