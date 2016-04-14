@@ -1361,7 +1361,7 @@ var NexTalkWebIM = function() {
     extend(IM, {
         log : log,
         idsArray : idsArray,
-        now : nowStamp,
+        nowStamp : nowStamp,
         isFunction : isFunction,
         isArray : isArray,
         isObject : isObject,
