@@ -359,7 +359,6 @@ var NexTalkWebIM = function() {
                 && window.air.Introspector) {
             window.air.Introspector.Console.log.apply(null, arguments);
         }
-
     }
 
     /**
@@ -1812,10 +1811,8 @@ var NexTalkWebIM = function() {
     };
     
     IM.prototype._disconnectServer = function() {
-        var _this = this, options = _this.options;
-        if (_this.connStatus == IM.connStatus.CONNECTED) {
-            _this.channel.close();
-        }
+        var _this = this;
+        _this.channel.close();
     };
 
     IM.prototype.handle = function(data) {
@@ -1841,34 +1838,39 @@ var NexTalkWebIM = function() {
                 && self.trigger("status", [ data.statuses ]);
     };
     
-    IM.prototype.online = function(show) {
+    IM.prototype.online = function(show, callback) {
         var self = this;
         if (show == IM.show.UNAVAILABLE) {
             return new Error("IM.show.UNAVAILABLE is error.");
         }
+        if (show == self.getShow()) {
+            callback();
+            return;
+        }
         
-        self._sendPresence({show : show}, null);
         // 检查一下管道连接
         if (self.connStatus != IM.connStatus.CONNECTED) {
             // self._connectServer();
             var id = self.getCurrUser().id;
             self.connectServer({uid : id});
+        } else {
+            self._sendPresence({show : show}, callback);
         }
     },
 
-    IM.prototype.offline = function() {
+    IM.prototype.offline = function(callback) {
         var self = this, connection = self.getConnection();
         if (self.connStatus == IM.connStatus.DISCONNECTED) {
+            callback();
             return;
         }
         
         self._sendPresence({show : IM.show.UNAVAILABLE}, null);
         var api = IM.WebApi.getInstance();
         var params = {
-            status : 'offline',
             ticket : connection.ticket
         };
-        api.offline(params, null);
+        api.offline(params, callback);
         
         // 断开连接
         self._disconnectServer();
@@ -1932,13 +1934,19 @@ var NexTalkWebIM = function() {
                 _sendPresence : function(msg, callback) {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
-                    // save show status
-                    self._currUser({show : msg.show});
-                    self.status.set("s", msg.show);
 
                     var api = IM.WebApi.getInstance();
                     var params = extend({}, msg);
-                    api.presence(params, callback);
+                    api.presence(params, function(ret, err) {
+                        if (ret == "ok") {
+                            // save show status
+                            self._currUser({show : msg.show});
+                            self.status.set("s", msg.show);
+                            callback();
+                        } else {
+                            callback();
+                        }
+                    });
                 },
 
                 sendMessage : function(msg, callback) {
@@ -2682,8 +2690,16 @@ var NexTalkWebIM = function() {
                 this._ajax("online", params, callback);
             },
             
+            offline : function(params, callback) {
+                this._ajax("offline", params, callback);
+            },
+            
             message : function(params, callback) {
                 this._ajax("message", params, callback);
+            },
+            
+            presence : function(presence, callback) {
+                this._ajax("presence", params, callback);
             }
         };
         extend(API.prototype, methods);

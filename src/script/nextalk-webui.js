@@ -344,15 +344,18 @@ var NexTalkWebUI = function() {
      */
     $.extend(UI.prototype, {
         handlerAvatar : function() {
+            _this.showTask.stop();
             var _this = this, els = _this.els;
-            var u = _this.webim.getCurrUser();
             var show = _this.webim.getShow();
             var path = _this.options.path;
 
-            _this.showTask.stop();
-            $('img', els.$mainCurrUser).attr('src', path + u.avatar);
-            $('img', els.$mainCurrUser).attr('alt', u.nick);
-            $('a', els.$mainCurrUser).attr('title', u.nick);
+            if (_this.webim.connStatus == IM.connStatus.CONNECTED) {
+                var u = _this.webim.getCurrUser();
+                $('img', els.$mainCurrUser).attr('src', path + u.avatar);
+                $('img', els.$mainCurrUser).attr('alt', u.nick);
+                $('a', els.$mainCurrUser).attr('title', u.nick);
+            }
+            
             $('a', els.$mainCurrUser).addClass(show);
             
             $('ul li', els.$mainCurrUser).each(function(i, el) {
@@ -420,9 +423,9 @@ var NexTalkWebUI = function() {
 
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
-//                els.$mainContent.perfectScrollbar({
-//                    wheelPropagation : false
-//                });
+                // els.$mainContent.perfectScrollbar({
+                //     wheelPropagation : false
+                // });
                 els.$mainContent.css('overflow', 'auto');
             }, 1);
         }
@@ -438,9 +441,9 @@ var NexTalkWebUI = function() {
         
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
-//                $chatboxContent.perfectScrollbar({
-//                    wheelPropagation : false
-//                });
+                // $chatboxContent.perfectScrollbar({
+                //     wheelPropagation : false
+                // });
                 $chatboxContent.css('overflow', 'auto');
             }, 1);
         }
@@ -454,9 +457,15 @@ var NexTalkWebUI = function() {
             $(el).click(function() {
                 var show = $(el).attr('value');
                 UI.getInstance().showTask.start();
-                window.setTimeout(function() {
-                    UI.getInstance().handlerAvatar();
-                }, 5000);
+                if (show == IM.show.UNAVAILABLE) {
+                    IM.getInstance().offline(function() {
+                        UI.getInstance().handlerAvatar();
+                    });
+                } else {
+                    IM.getInstance().online(show, function() {
+                        UI.getInstance().handlerAvatar();
+                    });
+                }
             });
         });
         $('ul.mzen-bar-tab>li', els.$mainFooter).each(function(i, el) {
@@ -516,6 +525,9 @@ var NexTalkWebUI = function() {
         var els = UI.getInstance().els;
         $items.each(function(i, el) {
             var item = $(el);
+            if (item.data('events')['click'])
+                return;
+
             // 点击启动一个新的聊天盒子
             item.click(function() {
                 var webui = UI.getInstance();
