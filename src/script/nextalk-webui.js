@@ -41,16 +41,16 @@ var NexTalkWebUI = function() {
      * 初始化NexTalkWebUI，在整个应用全局只需要调用一次。
      * 
      * @param {string}
-     *                appId 开发者的appId
+     *                appKey 开发者的appKey
      * @param {object}
      *                options
-     * @example NexTalkWebUI.init("app_id");
+     * @example NexTalkWebUI.init("app_key");
      */
-    UI.init = function(appId, options) {
+    UI.init = function(appKey, options) {
         if (!UI._instance) {
             UI._instance = new UI();
         }
-        UI.getInstance()._init(appId, options);
+        UI.getInstance()._init(appKey, options);
         return UI.getInstance();
     };
 
@@ -59,7 +59,7 @@ var NexTalkWebUI = function() {
     /**
      * 初始化NexTalkWebUI
      */
-    UI.prototype._init = function(appId, options) {
+    UI.prototype._init = function(appKey, options) {
         var _this = this;
         options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
 
@@ -109,7 +109,7 @@ var NexTalkWebUI = function() {
         });
 
         // 初始化NexTalkWebIM
-        _this.webim = IM.init(appId, options);
+        _this.webim = IM.init(appKey, options);
         _this.webim.setLoginStatusListener({
             onLogin : function(ev, data) {
                 _this.onLogin(ev, data);

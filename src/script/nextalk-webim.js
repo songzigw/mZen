@@ -1496,16 +1496,16 @@ var NexTalkWebIM = function() {
      * 初始化NexTalkWebIM，在整个应用全局只需要调用一次。
      * 
      * @param {string}
-     *                appId 开发者的appId
+     *                appKey 开发者的appKey
      * @param {object}
      *                options
-     * @example NexTalkWebIM.init("app_id");
+     * @example NexTalkWebIM.init("app_key");
      */
-    IM.init = function(appId, options) {
+    IM.init = function(appKey, options) {
         if (!IM._instance) {
             IM._instance = new IM();
         }
-        IM.getInstance()._init(appId, options);
+        IM.getInstance()._init(appKey, options);
         return IM.getInstance();
     };
 
@@ -1601,9 +1601,9 @@ var NexTalkWebIM = function() {
     /**
      * 初始化NexTalkWebIM
      */
-    IM.prototype._init = function(appId, options) {
+    IM.prototype._init = function(appKey, options) {
         var _this = this;
-        _this._appId = appId;
+        _this._appKey = appKey;
         options = _this.options = extend({}, IM.DEFAULTS, options || {});
         ajax.setup({
             dataType : options.isJsonp ? "jsonp" : "json"
