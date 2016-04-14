@@ -1260,16 +1260,16 @@ var NexTalkWebIM = function() {
             var ws = _this.ws = new WebSocket(ops.websocket);
 
             ws.onopen = function(ev) {
-                //console.log('open: ' + JSON.stringify(ev));
+                console.log('open: ' + JSON.stringify(ev));
                 _this.trigger("connected", [ ev.data ]);
                 ws.send("subscribe " + ops.domain + " " + ops.ticket);
             };
             ws.onclose = function(ev) {
-                //console.log('close: ' + JSON.stringify(ev));
+                console.log('close: ' + JSON.stringify(ev));
                 _this.trigger('disconnected', [ ev.data ]);
             };
             ws.onmessage = function(ev) {
-                //console.log('message: ' + JSON.stringify(ev));
+                console.log('message: ' + JSON.stringify(ev));
                 var data = ev.data;
                 try {
                     data = data ? (window.JSON && window.JSON.parse ? window.JSON
@@ -1280,7 +1280,7 @@ var NexTalkWebIM = function() {
                 _this.trigger('message', [ data ]);
             };
             ws.onerror = function(ev) {
-                //console.log('error: ' + JSON.stringify(ev));
+                console.log('error: ' + JSON.stringify(ev));
                 _this.trigger("error", [ ev ]);
             };
             return ws;

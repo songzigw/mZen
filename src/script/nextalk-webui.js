@@ -322,7 +322,6 @@ var NexTalkWebUI = function() {
             _this.handlerAvatar();
         },
         onMessage : function(ev, data) {
-            console.log('message: ' + IM.JSON.stringify(data));
             var _this = this;
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
@@ -333,10 +332,10 @@ var NexTalkWebUI = function() {
             }
         },
         onStatus : function(ev, data) {
-            console.log('status: ' + IM.JSON.stringify(data));
+            
         },
         onPresences : function(ev, data) {
-            console.log('presences: ' + IM.JSON.stringify(data));
+            
         }
     });
     
