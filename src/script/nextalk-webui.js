@@ -262,6 +262,7 @@ var NexTalkWebUI = function() {
             els.$msgBox.hide();
             
             if (_this.webim.loginTime > 0) {
+                showMsgBox(els.$msgBox, '正在连接...', 'mzen-tips-info');
                 return;
             }
             
