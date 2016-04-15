@@ -1354,7 +1354,6 @@
     ClassEvent.on(Channel);
 
     var NexTalkWebIM = function() {};
-
     var IM = NexTalkWebIM;
     ClassEvent.on(IM);
     window.NexTalkWebIM = IM;

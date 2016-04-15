@@ -6,15 +6,14 @@
  *
  */
 
-(function(UI, undefined) {
+(function(IM, undefined) {
 
     "use strict";
     
     var NexTalkWebUI = function() {};
-    window.NexTalkWebUI = NexTalkWebUI;
-    var IM = window.NexTalkWebUI;
-
+    var UI = NexTalkWebUI;
     IM.ClassEvent.on(UI);
+    window.NexTalkWebUI = UI;
 
     // ---------------------------------------
 
@@ -769,4 +768,4 @@
         $search.removeClass('focus');
     };
 
-})(NexTalkWebUI);
+})(NexTalkWebIM);
