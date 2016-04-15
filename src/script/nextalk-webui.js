@@ -98,8 +98,11 @@ var NexTalkWebUI = function() {
 
         // 定义聊天盒子存储空间
         _this.chatBoxUIs = {};
-        // 系统消息盒子
-        _this.chatBoxUIs[ChatBoxUI.SYS_MSG] = new ChatBoxUI(ChatBoxUI.SYS_MSG);
+        // 系统通知盒子
+        _this.chatBoxUIs[ChatBoxUI.NOTIFICATION] =
+            new ChatBoxUI(ChatBoxUI.NOTIFICATION);
+        _this.chatBoxUIs[ChatBoxUI.CHAT] = {};
+        _this.chatBoxUIs[ChatBoxUI.ROOM] = {};
 
         // 初始化监听器
         _this._initLisenters();
@@ -330,7 +333,7 @@ var NexTalkWebUI = function() {
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
                 if (msg.type == 'chat') {
-                    var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.USER_MSG + msg.from];
+                    var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.CHAT][msg.from];
                     if (chatBoxUI) {
                         chatBoxUI.receive(msg);
                         msg.read = true;
@@ -381,7 +384,7 @@ var NexTalkWebUI = function() {
     function getBuddyHTML(u) {
         var path = IM.getInstance().options.path;
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
-                + 'data-toggle="user_msg" data-id="' + u.id + '">'
+                + 'data-toggle="' + ChatBoxUI.NOTIFICATION + '" data-id="' + u.id + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>'
@@ -542,28 +545,28 @@ var NexTalkWebUI = function() {
             // 点击启动一个新的聊天盒子
             item.click(function() {
                 var webui = UI.getInstance();
-                if (item.attr('data-toggle') == ChatBoxUI.SYS_MSG) {
-                    webui.chatBoxUIs[ChatBoxUI.SYS_MSG].show();
+                if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
+                    webui.chatBoxUIs[ChatBoxUI.NOTIFICATION].show();
                     return;
                 }
                 var dataId = item.attr('data-id');
                 if (!dataId || dataId == '') {
                     return;
                 }
-                if (item.attr('data-toggle') == ChatBoxUI.ROOM_MSG) {
-                    if (!webui.chatBoxUIs[ChatBoxUI.ROOM_MSG + dataId]) {
-                        webui.chatBoxUIs[ChatBoxUI.ROOM_MSG + dataId] =
-                            new ChatBoxUI(ChatBoxUI.ROOM_MSG, dataId);
+                if (item.attr('data-toggle') == ChatBoxUI.ROOM) {
+                    if (!webui.chatBoxUIs[ChatBoxUI.ROOM][dataId]) {
+                        webui.chatBoxUIs[ChatBoxUI.ROOM][dataId] =
+                            new ChatBoxUI(ChatBoxUI.ROOM, dataId);
                     }
-                    webui.chatBoxUIs[ChatBoxUI.ROOM_MSG + dataId].show();
+                    webui.chatBoxUIs[ChatBoxUI.ROOM][dataId].show();
                     return;
                 }
-                if (item.attr('data-toggle') == ChatBoxUI.USER_MSG) {
-                    if (!webui.chatBoxUIs[ChatBoxUI.USER_MSG + dataId]) {
-                        webui.chatBoxUIs[ChatBoxUI.USER_MSG + dataId] =
-                            new ChatBoxUI(ChatBoxUI.USER_MSG, dataId);
+                if (item.attr('data-toggle') == ChatBoxUI.CHAT) {
+                    if (!webui.chatBoxUIs[ChatBoxUI.CHAT][dataId]) {
+                        webui.chatBoxUIs[ChatBoxUI.CHAT][dataId] =
+                            new ChatBoxUI(ChatBoxUI.CHAT, dataId);
                     }
-                    webui.chatBoxUIs[ChatBoxUI.USER_MSG + dataId].show();
+                    webui.chatBoxUIs[ChatBoxUI.CHAT][dataId].show();
                     return;
                 }
             });
@@ -584,17 +587,17 @@ var NexTalkWebUI = function() {
         _this.$boxBody = $('#nextalk_content_chatbox>.nextalk-wrap', $cbPage);
         _this.$boxBody.empty();
 
-        if (type == ChatBoxUI.SYS_MSG) {
-            $cbPage.attr('id', ChatBoxUI.SYS_MSG);
+        if (type == ChatBoxUI.NOTIFICATION) {
+            $cbPage.attr('id', ChatBoxUI.NOTIFICATION);
             $('footer', $cbPage).hide();
             _this.avatar = '';
             _this.name = '系统通知';
-        } else if (type == ChatBoxUI.ROOM_MSG) {
-            $cbPage.attr('id', ChatBoxUI.ROOM_MSG + id);
+        } else if (type == ChatBoxUI.ROOM) {
+            $cbPage.attr('id', ChatBoxUI.ROOM + '_' + id);
             _this.avatar = '';
             _this.name = '我的房间';
-        } else if (type == ChatBoxUI.USER_MSG) {
-            $cbPage.attr('id', ChatBoxUI.USER_MSG + id);
+        } else if (type == ChatBoxUI.CHAT) {
+            $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
             _this.avatar = IM.getInstance().getBuddy(id).avatar;
             _this.name = IM.getInstance().getBuddy(id).nick;
             _this.nickname = _this.name;
@@ -611,9 +614,9 @@ var NexTalkWebUI = function() {
     };
 
     // 聊天盒子类型
-    ChatBoxUI['SYS_MSG'] = 'sys_msg';
-    ChatBoxUI['USER_MSG'] = 'user_msg';
-    ChatBoxUI['ROOM_MSG'] = 'room_msg';
+    ChatBoxUI.NOTIFICATION = IM.msgType.NOTIFICATION;
+    ChatBoxUI.CHAT = IM.msgType.CHAT;
+    ChatBoxUI.ROOM = IM.msgType.ROOM;
 
     ChatBoxUI.prototype.show = function() {
         var _this = this;
@@ -648,7 +651,7 @@ var NexTalkWebUI = function() {
         _this.$boxBody.append(html);
         
         var msg = {
-            type : 'chat',
+            type : _this.type,
             from : currUser.id,
             to : _this.id,
             nick : currUser.nick,

@@ -390,6 +390,7 @@ html, body {
     height: 38px !important;
     width: 38px !important;
     border-radius: 50%;
+    background-color: white;
 }
 
 .mzen-bar-nav .nextalk-user a.available {

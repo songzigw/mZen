@@ -6,13 +6,10 @@
  *
  */
 
-var NexTalkWebIM = function() {
-};
-(function(NexTalkWebIM, undefined) {
+(function(window, undefined) {
 
-    // -------------------------
-    //"use strict";
-
+    // "use strict";
+    
     var JSON = window.JSON
             || (function() {
                 var chars = {
@@ -1355,9 +1352,13 @@ var NexTalkWebIM = function() {
         }
     };
     ClassEvent.on(Channel);
-    
+
+    var NexTalkWebIM = function() {};
+
     var IM = NexTalkWebIM;
     ClassEvent.on(IM);
+    window.NexTalkWebIM = IM;
+    
     extend(IM, {
         log : log,
         idsArray : idsArray,
@@ -1384,24 +1385,6 @@ var NexTalkWebIM = function() {
     /** 版本号 */
     IM.VERSION = IM.version = IM.v = "0.0.1";
 
-    /** 连接情形 */
-    // IM.connState = {};
-    // (function(connState) {
-    // connState[connState["ACCEPTED"] = 0] = "ACCEPTED";
-    // connState[connState["UNACCEPTABLE_PROTOCOL_VERSION"] = 1] =
-    // "UNACCEPTABLE_PROTOCOL_VERSION";
-    // connState[connState["IDENTIFIER_REJECTED"] = 2] = "IDENTIFIER_REJECTED";
-    // connState[connState["SERVER_UNAVAILABLE"] = 3] = "SERVER_UNAVAILABLE";
-    // connState[connState["TOKEN_INCORRECT"] = 4] = "TOKEN_INCORRECT";
-    // connState[connState["NOT_AUTHORIZED"] = 5] = "NOT_AUTHORIZED";
-    // connState[connState["REDIRECT"] = 6] = "REDIRECT";
-    // connState[connState["PACKAGE_ERROR"] = 7] = "PACKAGE_ERROR";
-    // connState[connState["APP_BLOCK_OR_DELETE"] = 8] = "APP_BLOCK_OR_DELETE";
-    // connState[connState["BLOCK"] = 9] = "BLOCK";
-    // connState[connState["TOKEN_EXPIRE"] = 10] = "TOKEN_EXPIRE";
-    // connState[connState["DEVICE_ERROR"] = 11] = "DEVICE_ERROR";
-    // })(IM.connState);
-
     /** 连接状态 */
     IM.connStatus = {};
     (function(connStatus) {
@@ -1415,14 +1398,18 @@ var NexTalkWebIM = function() {
         connStatus[connStatus["DISCONNECTED"] = 2] = "DISCONNECTED";
     })(IM.connStatus);
 
-    /** 会话通知状态 */
-    IM.conversationNoticeStatus = {};
     /** 会话类型 */
     IM.conversationType = {};
-    /** 搜索类型 */
-    IM.searchType = {};
-    /** 发送状态 */
-    IM.sentStatus = {};
+    
+    /** 消息类型 */
+    IM.msgType = {
+        /** 私聊 */
+        CHAT : 'chat',
+        /** 聊天室 */
+        ROOM : 'room',
+        /** 通知 */
+        NOTIFICATION : 'notification'
+    };
 
     /** 错误码 */
     IM.errCode = {};
@@ -1449,24 +1436,6 @@ var NexTalkWebIM = function() {
         /** 离线 */
         show[show["UNAVAILABLE"] = "unavailable"] = "UNAVAILABLE";
     })(IM.show);
-
-    /** 消息类型 */
-    IM.MessageType = {
-        TextMessage : "TextMessage",
-        ImageMessage : "ImageMessage",
-        DiscussionNotificationMessage : "DiscussionNotificationMessage",
-        VoiceMessage : "VoiceMessage",
-        RichContentMessage : "RichContentMessage",
-        HandshakeMessage : "HandshakeMessage",
-        UnknownMessage : "UnknownMessage",
-        SuspendMessage : "SuspendMessage",
-        LocationMessage : "LocationMessage",
-        InformationNotificationMessage : "InformationNotificationMessage",
-        ContactNotificationMessage : "ContactNotificationMessage",
-        ProfileNotificationMessage : "ProfileNotificationMessage",
-        CommandNotificationMessage : "CommandNotificationMessage",
-        CommandMessage : "CommandMessage"
-    };
 
     /** 默认配置信息 */
     IM.DEFAULTS = {
@@ -1520,23 +1489,9 @@ var NexTalkWebIM = function() {
          * rooms 房间列表
          */
         _dataAccess : {},
+
         /** 连接状态 */
         connStatus : IM.connStatus.DISCONNECTED,
-        /** 消息存储 */
-        messageAccess : {
-            // 未读消息总数
-            notTotal : 0,
-            
-            // 聊天室消息
-            roomMsg : {
-                notRead : 0
-            },
-            
-            // 私聊消息
-            chatMsg : {
-                notRead : 0
-            }
-        },
 
         _serverTime : function(time) {
             this._dataAccess.serverTime = time;
@@ -1611,6 +1566,95 @@ var NexTalkWebIM = function() {
             return this._dataAccess.rooms;
         }
     });
+    
+    /**
+     * 消息数据
+     */
+    IM.prototype._msgData = {
+        // 私聊消息
+        chat : {
+            
+        },
+        // 聊天室消息
+        room : {
+            
+        },
+        
+        get : function(msgType, key) {
+            return this[msgType][key];
+        },
+        
+        set : function(msgType, key, value) {
+            var _this = this;
+            if (typeof value == "object") {
+                _this[msgType][key] = value;
+            }
+        }
+    };
+    /**
+     * 保存和对方的通话
+     */
+    IM.prototype._saveMsg = function(msgType, other, msg) {
+        var _this = this;
+        // 获取对话消息
+        var dInfo = _this._msgData.get(msgType, other);
+        if (!dInfo) {
+            dInfo = new DialogInfo(msgType, other);
+            _this._msgData.set(msgType, other);
+        }
+        dInfo.add(msg);
+    };
+    /**
+     * 取所有的聊天记录
+     */
+    IM.prototype.getAllMsg = function(msgType, other) {
+        var _this = this;
+        // 获取对话消息
+        var dInfo = _this._msgData.get(msgType, other);
+        if (!dInfo) {
+            return [];
+        }
+        return dInfo.getAll();
+    };
+    
+    /**
+     * 会话列表
+     */
+    IM.prototype.conversations = {
+        
+    };
+
+    /**
+     * 和对方的对话信息
+     */
+    var DialogInfo = function(msgType, other) {
+        var _this = this;
+        _this.msgType = msgType;
+        // 未读消息数
+        _this.notCount = 0;
+        // 对话的对象
+        _this.other = other;
+        // 对话的记录
+        _this.record = [];
+    }
+    /**
+     * 保存和对方的通话
+     */
+    DialogInfo.prototype.add = function(msg) {
+        
+    };
+    /**
+     * 获取所有的往来通话
+     */
+    DialogInfo.prototype.getAll = function() {
+        
+    };
+    /**
+     * 获取最后一条通话记录
+     */
+    DialogInfo.prototype.getLast = function() {
+        
+    };
 
     /**
      * 初始化NexTalkWebIM
@@ -1624,7 +1668,7 @@ var NexTalkWebIM = function() {
         });
 
         // 初始化Web业务服务API
-        IM.WebApi.init({
+        IM.WebAPI.init({
             path : options.path,
             dataType : 'json'
         });
@@ -1726,25 +1770,20 @@ var NexTalkWebIM = function() {
         // 接收消息
         _this.bind("messages", function(ev, data) {
             console.log("messages: " + JSON.stringify(data));
-            
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
                 msg.read = false;
-                if (msg.type == 'chat') {
-                    var tos = _this.messageAccess.chaMsg[msg.to];
-                    if (!tos) {
-                        tos = _this.messageAccess.chaMsg[msg.to] = [];
-                    }
-                    tos.push(msg);
-                } else if (msg.type == 'room') {
-                    var tos = _this.messageAccess.roomMsg[msg.to];
-                    if (!tos) {
-                        tos = _this.messageAccess.roomMsg[msg.to] = [];
-                    }
-                    tos.push(msg);
+                switch (msg.type) {
+                    case IM.msgType.CHAT:
+                        _this._saveMsg(IM.msgType.CHAT, msg.from, msg);
+                        break;
+    
+                    case IM.msgType.ROOM:
+                        _this._saveMsg(IM.msgType.ROOM, msg.from, msg);
+                    default:
+                        break;
                 }
             }
-            
             _this.receiveMsgListener.onMessage(ev, data);
         });
         // 输入状态
@@ -1796,7 +1835,8 @@ var NexTalkWebIM = function() {
     IM.prototype.connectServer = function(params) {
         var _this = this, options = _this.options;
         // 如果服务器已经连上
-        if (_this.connStatus == IM.connStatus.CONNECTED) {
+        if (_this.connStatus == IM.connStatus.CONNECTED ||
+                _this.connStatus == IM.connStatus.CONNECTING) {
             return;
         }
 
@@ -1875,6 +1915,10 @@ var NexTalkWebIM = function() {
         }
         
         // 检查一下管道连接
+        if (self.connStatus == IM.connStatus.CONNECTING) {
+            callback();
+            return;
+        }
         if (self.connStatus != IM.connStatus.CONNECTED) {
             self.status.set("s", show);
             var id = self.getCurrUser().id;
@@ -1891,7 +1935,7 @@ var NexTalkWebIM = function() {
             return;
         }
         
-        var api = IM.WebApi.getInstance();
+        var api = IM.WebAPI.getInstance();
         var params = {
             ticket : connection.ticket
         };
@@ -1935,7 +1979,7 @@ var NexTalkWebIM = function() {
 
                     // 触发正在登入事件
                     _this.trigger("login", [ params ]);
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     api.online(params, function(ret, err) {
                         window.setTimeout(function() {
                             if (ret) {
@@ -1967,7 +2011,7 @@ var NexTalkWebIM = function() {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = extend({}, msg);
                     api.presence(params, function(ret, err) {
                         if (ret == "ok") {
@@ -1981,10 +2025,11 @@ var NexTalkWebIM = function() {
                     });
                 },
 
-                sendMessage : function(msg, callback) {
+                sendMessage : function(msg) {
                     var self = this;
 
-                    var api = IM.WebApi.getInstance();
+                    self._saveMsg(msg.type, msg.to, msg);
+                    var api = IM.WebAPI.getInstance();
                     var params = extend({
                         ticket : self.getConnection().ticket
                     }, msg);
@@ -1995,7 +2040,7 @@ var NexTalkWebIM = function() {
                     var self = this;
                     msg.ticket = self.getConnection().ticket;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = extend({}, msg);
                     api.status(params, callback);
                 },
@@ -2005,7 +2050,7 @@ var NexTalkWebIM = function() {
                     if (!self.getConnection() || !self.getConnection().ticket)
                         return;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : self.getConnection().ticket
                     };
@@ -2062,7 +2107,7 @@ var NexTalkWebIM = function() {
                 });
                 var _new = extend({}, _old, options);
                 self.data = _new;
-                IM.WebApi.getInstance().setting({
+                IM.WebAPI.getInstance().setting({
                     data : JSON.stringify(_new)
                 });
             }
@@ -2153,7 +2198,7 @@ var NexTalkWebIM = function() {
                     if (!v)
                         return;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     api.remove_buddy({
                         id : id
                     }, function(ret, err) {
@@ -2233,7 +2278,7 @@ var NexTalkWebIM = function() {
                     ids = idsArray(ids);
                     if (ids.length) {
                         var self = this;
-                        var api = IM.WebApi.getInstance();
+                        var api = IM.WebAPI.getInstance();
                         var params = {
                             ids : ids.join(",")
                         };
@@ -2250,7 +2295,7 @@ var NexTalkWebIM = function() {
                 search : function(val, callback) {
                     var self = this;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         nick : val
                     };
@@ -2320,7 +2365,7 @@ var NexTalkWebIM = function() {
                 invite : function(id, nick, members, callback) {
                     var self = this;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : IM.getInstance().getConnection().ticket,
                         id : id,
@@ -2339,7 +2384,7 @@ var NexTalkWebIM = function() {
                 join : function(id, nick, callback) {
                     var self = this, d = self.dataHash[id];
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : IM.getInstance().getConnection().ticket,
                         id : id,
@@ -2358,7 +2403,7 @@ var NexTalkWebIM = function() {
                     user = IM.getInstance().getCurrUser();
                     
                     if (d) {
-                        var api = IM.WebApi.getInstance();
+                        var api = IM.WebAPI.getInstance();
                         var params = {
                             ticket : IM.getInstance().getConnection().ticket,
                             id : id,
@@ -2383,7 +2428,7 @@ var NexTalkWebIM = function() {
                                 list.push(v.id);
                         });
 
-                        var api = IM.WebApi.getInstance();
+                        var api = IM.WebAPI.getInstance();
                         var params = {
                             ticket : IM.getInstance().getConnection().ticket,
                             id : id
@@ -2405,7 +2450,7 @@ var NexTalkWebIM = function() {
                                 list.push(v.id);
                         });
 
-                        var api = IM.WebApi.getInstance();
+                        var api = IM.WebAPI.getInstance();
                         var params = {
                             ticket : IM.getInstance().getConnection().ticket,
                             id : id
@@ -2445,7 +2490,7 @@ var NexTalkWebIM = function() {
                 loadMember : function(id) {
                     var self = this;
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : IM.getInstance().getConnection().ticket,
                         id : id
@@ -2563,7 +2608,7 @@ var NexTalkWebIM = function() {
                     self.data[type][id] = [];
                     self.trigger("clear", [ type, id ]);
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : IM.getInstance().getConnection().ticket,
                         type : type,
@@ -2602,7 +2647,7 @@ var NexTalkWebIM = function() {
                     var self = this;
                     self.data[type][id] = [];
 
-                    var api = IM.WebApi.getInstance();
+                    var api = IM.WebAPI.getInstance();
                     var params = {
                         ticket : IM.getInstance().getConnection().ticket,
                         type : type,
@@ -2617,16 +2662,17 @@ var NexTalkWebIM = function() {
             });
 
     /**
-     * Web业务服务API
+     * Web业务服务API (IM.WebAPI)
      */
-    IM.WebApi = function(options) {
-        this.options = extend({}, IM.WebApi.DEFAULTS, options || {});
-    };
-    /**
-     * Web业务服务API
-     */
-    (function(WebApi) {
-        var API = WebApi;
+    (function(IM, undefined) {
+
+        IM.WebAPI = function(options) {
+            this.options = extend({},
+                    IM.WebAPI.DEFAULTS,
+                    options || {});
+        };
+
+        var API = IM.WebAPI;
         API.DEFAULTS = {
             callback : null,
             path : "/",
@@ -2677,7 +2723,7 @@ var NexTalkWebIM = function() {
          */
         API.getInstance = function() {
             if (!API._instance) {
-                throw new Error("NexTalkWebIM.WebApi is not initialized.");
+                throw new Error("NexTalkWebIM.WebAPI is not initialized.");
             }
             return API._instance;
         };
@@ -2736,6 +2782,6 @@ var NexTalkWebIM = function() {
         };
         extend(API.prototype, methods);
 
-    })(IM.WebApi);
+    })(IM);
 
-})(NexTalkWebIM);
+})(window);

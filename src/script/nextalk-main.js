@@ -60,7 +60,7 @@
         }, 5);
     }
 
-    IM.WebApi.route(nextalkConfig.route);
+    IM.WebAPI.route(nextalkConfig.route);
     UI.init(nextalkConfig.appId, {
         path : nextalkConfig.apiPath
     });
