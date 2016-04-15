@@ -1592,7 +1592,7 @@
         }
     };
     /**
-     * 保存和对方的通话
+     * 保存通话记录
      */
     IM.prototype._saveMsg = function(msgType, other, msg) {
         var _this = this;
@@ -1638,10 +1638,15 @@
         _this.record = [];
     }
     /**
-     * 保存和对方的通话
+     * 保存通话记录
      */
     DialogInfo.prototype.add = function(msg) {
-        
+        var _this = this, webim = IM.getInstance();
+        var uid = webim.getCurrUser().id;
+        if (msg.from != uid) {
+            _this.notCount++;
+        }
+        _this.record[_record.length] = msg;
     };
     /**
      * 获取所有的往来通话
