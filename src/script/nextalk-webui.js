@@ -359,14 +359,15 @@
         },
         
         handlerMain : function() {
-            var _this = this, els = _this.els, webim = _this.webim;
+            var _this = this, els = _this.els;
             els.$mainCurrUser.click(function() {
                 $('.dropdown-menu', $(this)).slideToggle();
             });
             $('.dropdown-menu li', els.$mainCurrUser).each(function(i, el) {
                 $(el).click(function() {
-                    var show = $(el).attr('data-show');
                     _this.showTask.start();
+                    var show = $(el).attr('data-show');
+                    var webim = _this.webim
                     if (show == IM.show.UNAVAILABLE) {
                         webim.offline(function() {
                             _this.handlerAvatar();
@@ -414,7 +415,6 @@
             _this.toggleMainBuddies();
             // settings
             _this.toggleMainSettings();
-            
         },
         
         handlerAvatar : function() {
@@ -540,7 +540,7 @@
     function buddyHTML(u) {
         var path = IM.getInstance().options.path;
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
-                + 'data-toggle="' + ChatBoxUI.NOTIFICATION + '" data-id="' + u.id + '">'
+                + 'data-toggle="' + ChatBoxUI.CHAT + '" data-id="' + u.id + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>' + showHTML(u) +' </div></li>';

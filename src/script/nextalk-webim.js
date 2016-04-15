@@ -1599,7 +1599,7 @@
         var dInfo = _this._msgData.get(msgType, other);
         if (!dInfo) {
             dInfo = new DialogInfo(msgType, other);
-            _this._msgData.set(msgType, other);
+            _this._msgData.set(msgType, other, dInfo);
         }
         dInfo.add(msg);
     };
@@ -1645,7 +1645,7 @@
         if (msg.from != uid) {
             _this.notCount++;
         }
-        _this.record[_record.length] = msg;
+        _this.record[_this.record.length] = msg;
     };
     /**
      * 获取所有的往来通话
@@ -2029,7 +2029,7 @@
                     });
                 },
 
-                sendMessage : function(msg) {
+                sendMessage : function(msg, callback) {
                     var self = this;
 
                     self._saveMsg(msg.type, msg.to, msg);
