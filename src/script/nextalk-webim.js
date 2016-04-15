@@ -1802,7 +1802,7 @@ var NexTalkWebIM = function() {
 
         // 连接前请先登入成功
         _this.login(params, function() {
-            // 准备成功，开始连接
+            // 登入成功，开始连接
             _this._connectServer();
         });
     }
@@ -1921,8 +1921,7 @@ var NexTalkWebIM = function() {
                                 room_ids.push(k.slice(2));
                         });
                     }
-                    if (status.get("s") 
-                            && status.get("s") == IM.show.UNAVAILABLE) {
+                    if (status.get("s") == IM.show.UNAVAILABLE) {
                         status.set("s", IM.show.AVAILABLE);
                     } 
                     params = extend({
@@ -1946,11 +1945,11 @@ var NexTalkWebIM = function() {
                                     _this._currUser(ret.user);
                                     _this._buddies(ret.buddies);
                                     _this._rooms(ret.rooms);
+                                    // 触发登入成功事件
+                                    _this.trigger("login.win", [ ret ]);
                                     if (typeof callback == "function") {
                                         callback();
                                     }
-                                    // 触发登入成功事件
-                                    _this.trigger("login.win", [ ret ]);
                                 } else {
                                     // 触发登入失败事件
                                     _this.trigger("login.fail", [ ret.error_msg ]);
