@@ -1533,7 +1533,7 @@ var NexTalkWebIM = function() {
             },
             
             // 私聊消息
-            privateMsg : {
+            chatMsg : {
                 notRead : 0
             }
         },
@@ -1724,8 +1724,27 @@ var NexTalkWebIM = function() {
         });
 
         // 接收消息
-        _this.bind("message", function(ev, data) {
-            console.log("message: " + JSON.stringify(data));
+        _this.bind("messages", function(ev, data) {
+            console.log("messages: " + JSON.stringify(data));
+            
+            for (var i = 0; i < data.length; i++) {
+                var msg = data[i];
+                msg.read = false;
+                if (msg.type == 'chat') {
+                    var tos = _this.messageAccess.chaMsg[msg.to];
+                    if (!tos) {
+                        tos = _this.messageAccess.chaMsg[msg.to] = [];
+                    }
+                    tos.push(msg);
+                } else if (msg.type == 'room') {
+                    var tos = _this.messageAccess.roomMsg[msg.to];
+                    if (!tos) {
+                        tos = _this.messageAccess.roomMsg[msg.to] = [];
+                    }
+                    tos.push(msg);
+                }
+            }
+            
             _this.receiveMsgListener.onMessage(ev, data);
         });
         // 输入状态
@@ -1836,7 +1855,7 @@ var NexTalkWebIM = function() {
                     msgs.push(msg);
                 }
             }
-            msgs.length && self.trigger("message", [ msgs ]);
+            msgs.length && self.trigger("messages", [ msgs ]);
             events.length && self.trigger("event", [ events ]);
         }
         data.presences && data.presences.length

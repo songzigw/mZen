@@ -328,9 +328,15 @@ var NexTalkWebUI = function() {
             var _this = this;
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
-                var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.USER_MSG + msg.from];
-                if (chatBoxUI) {
-                    chatBoxUI.receive(msg);
+                if (msg.type == 'chat') {
+                    var chatBoxUI = _this.chatBoxUIs[ChatBoxUI.USER_MSG + msg.from];
+                    if (chatBoxUI) {
+                        chatBoxUI.receive(msg);
+                        msg.read = true;
+                    }
+                    // 处理会话通知
+                } else if (msg.type == 'room') {
+                    // 处理会话通知
                 }
             }
         },
