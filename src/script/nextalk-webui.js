@@ -637,7 +637,7 @@
 
         var hh = els.$mainHeader.height();
         var fh = els.$mainFooter.height();
-        els.$mainPage.height(wh);
+        // els.$mainPage.height(wh);
         els.$mainContent.height(wh - hh - fh - 1);
 
         if ($.isFunction($.fn.perfectScrollbar)) {
