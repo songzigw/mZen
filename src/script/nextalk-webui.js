@@ -502,12 +502,15 @@
         },
         
         loadConversations : function(msgType, other, msg) {
-            if (typeof msgType == 'undefined')
-                return;
-            
-            //???
             var _this = this, els = _this.els, webim = _this.webim;
             var $frameMessage = els.$frameMessage;
+            
+            if (typeof msgType == 'undefined') {
+                $('.mzen-tips-warning', $frameMessage).show();
+                return;
+            }
+            
+            //???
             var $items = $('.nextalk-message-items', $frameMessage);
             
             $('>li', $items).each(function(i, el) {
@@ -632,6 +635,7 @@
             els.$mainPage.width(270);
         }
 
+        els.$mainPage.height(ww);
         var hh = els.$mainHeader.height();
         var fh = els.$mainFooter.height();
         els.$mainContent.height(wh - hh - fh - 1);
@@ -653,19 +657,16 @@
         if (ww <= 320) {
             $chatboxPage.width(ww);
         } else {
-            $chatboxPage.width(ww - 270 - 1);
+            $chatboxPage.width(ww - 270 - 3);
         }
 
         var hh = $('header', $chatboxPage).height();
         var fh = $('footer', $chatboxPage).height();
         var $chatboxContent = $('#nextalk_content_chatbox', $chatboxPage);
-        $chatboxContent.height(wh - hh - fh);
+        $chatboxContent.height(wh - hh - fh - 1);
         
         if ($.isFunction($.fn.perfectScrollbar)) {
             setTimeout(function() {
-                // $chatboxContent.perfectScrollbar({
-                //     wheelPropagation : false
-                // });
                 $chatboxContent.css('overflow', 'auto');
             }, 1);
         }
