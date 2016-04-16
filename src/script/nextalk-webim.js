@@ -1409,6 +1409,8 @@
         /** 通知 */
         NOTIFICATION : 'notification'
     };
+    
+    IM.name.NOTIFICATION = '系统通知';
 
     /** 错误码 */
     IM.errCode = {};
@@ -1603,19 +1605,16 @@
         }
         dInfo.add(msg);
     };
-    /**
-     * 取所有的聊天记录
-     */
-    IM.prototype.getAllMsg = function(msgType, other) {
+    IM.prototype.getDialogInfo = function(msgType, other) {
         var _this = this;
         // 获取对话消息
         var dInfo = _this._msgData.get(msgType, other);
-        if (!dInfo) {
-            return [];
-        }
-        return dInfo.getAll();
-    };
-    
+        if (!dInfo)
+            return undefined;
+
+        return dInfo;
+    }    
+
     /**
      * 会话列表
      */
@@ -1633,6 +1632,21 @@
         _this.notCount = 0;
         // 对话的对象
         _this.other = other;
+        _this.timestamp = null;
+        
+        var path = IM.getInstance().options.path;
+        if (msgType ==IM.msgType.NOTIFICATION) {
+            _this.name = IM.name.NOTIFICATION;
+            _this.avatar = '../imgs/messagescenter_notice.png';
+        } else if (msgType == IM.msgType.CHAT) {
+            var buddy = IM.getInstance().getBuddy(other);
+            _this.name = buddy.nick;
+            _this.avatar = path + buddy.avatar;
+        } else if (msgType == IM.msgType.CHAT) {
+            _this.name = '房间';
+            _this.avatar = '../imgs/group.gif';
+        }
+        
         // 对话的记录
         _this.record = [];
     }
@@ -1645,19 +1659,23 @@
         if (msg.from != uid) {
             _this.notCount++;
         }
+        _this.timestamp = msg.timestamp;
         _this.record[_this.record.length] = msg;
     };
     /**
      * 获取所有的往来通话
      */
     DialogInfo.prototype.getAll = function() {
-        
+        return this.record;
     };
     /**
      * 获取最后一条通话记录
      */
     DialogInfo.prototype.getLast = function() {
-        
+        if (this.record.length <= 0)
+            return undefined;
+
+        return this.record[this.record.length - 1];
     };
 
     /**

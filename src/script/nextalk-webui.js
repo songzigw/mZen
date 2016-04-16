@@ -444,7 +444,7 @@
         toggleMainMessage : function() {
             var _this = this, els = this.els;
             var $frameMessage = els.$frameMessage;
-            var $items = $('nextalk-message-items', $frameMessage).empty();
+            var $items = $('.nextalk-message-items', $frameMessage).empty();
             _this._toggleConversations($('>li', $items));
         },
         
@@ -502,18 +502,34 @@
         },
         
         loadConversations : function(msgType, other, msg) {
+            if (typeof msgType == 'undefined')
+                return;
+            
             //???
-            var _this = this, els = _this.els;
+            var _this = this, els = _this.els, webim = _this.webim;
             var $frameMessage = els.$frameMessage;
-            var $items = $('nextalk-message-items', $frameMessage);
+            var $items = $('.nextalk-message-items', $frameMessage);
+            
+            $('>li', $items).each(function(i, el) {
+                var $el = $(el);
+                if ($el.attr('data-toggle') == msgType
+                        && $el.attr('data-id') == other) {
+                    $el.remove();
+                    // break
+                    return false;
+                }
+            });
+            var dInfo = webim.getDialogInfo(msgType, other);
+            conversationHTML(dInfo, msg.body).appendTo($items);
+            
             _this._toggleConversations($('>li', $items));
         },
         
         loadBuddies : function() {
-            var _this = this, els = _this.els;
+            var _this = this, els = _this.els, webim = _this.webim;
             var $frameBuddies = els.$frameBuddies;
             var $items = $('ul.mzen-user-view', $frameBuddies).empty();
-            var buddies = _this.webim.getBuddies();
+            var buddies = webim.getBuddies();
             if (buddies && buddies.length > 0) {
                 $('.mzen-tips-warning', $frameBuddies).hide();
                 for (var i = 0; i < buddies.length; i++) {
@@ -527,14 +543,30 @@
 
     });
     
-    function conversationHTML() {
-        var html = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover" data-toggle="chat" data-id="">'
-                + '<img class="mzen-img-object mzen-pull-left" src="../imgs/head_def.png">'
+    function conversationHTML(dInfo, text) {
+        var html = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover"'
+                + ' data-toggle="' + dInfo.msgType + '" ' + getDataId(dInfo.msgType, dInfo.other) + '>'
+                + '<img class="mzen-img-object mzen-pull-left" src="' + dInfo.avatar + '">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
-                + '<label>张三</label>'
-                + '<em class="mzen-pull-right msg-time">2016/1/3</em>'
-                + '<span class="mzen-badge mzen-badge-danger">12</span>'
-                + '<p class="mzen-ellipsis-2">[文本消息]:哈哈哈哈哈</p>' + '</div>' + '</li>';
+                + '<label>' + dInfo.name + '</label>'
+                + '<em class="mzen-pull-right msg-time">'+ dInfo.timestamp +'</em>'
+                + getNotCount(dInfo.notCount)
+                + '<p class="mzen-ellipsis-2">'+ text +'</p></div></li>';
+
+        return $(html);
+    }
+    
+    function getDataId(msgType, other) {
+        if (msgType == IM.msgType.NOTIFICATION)
+            return '';
+
+        return 'data-id=' + other;
+    }
+    function getNotCount(notCount) {
+        if (notCount == 0)
+            return '';
+
+        return '<span class="mzen-badge mzen-badge-danger">'+ notCount +'</span>';
     }
 
     function buddyHTML(u) {
@@ -641,11 +673,11 @@
         if (type == ChatBoxUI.NOTIFICATION) {
             $cbPage.attr('id', ChatBoxUI.NOTIFICATION);
             $('footer', $cbPage).hide();
-            _this.avatar = '';
-            _this.name = '系统通知';
+            _this.avatar = '../imgs/messagescenter_notice.png';
+            _this.name = IM.name.NOTIFICATION;
         } else if (type == ChatBoxUI.ROOM) {
             $cbPage.attr('id', ChatBoxUI.ROOM + '_' + id);
-            _this.avatar = '';
+            _this.avatar = '../imgs/group.gif';
             _this.name = '我的房间';
         } else if (type == ChatBoxUI.CHAT) {
             $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
