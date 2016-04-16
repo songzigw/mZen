@@ -551,7 +551,7 @@
                 + '<label>' + dInfo.name + '</label>'
                 + '<em class="mzen-pull-right msg-time">'+ dInfo.timestamp +'</em>'
                 + getNotCount(dInfo.notCount)
-                + '<p class="mzen-ellipsis-2">'+ text +'</p></div></li>';
+                + '<p class="mzen-ellipsis-1">'+ text +'</p></div></li>';
 
         return $(html);
     }
