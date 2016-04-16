@@ -9,15 +9,7 @@
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body style="overflow: hidden;">
-        <div class="mzen-tips nextalk-msg-box mzen-tips-info" style="display: none;">
-            <div class="mzen-tips-content mzen-ellipsis-1">
-                <i class="mzen-iconfont mzen-icon-warnfill"></i>
-                <span>...</span>
-                <i class="mzen-iconfont mzen-icon-roundclosefill"></i>
-            </div>
-        </div>
-        
-        <div class="nextalk-page nextalk-screen nextalk-page-login"
+        <div class="nextalk-page nextalk-screen-full nextalk-page-login"
             id="nextalk_page_init">
             <div class="mzen-content
                 mzen-flex-col mzen-flex-center">
@@ -25,7 +17,7 @@
             <p>一起来聊聊</p></div>
         </div>
         
-        <div class="nextalk-page nextalk-screen nextalk-page-login"
+        <div class="nextalk-page nextalk-screen-full nextalk-page-login"
             id="nextalk_page_login"
             style="display: none;">
             <div class="mzen-content
@@ -37,8 +29,16 @@
         </div>
         
         <div class="nextalk-page" id="nextalk_page_main">
+        
+        <div class="mzen-tips mzen-tips-info nextalk-msg-box" style="display: none;">
+            <div class="mzen-tips-content mzen-ellipsis-1">
+                <i class="mzen-iconfont mzen-icon-warnfill"></i>
+                <span>...</span>
+            </div>
+        </div>
+        
         <!--头部集合 BEGIN-->
-        <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
+        <header class="mzen-bar mzen-bar-nav mzen-bar-white">
             <a class="mzen-pull-left mzen-img nextalk-logo">
             <img class="mzen-img-object" src="../imgs/webim.72x72.png" />
             </a>
@@ -72,7 +72,7 @@
         </header>
         <!--头部集合 END-->
         
-        <div class="nextalk-overflow" id="nextalk_content_main">
+        <div class="nextalk-scroll" id="nextalk_content_main">
         
         <div class="mzen-content nextalk-wrap message" id="message_wrap">
 			
@@ -196,7 +196,7 @@
         </div>
         
         <!--底部导航 BEGIN-->
-        <footer class="mzen-nav" id="main-footer">
+        <footer class="mzen-nav">
             <ul class="mzen-bar-tab">
                 <li data-toggle="message" class="active">
                     <span class="mzen-iconfont mzen-icon-message"></span>
@@ -213,19 +213,20 @@
             </ul>
         </footer>
         <!--底部导航 END-->
+        
         </div>
         
-        <div class="nextalk-page nextalk-screen chatbox" id="nextalk_page_chatbox" style="display: none;">
+        <div class="nextalk-page nextalk-screen-right chatbox" id="nextalk_page_chatbox" style="display: none;">
             <!--头部集合 BEGIN-->
-            <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
-                <a tapmode="tap-active" class="mzen-pull-left mzen-tap-active">
+            <header class="mzen-bar mzen-bar-nav mzen-bar-white">
+                <a class="mzen-pull-left mzen-tap-active">
                 <span class="mzen-iconfont mzen-icon-left"></span></a>
                 <div class="mzen-title">
                     张三
                 </div>
             </header>
             <!--头部集合 END-->
-            <div class="nextalk-overflow" id="nextalk_content_chatbox">
+            <div class="nextalk-scroll" id="nextalk_content_chatbox">
                 <div class="mzen-content-padded nextalk-wrap">
                     <p class="mzen-text-center">5-21 20:00</p>
                     <div class="mzen-chat-sender">

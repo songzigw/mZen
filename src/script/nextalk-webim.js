@@ -1397,9 +1397,6 @@
         connStatus[connStatus["DISCONNECTED"] = 2] = "DISCONNECTED";
     })(IM.connStatus);
 
-    /** 会话类型 */
-    IM.conversationType = {};
-    
     /** 消息类型 */
     IM.msgType = {
         /** 私聊 */
@@ -1622,13 +1619,6 @@
     }    
 
     /**
-     * 会话列表
-     */
-    IM.prototype.conversations = {
-        
-    };
-
-    /**
      * 和对方的对话信息
      */
     var DialogInfo = function(msgType, other) {
@@ -1651,7 +1641,7 @@
             } else {
                 _this.avatar = '../imgs/head_def.png';
             }
-        } else if (msgType == IM.msgType.CHAT) {
+        } else if (msgType == IM.msgType.ROOM) {
             _this.name = '房间';
             _this.avatar = '../imgs/group.gif';
         }

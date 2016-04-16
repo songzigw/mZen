@@ -623,7 +623,14 @@
     }
 
     function resizeableMain(els) {
-        var wh = $(window).height();
+        var $w = $(window);
+        var wh = $w.height();
+        var ww = $w.width();
+        if (ww <= 320) {
+            els.$mainPage.width(ww);
+        } else {
+            els.$mainPage.width(270);
+        }
 
         var hh = els.$mainHeader.height();
         var fh = els.$mainFooter.height();
@@ -640,7 +647,14 @@
     }
     
     function resizeableChatbox($chatboxPage) {
-        var wh = $(window).height();
+        var $w = $(window);
+        var wh = $w.height();
+        var ww = $w.width();
+        if (ww <= 320) {
+            $chatboxPage.width(ww);
+        } else {
+            $chatboxPage.width(ww - 270 - 1);
+        }
 
         var hh = $('header', $chatboxPage).height();
         var fh = $('footer', $chatboxPage).height();
