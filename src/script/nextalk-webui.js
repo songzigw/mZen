@@ -572,7 +572,8 @@
 
     function buddyHTML(u) {
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
-                + 'data-toggle="' + ChatBoxUI.CHAT + '" data-id="' + u.id + '">'
+                + 'data-toggle="' + ChatBoxUI.CHAT + '" data-id="'
+                + u.id + '" data-name="' + u.nick + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="'+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>' + showHTML(u) +' </div></li>';
@@ -681,14 +682,13 @@
             _this.name = name;
         } else if (type == ChatBoxUI.CHAT) {
             $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
-            var buddy = IM.getInstance().getBuddy(id);
             _this.name = name;
+            var buddy = IM.getInstance().getBuddy(id);
             if (buddy) {
                 _this.avatar = buddy.avatar;
             } else {
                 _this.avatar = '../imgs/head_def.png';
             }
-            _this.nickname = _this.name;
         }
         $('header>.mzen-title', $cbPage).text(_this.name);
         
@@ -739,7 +739,7 @@
             from : currUser.id,
             to : _this.id,
             nick : currUser.nick,
-            to_nick : _this.nickname,
+            to_nick : _this.name,
             body : body,
             timestamp : IM.nowStamp()
         };
