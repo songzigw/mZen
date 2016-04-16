@@ -524,8 +524,13 @@
             });
             var dInfo = webim.getDialogInfo(msgType, other);
             conversationHTML(dInfo, msg.body).appendTo($items);
-            
-            _this._toggleConversations($('>li', $items));
+            var $cLis = $('>li', $items);
+            _this._toggleConversations($cLis);
+            if ($cLis.length > 0) {
+                $('.mzen-tips-warning', $frameMessage).hide();
+            } else {
+                $('.mzen-tips-warning', $frameMessage).show();
+            }
         },
         
         loadBuddies : function() {

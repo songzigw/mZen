@@ -50,11 +50,6 @@ html, body {
     right: 0px;
 }
 
-.mzen-input-row {
-    padding: 6px 15px;
-    width: 100%;
-}
-
 .mzen-btn-default {
   color: #333333;
   background-color: #FFFFFF;
@@ -103,6 +98,16 @@ html, body {
 }
 
 /*------------------------------------*/
+
+.nextalk.mzen-input-row {
+    width: 100%;
+}
+
+.nextalk.mzen-input-row .mzen-input {
+    height: 55px;
+    border-bottom: 0;
+}
+
 .nextalk-show {
   display: inline-block;
   background: #b7b7b7;
