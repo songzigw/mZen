@@ -2048,7 +2048,8 @@
                     api.presence(params, function(ret, err) {
                         if (ret == "ok") {
                             // save show status
-                            self._currUser({show : msg.show});
+                            //self._currUser({show : msg.show});
+                            self.getCurrUser().show = msg.show;
                             self.status.set("s", msg.show);
                             callback();
                         } else {
