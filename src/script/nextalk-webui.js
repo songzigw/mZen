@@ -635,9 +635,9 @@
             els.$mainPage.width(270);
         }
 
-        els.$mainPage.height(ww);
         var hh = els.$mainHeader.height();
         var fh = els.$mainFooter.height();
+        els.$mainPage.height(wh);
         els.$mainContent.height(wh - hh - fh - 1);
 
         if ($.isFunction($.fn.perfectScrollbar)) {
@@ -657,7 +657,7 @@
         if (ww <= 320) {
             $chatboxPage.width(ww);
         } else {
-            $chatboxPage.width(ww - 270 - 3);
+            $chatboxPage.width(ww - 270 - 5);
         }
 
         var hh = $('header', $chatboxPage).height();

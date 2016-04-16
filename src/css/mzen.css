@@ -2559,7 +2559,6 @@ input.mzen-counter-input {
 .mzen-tips {
     width: 100%;
     position: relative;
-    z-index: 99;
     overflow: hidden;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
