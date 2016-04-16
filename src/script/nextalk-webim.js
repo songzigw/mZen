@@ -1505,6 +1505,8 @@
 
         _currUser : function(user) {
             this._dataAccess.currUser = this._dataAccess.currUser || {};
+            var path = this.options.path;
+            user.avatar = path + user.avatar;
             extend(this._dataAccess.currUser, user);
         },
         
@@ -1514,6 +1516,10 @@
         },
 
         _buddies : function(buddies) {
+            var path = this.options.path;
+            for (var i = 0; i < buddies.length; i++) {
+                buddies[i].avatar = path + buddies[i].avatar;
+            }
             this._dataAccess.buddies = this._dataAccess.buddies || [];
             extend(this._dataAccess.buddies, buddies);
         },
@@ -1634,14 +1640,17 @@
         _this.other = other;
         _this.timestamp = null;
         
-        var path = IM.getInstance().options.path;
         if (msgType ==IM.msgType.NOTIFICATION) {
             _this.name = IM.name.NOTIFICATION;
             _this.avatar = '../imgs/messagescenter_notice.png';
         } else if (msgType == IM.msgType.CHAT) {
             var buddy = IM.getInstance().getBuddy(other);
-            _this.name = buddy.nick;
-            _this.avatar = path + buddy.avatar;
+            if (buddy) {
+                _this.name = buddy.nick;
+                _this.avatar = buddy.avatar;
+            } else {
+                _this.avatar = '../imgs/head_def.png';
+            }
         } else if (msgType == IM.msgType.CHAT) {
             _this.name = '房间';
             _this.avatar = '../imgs/group.gif';
@@ -1657,6 +1666,7 @@
         var _this = this, webim = IM.getInstance();
         var uid = webim.getCurrUser().id;
         if (msg.from != uid) {
+            _this.name = msg.nick;
             _this.notCount++;
         }
         _this.timestamp = msg.timestamp;

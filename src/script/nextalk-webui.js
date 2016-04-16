@@ -420,11 +420,10 @@
         handlerAvatar : function() {
             var _this = this, els = _this.els;
             var show = _this.webim.getShow();
-            var path = _this.options.path;
 
             if (_this.webim.connStatus == IM.connStatus.CONNECTED) {
                 var u = _this.webim.getCurrUser();
-                $('img', els.$mainCurrUser).attr('src', path + u.avatar);
+                $('img', els.$mainCurrUser).attr('src', u.avatar);
                 $('img', els.$mainCurrUser).attr('alt', u.nick);
                 $('a', els.$mainCurrUser).attr('title', u.nick);
             }
@@ -481,10 +480,11 @@
                     if (!dataId || dataId == '') {
                         return;
                     }
+                    var name = item.attr('data-name');
                     if (item.attr('data-toggle') == ChatBoxUI.ROOM) {
                         if (!_this.chatBoxUIs[ChatBoxUI.ROOM][dataId]) {
                             _this.chatBoxUIs[ChatBoxUI.ROOM][dataId] =
-                                new ChatBoxUI(ChatBoxUI.ROOM, dataId);
+                                new ChatBoxUI(ChatBoxUI.ROOM, dataId, name);
                         }
                         _this.chatBoxUIs[ChatBoxUI.ROOM][dataId].show();
                         return;
@@ -492,7 +492,7 @@
                     if (item.attr('data-toggle') == ChatBoxUI.CHAT) {
                         if (!_this.chatBoxUIs[ChatBoxUI.CHAT][dataId]) {
                             _this.chatBoxUIs[ChatBoxUI.CHAT][dataId] =
-                                new ChatBoxUI(ChatBoxUI.CHAT, dataId);
+                                new ChatBoxUI(ChatBoxUI.CHAT, dataId, name);
                         }
                         _this.chatBoxUIs[ChatBoxUI.CHAT][dataId].show();
                         return;
@@ -545,7 +545,8 @@
     
     function conversationHTML(dInfo, text) {
         var html = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover"'
-                + ' data-toggle="' + dInfo.msgType + '" ' + getDataId(dInfo.msgType, dInfo.other) + '>'
+                + ' data-toggle="' + dInfo.msgType + '" ' + getDataId(dInfo.msgType, dInfo.other)
+                + ' data-name="' + dInfo.name + '">'
                 + '<img class="mzen-img-object mzen-pull-left" src="' + dInfo.avatar + '">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<label>' + dInfo.name + '</label>'
@@ -570,10 +571,9 @@
     }
 
     function buddyHTML(u) {
-        var path = IM.getInstance().options.path;
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
                 + 'data-toggle="' + ChatBoxUI.CHAT + '" data-id="' + u.id + '">'
-                + '<img class="mzen-img-object mzen-pull-left" src="'+path+u.avatar+'">'
+                + '<img class="mzen-img-object mzen-pull-left" src="'+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span>' + showHTML(u) +' </div></li>';
         return html;
@@ -656,7 +656,7 @@
         }
     }
 
-    var ChatBoxUI = function(type, id) {
+    var ChatBoxUI = function(type, id, name) {
         var _this = this;
         _this.type = type;
         if (id) {
@@ -678,11 +678,16 @@
         } else if (type == ChatBoxUI.ROOM) {
             $cbPage.attr('id', ChatBoxUI.ROOM + '_' + id);
             _this.avatar = '../imgs/group.gif';
-            _this.name = '我的房间';
+            _this.name = name;
         } else if (type == ChatBoxUI.CHAT) {
             $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
-            _this.avatar = IM.getInstance().getBuddy(id).avatar;
-            _this.name = IM.getInstance().getBuddy(id).nick;
+            var buddy = IM.getInstance().getBuddy(id);
+            _this.name = name;
+            if (buddy) {
+                _this.avatar = buddy.avatar;
+            } else {
+                _this.avatar = '../imgs/head_def.png';
+            }
             _this.nickname = _this.name;
         }
         $('header>.mzen-title', $cbPage).text(_this.name);
@@ -707,10 +712,10 @@
         resizeableChatbox(_this.$cbPage);
     };
     ChatBoxUI.prototype.receive = function(msg) {
-        var _this = this, path = UI.getInstance().options.path;
+        var _this = this;
         var html = '<div class="mzen-chat-receiver">'
             + '<div class="mzen-chat-receiver-avatar">'
-            + '<img src="' + path + _this.avatar + '"></div>'
+            + '<img src="' + _this.avatar + '"></div>'
             + '<div class="mzen-chat-receiver-cont">'
             + '<div class="mzen-chat-left-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
@@ -718,13 +723,12 @@
     };
     ChatBoxUI.prototype._send = function(body) {
         var _this = this, webui = UI.getInstance();
-        var path = webui.options.path;
         var webim = webui.webim;
         var currUser = webim.getCurrUser();
         
         var html = '<div class="mzen-chat-sender">'
             + '<div class="mzen-chat-sender-avatar">'
-            + '<img src="' + path + currUser.avatar + '"></div>'
+            + '<img src="' + currUser.avatar + '"></div>'
             + '<div class="mzen-chat-sender-cont">'
             + '<div class="mzen-chat-right-triangle"></div>'
             + '<span>' + body + '</span></div></div>';
