@@ -638,10 +638,12 @@
         var ww = $w.width();
         if (mobile) {
             els.$mainPage.width(ww);
-        } if (ww <= 320) {
-            els.$mainPage.width(ww);
         } else {
-            els.$mainPage.width(270);
+            if (ww <= 320) {
+                els.$mainPage.width(ww);
+            } else {
+                els.$mainPage.width(270);
+            }
         }
 
         var hh = els.$mainHeader.height();
@@ -667,10 +669,12 @@
         var ww = $w.width();
         if (mobile) {
             $chatboxPage.width(ww);
-        } if (ww <= 320) {
-            $chatboxPage.width(ww);
         } else {
-            $chatboxPage.width(ww - 270 - 5);
+            if (ww <= 320) {
+                $chatboxPage.width(ww);
+            } else {
+                $chatboxPage.width(ww - 270 - 5);
+            }
         }
 
         var hh = $('header', $chatboxPage).height();
@@ -847,6 +851,8 @@
         ticket : 'ticket',
         // APP_KEY 暂时不用
         appKey : 'app_key',
+        /** 是否是手机端 */
+        mobile : false,
         // API根路径
         apiPath : '/',
         // API路由
@@ -873,7 +879,8 @@
         
         _this._loadHTML(function() {
             UI.init(_this.ticket, {
-                path : _this.apiPath
+                path : _this.apiPath,
+                mobile : _this.mobile
             });
             UI.getInstance().connectServer(_this.ticket);
         });
