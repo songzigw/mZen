@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+    content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+<title>Demo Mobile Chat</title>
+</head>
+<body>
+
+    <script type="text/javascript" src="../script/nextalk-main.js"></script>
+    <script type="text/javascript">
+        nextalkConfig = {
+            // API根路径
+            apiPath : '/nextalk-webim-song/',
+            // API路由
+            route : {
+                online : "online.do",
+                offline : "offline.do",
+                buddies : "buddies.do",
+                remove_buddy : "remove_buddy.do",
+                deactivate : "refresh.do",
+                message : "message.do",
+                presence : "presence.do",
+                status : "status.do",
+                setting : "setting.do",
+                history : "history.do",
+                clear : "clear_history.do",
+                download : "download_history.do",
+                // room actions
+                invite : "invite.do",
+                join : "join.do",
+                leave : "leave.do",
+                block : "block.do",
+                unblock : "unblock.do",
+                members : "members.do",
+                // notifications
+                notifications : "notifications.do",
+                // upload files
+                upload : "upload.do"
+            }
+        };
+        nextalkConfig.go();
+    </script>
+
+</body>
+</html>

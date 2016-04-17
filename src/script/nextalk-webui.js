@@ -244,18 +244,18 @@
         });
     };
     
-    UI.prototype.connectServer = function(uid) {
+    UI.prototype.connectServer = function(ticket) {
         var _this = this;
-        _this._uid = uid;
+        _this._ticket = ticket;
         window.setTimeout(function() {
-            _this._connectServer(uid);
+            _this._connectServer(ticket);
         }, 1100);
     };
     
-    UI.prototype._connectServer = function(uid) {
+    UI.prototype._connectServer = function(ticket) {
         var _this = this;
         _this.els.$initPage.hide();
-        _this.webim.connectServer({uid : uid});
+        _this.webim.connectServer({ticket : ticket});
     }
     
     $.extend(UI.prototype, {
@@ -354,7 +354,7 @@
         handlerLogin : function() {
             var _this = this, els = _this.els;
             els.$loginBtn.click(function() {
-                _this._connectServer(_this._uid);
+                _this._connectServer(_this._ticket);
             });
         },
         
@@ -825,3 +825,91 @@
     };
 
 })(NexTalkWebIM);
+
+/**
+ * 程序入口设置
+ */
+(function(UI, IM, undefined) {
+
+    "use strict";
+
+    // NexTalkWebUI初始化参数
+    var main = {
+        // 通信令牌 暂时不用
+        ticket : 'ticket',
+        // APP_KEY 暂时不用
+        appKey : 'app_key',
+        // API根路径
+        apiPath : '/',
+        // API路由
+        route : {}
+    }
+    main.setOps = function(ops) {
+        $.extend(this, ops || {});
+    };
+    main._loadHTML = function(callback) {
+        $.ajax({
+            type : 'GET',
+            cache : false,
+            url : '../html/main.html',
+            dataType : 'html',
+            success : function(ret) {
+                document.write(ret);
+                callback();
+            }
+        });
+    };
+    main.go = function() {
+        var _this = this;
+        
+        _this._loadHTML(function() {
+            UI.init(_this.ticket, {
+                path : _this.apiPath
+            });
+            UI.getInstance().connectServer(_this.ticket);
+        });
+    };
+
+    var top = window.top;
+    if (top != window.self) {
+     // 获取父窗体中的引导程序
+        var iframe = top.nextalkIframe;
+        main.setConfig(iframe.nextalkMain);
+        
+        // 父窗口中的页面元素
+        var nkMain = $('#nextalk_main', top.document);
+        var nkIframe = $('#nextalk_iframe', top.document);
+
+        var nkMainHeight = -42;
+        var nkIframeHeight = -(iframe.panel.height);
+        slideUp(nkMain, nkMainHeight);
+
+        nkMain.find('a').click(function() {
+            nkMain.hide();
+            slideUp(nkIframe, nkIframeHeight);
+        });
+        nkIframe.find('a').click(function() {
+            nkIframe.hide();
+            slideUp(nkMain, nkMainHeight);
+        });
+    }
+
+    function slideUp($el, offset) {
+        $el.css({
+            bottom : offset + 'px'
+        });
+        $el.show();
+        var timerTask = window.setTimeout(function() {
+            $el.css({
+                bottom : '0px'
+            });
+            window.clearTimeout(timerTask);
+        }, 5);
+    }
+
+    IM.WebAPI.route(main.route);
+
+    window.nextalkMain = main;
+
+})(NexTalkWebUI, NexTalkWebIM);
+

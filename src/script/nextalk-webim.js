@@ -1943,8 +1943,8 @@
         }
         if (self.connStatus != IM.connStatus.CONNECTED) {
             self.status.set("s", show);
-            var id = self.getCurrUser().id;
-            self.connectServer({uid : id});
+            var ticket = self.getConnection().ticket;
+            self.connectServer({ticket : ticket});
         } else {
             self._sendPresence({show : show}, callback);
         }

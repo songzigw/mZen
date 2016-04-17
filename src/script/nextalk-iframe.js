@@ -1,5 +1,5 @@
 /*!
- * nextalk-boot.js v1.0.0
+ * nextalk-iframe.js v1.0.0
  * http://nextalk.im/
  *
  * Copyright (c) 2014 NexTalk
@@ -10,29 +10,34 @@
 
     "use strict";
 
-    var boot = {};
-    // 登入用户ID
-    boot.uid = '';
-    boot.appId = '';
-    // API根路径
-    boot.apiPath = '/';
-    // API路由
-    boot.route = {};
-    // 引导程序导入依赖文件需要的根路径
-    boot.path = '/src/';
-
-    boot.panel = {
-        width : 320,
-        height : 530
+    var iframe = {
+        nextalkConfig : {
+            // 通信令牌 暂时不用
+            ticket : 'ticket',
+            // APP_KEY 暂时不用
+            appKey : 'app_key',
+            // API根路径
+            apiPath : '/',
+            // API路由
+            route : {}
+        },
+        // 导入依赖文件需要的根路径
+        path : '/src/',
+        // Iframe 宽高
+        panel : {
+            width : 320,
+            height : 530
+        }
     };
+    win.nextalkIframe = iframe;
 
-    boot._getCss = function() {
+    iframe._getCss = function() {
         var cssLink = '<link rel="stylesheet" type="text/css" href="'
-                + this.path + 'css/nextalk-boot.css" />';
+                + this.path + 'css/nextalk-iframe.css" />';
         return cssLink;
     };
 
-    boot._getBtnHTML = function() {
+    iframe._getBtnHTML = function() {
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
                 + this.path + 'imgs/chat.png" />' + '<span>聊天</span></a>'
@@ -41,7 +46,7 @@
     }
 
     var h = 20;
-    boot._getIfrHTML = function() {
+    iframe._getIfrHTML = function() {
         var ifrHTML = '<div class="nextalk-iframe" id="nextalk_iframe" '
                 + 'style="width:'+ this.panel.width + 'px;height:' + this.panel.height + 'px;">'
                 + '<div class="nextalk-minimize" style="width:100%;heigth:' + h + 'px;">'
@@ -49,17 +54,15 @@
                 + '<div style="width:100%;height:' + (this.panel.height - h) + 'px;">'
                 + '<iframe src="'
                 + this.path
-                + 'nextalk/main.html" name="nextalk_iframe" frameborder="no" scrolling="no"/>'
+                + 'html/iframe.html" name="nextalk_iframe" frameborder="no" scrolling="no"/>'
                 + '</div></div>';
         return ifrHTML;
     };
 
-    boot.start = function() {
+    iframe.go = function() {
         document.write(this._getCss());
         document.write(this._getBtnHTML());
         document.write(this._getIfrHTML());
     }
-
-    win.nextalkBoot = boot;
 
 })(window);
