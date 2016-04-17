@@ -11,7 +11,7 @@
     "use strict";
 
     var iframe = {
-        nextalkConfig : {
+        config : {
             // 通信令牌 暂时不用
             ticket : 'ticket',
             // APP_KEY 暂时不用
@@ -22,7 +22,7 @@
             route : {}
         },
         // 导入依赖文件需要的根路径
-        path : '/src/',
+        path : '/',
         // Iframe 宽高
         panel : {
             width : 320,

@@ -875,7 +875,7 @@
     if (top != window.self) {
      // 获取父窗体中的引导程序
         var iframe = top.nextalkIframe;
-        main.setConfig(iframe.nextalkMain);
+        main.setConfig(iframe.config);
         
         // 父窗口中的页面元素
         var nkMain = $('#nextalk_main', top.document);
