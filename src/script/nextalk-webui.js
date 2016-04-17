@@ -847,9 +847,9 @@
     // NexTalkWebUI初始化参数
     var main = {
         // 通信令牌 暂时不用
-        ticket : 'ticket',
+        //ticket : 'ticket',
         // APP_KEY 暂时不用
-        appKey : 'app_key',
+        //appKey : 'app_key',
         /** 是否是手机端 */
         mobile : false,
         // 引入资源文件的根路径
