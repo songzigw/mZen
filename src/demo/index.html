@@ -6,16 +6,25 @@
 </head>
 <body>
 
-	<a href="javascript:;" target="_blank" onclick="openWin();">弹出聊天框</a>
+	<a href="javascript:;" target="_blank" onclick="openChatBox();">弹出聊天框</a>
 	<a href="b_iframe.html" target="_blank">网页右下角聊天</a>
 	<a href="b_window.html" target="_blank">全屏聊天</a>
 	<a href="mobile.html" target="_blank">手机端聊天</a>
 	<script type="text/javascript">
-        function openWin() {
+        function openChatBox() {
+            openWindow("b_window.html", "window_chat", 790, 500);
+        }
+        function openWindow(url, name, iWidth, iHeight) {
+            // 获得窗口的水平位置
+            var iLeft = (window.screen.width - 10 - iWidth) / 2;
+            // 获得窗口的垂直位置
+            var iTop = (window.screen.height - 30 - iHeight) / 2;
             window.open(
-	            "b_window.html",
-	            "window_chat",
-	            "height=500,width=790,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no");
+	          url,
+	          name,
+	          'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth
+	          + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft
+	          + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
         }
     </script>
 </body>
