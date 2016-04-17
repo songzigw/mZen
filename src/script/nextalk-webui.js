@@ -869,7 +869,12 @@
             url : main.resPath + 'html/main.html',
             dataType : 'html',
             success : function(ret) {
-                $('body').append(ret).css({overflow: 'hidden'});
+                var $ret = $(ret);
+                $('img', $ret).each(function(i, el) {
+                    var $el = $(el);
+                    $el.attr('src', main.resPath + $el.attr('src'));
+                });
+                $('body').append($ret).css({overflow: 'hidden'});
                 //document.write(ret);
                 callback();
             }
