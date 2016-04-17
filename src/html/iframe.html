@@ -4,45 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport"
     content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
-<title>Demo Chat</title>
+<title>Chat</title>
 </head>
 <body>
     <!-- NexTalkWebIM here -->
-    <script type="text/javascript" src="../script/nextalk-iframe.js"></script>
+    <script type="text/javascript" src="../script/nextalk-main.js"></script>
     <script type="text/javascript">
-        nextalkBoot.uid = '1';
-        nextalkBoot.appId = 'app_id';
-        nextalkBoot.apiPath = '/nextalk-webim-song/';
-        nextalkBoot.route = {
-            online : "online.do",
-            offline : "offline.do",
-            buddies : "buddies.do",
-            remove_buddy : "remove_buddy.do",
-            deactivate : "refresh.do",
-            message : "message.do",
-            presence : "presence.do",
-            status : "status.do",
-            setting : "setting.do",
-            history : "history.do",
-            clear : "clear_history.do",
-            download : "download_history.do",
-            // room actions
-            invite : "invite.do",
-            join : "join.do",
-            leave : "leave.do",
-            block : "block.do",
-            unblock : "unblock.do",
-            members : "members.do",
-            // notifications
-            notifications : "notifications.do",
-            // upload files
-            upload : "upload.do"
-        };
-
-        // 引导程序导入依赖文件需要的根路径
-        nextalkBoot.path = '/nextalk-webim-song/src/';
-
-        nextalkBoot.start();
+        nextalkMain.go();
     </script>
 </body>
 </html>
