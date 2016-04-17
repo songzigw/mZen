@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport"
     content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
-<title>Demo Mobile Chat</title>
+<title>Demo Window Chat</title>
 </head>
 <body>
 
     <script type="text/javascript" src="../script/nextalk-main.js"></script>
     <script type="text/javascript">
-        nextalkConfig = {
+        nextalkMain.setConfig({
             // API根路径
             apiPath : '/nextalk-webim-song/',
             // API路由
@@ -39,8 +39,8 @@
                 // upload files
                 upload : "upload.do"
             }
-        };
-        nextalkConfig.go();
+        });
+        nextalkMain.go();
     </script>
 
 </body>
