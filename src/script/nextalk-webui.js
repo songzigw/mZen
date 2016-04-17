@@ -631,10 +631,14 @@
     }
 
     function resizeableMain(els) {
+        var webui = UI.getInstance();
+        var mobile = webui.options.mobile;
         var $w = $(window);
         var wh = $w.height();
         var ww = $w.width();
-        if (ww <= 320) {
+        if (mobile) {
+            els.$mainPage.width(ww);
+        } if (ww <= 320) {
             els.$mainPage.width(ww);
         } else {
             els.$mainPage.width(270);
@@ -656,10 +660,14 @@
     }
     
     function resizeableChatbox($chatboxPage) {
+        var webui = UI.getInstance();
+        var mobile = webui.options.mobile;
         var $w = $(window);
         var wh = $w.height();
         var ww = $w.width();
-        if (ww <= 320) {
+        if (mobile) {
+            $chatboxPage.width(ww);
+        } if (ww <= 320) {
             $chatboxPage.width(ww);
         } else {
             $chatboxPage.width(ww - 270 - 5);
