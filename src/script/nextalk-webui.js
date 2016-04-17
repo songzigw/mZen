@@ -870,6 +870,7 @@
     main.go = function() {
         var _this = this;
         
+        IM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
             UI.init(_this.ticket, {
                 path : _this.apiPath,
@@ -881,7 +882,7 @@
 
     var top = window.top;
     if (top != window.self) {
-     // 获取父窗体中的引导程序
+        // 获取父窗体中的引导程序
         var iframe = top.nextalkIframe;
         main.setConfig(iframe.config);
         
@@ -915,8 +916,6 @@
             window.clearTimeout(timerTask);
         }, 5);
     }
-
-    IM.WebAPI.route(main.route);
 
     window.nextalkMain = main;
 
