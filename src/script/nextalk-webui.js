@@ -854,7 +854,7 @@
             url : '../html/main.html',
             dataType : 'html',
             success : function(ret) {
-                $('body').append(ret);
+                $('body').append(ret).css({overflow: 'hidden'});
                 //document.write(ret);
                 callback();
             }
