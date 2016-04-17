@@ -7,10 +7,15 @@
 <body>
 
 	<a href="javascript:;" target="_blank" onclick="openChatBox();">弹出聊天框</a>
+	<a href="javascript:;" target="_blank" onclick="openChatBox2();">简易聊天框</a>
+	
 	<a href="b_iframe.html" target="_blank">网页右下角聊天</a>
 	<a href="b_window.html" target="_blank">全屏聊天</a>
 	<a href="mobile.html" target="_blank">手机端聊天</a>
 	<script type="text/javascript">
+	    function openChatBox2() {
+            openWindow("/qiaoju/html/chatbox.html", "window_chat", 790, 500);
+        }
         function openChatBox() {
             openWindow("b_window.html", "window_chat", 790, 500);
         }
