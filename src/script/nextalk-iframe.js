@@ -16,13 +16,13 @@
             ticket : 'ticket',
             // APP_KEY 暂时不用
             appKey : 'app_key',
+            // 引入资源文件的根路径
+            resPath : '/src/',
             // API根路径
             apiPath : '/',
             // API路由
             route : {}
         },
-        // 导入依赖文件需要的根路径
-        path : '/',
         // Iframe 宽高
         panel : {
             width : 320,
@@ -33,7 +33,7 @@
 
     iframe._getCss = function() {
         var cssLink = '<link rel="stylesheet" type="text/css" href="'
-                + this.path + 'css/nextalk-iframe.css" />';
+                + this.config.resPath + 'css/nextalk-iframe.css" />';
         return cssLink;
     };
 
