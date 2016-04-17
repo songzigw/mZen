@@ -40,7 +40,7 @@
     iframe._getBtnHTML = function() {
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
-                + this.path + 'imgs/chat.png" />' + '<span>聊天</span></a>'
+                + this.config.resPath + 'imgs/chat.png" />' + '<span>聊天</span></a>'
                 + '<span class="nextalk-alert">5</span></div>';
         return btnHTML;
     }
@@ -53,7 +53,7 @@
                 + '<a class="" title="最小化">-</a></div>'
                 + '<div style="width:100%;height:' + (this.panel.height - h) + 'px;">'
                 + '<iframe src="'
-                + this.path
+                + this.config.resPath
                 + 'html/iframe.html" name="nextalk_iframe" frameborder="no" scrolling="no"/>'
                 + '</div></div>';
         return ifrHTML;
