@@ -651,14 +651,9 @@
         // els.$mainPage.height(wh);
         els.$mainContent.height(wh - hh - fh - 1);
 
-        if ($.isFunction($.fn.perfectScrollbar)) {
-            setTimeout(function() {
-                // els.$mainContent.perfectScrollbar({
-                //     wheelPropagation : false
-                // });
-                els.$mainContent.css('overflow', 'auto');
-            }, 1);
-        }
+        setTimeout(function() {
+            els.$mainContent.css('overflow', 'auto');
+        }, 1);
     }
     
     function resizeableChatbox($chatboxPage) {
@@ -682,11 +677,9 @@
         var $chatboxContent = $('#nextalk_content_chatbox', $chatboxPage);
         $chatboxContent.height(wh - hh - fh - 1);
         
-        if ($.isFunction($.fn.perfectScrollbar)) {
-            setTimeout(function() {
-                $chatboxContent.css('overflow', 'auto');
-            }, 1);
-        }
+        setTimeout(function() {
+            $chatboxContent.css('overflow', 'auto');
+        }, 1);
     }
 
     var ChatBoxUI = function(type, id, name) {
