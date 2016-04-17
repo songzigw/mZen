@@ -21,7 +21,9 @@
     UI.VERSION = UI.version = UI.v = "0.0.1";
 
     /** 默认配置信息 */
-    UI.DEFAULTS = $.extend(IM.DEFAULTS, {});
+    UI.DEFAULTS = $.extend(IM.DEFAULTS, {
+        mobile : false
+    });
 
     // 实例化NexTalkWebUI类对象----------------
 
@@ -62,6 +64,9 @@
     UI.prototype._init = function(appKey, options) {
         var _this = this;
         options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
+        
+        // 初始化NexTalkWebIM
+        _this.webim = IM.init(appKey, options);
 
         // 界面元素定义
         var els = _this.els = {};
@@ -85,7 +90,6 @@
         els.$frameMessage = $('#message_wrap', els.$mainPage).show();
         els.$frameBuddies = $('#buddies_wrap', els.$mainPage).hide();
         els.$frameSettings = $('#settings_wrap', els.$mainPage).hide();
-
         // 聊天盒子界面chatboxPage（这只是一个模板）
         els.$chatboxPage = $('#nextalk_page_chatbox', els.$body);
 
@@ -110,8 +114,6 @@
             _this.trigger('nextalk.resizeable', []);
         });
 
-        // 初始化NexTalkWebIM
-        _this.webim = IM.init(appKey, options);
         _this.webim.setLoginStatusListener({
             onLogin : function(ev, data) {
                 _this.onLogin(ev, data);
@@ -699,11 +701,11 @@
         if (type == ChatBoxUI.NOTIFICATION) {
             $cbPage.attr('id', ChatBoxUI.NOTIFICATION);
             $('footer', $cbPage).hide();
-            _this.avatar = '../imgs/messagescenter_notice.png';
+            _this.avatar = IM.imgs.NOTICE;
             _this.name = IM.name.NOTIFICATION;
         } else if (type == ChatBoxUI.ROOM) {
             $cbPage.attr('id', ChatBoxUI.ROOM + '_' + id);
-            _this.avatar = '../imgs/group.gif';
+            _this.avatar = IM.imgs.GROUP;
             _this.name = name;
         } else if (type == ChatBoxUI.CHAT) {
             $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
@@ -712,7 +714,7 @@
             if (buddy) {
                 _this.avatar = buddy.avatar;
             } else {
-                _this.avatar = '../imgs/head_def.png';
+                _this.avatar = IM.imgs.HEAD;
             }
         }
         $('header>.mzen-title', $cbPage).text(_this.name);
@@ -837,6 +839,10 @@
 (function(UI, IM, undefined) {
 
     "use strict";
+    
+    if (!window.nextalkResPath) {
+        throw Error('window.nextalkResPath not settings');
+    }
 
     // NexTalkWebUI初始化参数
     var main = {
@@ -846,6 +852,8 @@
         appKey : 'app_key',
         /** 是否是手机端 */
         mobile : false,
+        // 引入资源文件的根路径
+        resPath : window.nextalkResPath,
         // API根路径
         apiPath : '/',
         // API路由
@@ -858,7 +866,7 @@
         $.ajax({
             type : 'GET',
             cache : false,
-            url : '../html/main.html',
+            url : main.resPath + 'html/main.html',
             dataType : 'html',
             success : function(ret) {
                 $('body').append(ret).css({overflow: 'hidden'});
@@ -873,7 +881,8 @@
         IM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
             UI.init(_this.ticket, {
-                path : _this.apiPath,
+                resPath : _this.resPath,
+                apiPath : _this.apiPath,
                 mobile : _this.mobile
             });
             UI.getInstance().connectServer(_this.ticket);

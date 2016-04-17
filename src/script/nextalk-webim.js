@@ -1441,7 +1441,8 @@
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
         channelType : Channel.type.WEBSOCKET,
         isJsonp : true,
-        path : "/"
+        resPath : '/',
+        apiPath : "/"
     };
 
     // 实例化NexTalkWebIM类对象----------------
@@ -1502,8 +1503,8 @@
 
         _currUser : function(user) {
             this._dataAccess.currUser = this._dataAccess.currUser || {};
-            var path = this.options.path;
-            user.avatar = path + user.avatar;
+            //var path = this.options.apiPath;
+            //user.avatar = path + user.avatar;
             extend(this._dataAccess.currUser, user);
         },
         
@@ -1513,10 +1514,10 @@
         },
 
         _buddies : function(buddies) {
-            var path = this.options.path;
-            for (var i = 0; i < buddies.length; i++) {
-                buddies[i].avatar = path + buddies[i].avatar;
-            }
+            //var path = this.options.apiPath;
+            //for (var i = 0; i < buddies.length; i++) {
+            //    buddies[i].avatar = path + buddies[i].avatar;
+            //}
             this._dataAccess.buddies = this._dataAccess.buddies || [];
             extend(this._dataAccess.buddies, buddies);
         },
@@ -1632,18 +1633,18 @@
         
         if (msgType ==IM.msgType.NOTIFICATION) {
             _this.name = IM.name.NOTIFICATION;
-            _this.avatar = '../imgs/messagescenter_notice.png';
+            _this.avatar = IM.imgs.NOTICE;
         } else if (msgType == IM.msgType.CHAT) {
             var buddy = IM.getInstance().getBuddy(other);
             if (buddy) {
                 _this.name = buddy.nick;
                 _this.avatar = buddy.avatar;
             } else {
-                _this.avatar = '../imgs/head_def.png';
+                _this.avatar = IM.imgs.HEAD;
             }
         } else if (msgType == IM.msgType.ROOM) {
             _this.name = '房间';
-            _this.avatar = '../imgs/group.gif';
+            _this.avatar = IM.imgs.GROUP;
         }
         
         // 对话的记录
@@ -1691,7 +1692,7 @@
 
         // 初始化Web业务服务API
         IM.WebAPI.init({
-            path : options.path,
+            apiPath : options.apiPath,
             dataType : 'json'
         });
         
@@ -1705,8 +1706,18 @@
         
         _this._initListener();
         _this._initTimerTask();
+        _this._initImgs();
         return _this;
     };
+
+    /** 初始化默认图片 */
+    IM.imgs = {};
+    IM.prototype._initImgs = function() {
+        var path = this.options.resPath;
+        IM.imgs.HEAD = path + 'imgs/head_def.png';
+        IM.imgs.GROUP = path + 'imgs/group.gif';
+        IM.imgs.NOTICE = path + 'imgs/messagescenter_notice.png';
+    }
 
     /** 绑定WebIM客户端存在的各种事件监听 */
     IM.prototype._initListener = function() {
@@ -2698,7 +2709,7 @@
         var API = IM.WebAPI;
         API.DEFAULTS = {
             callback : null,
-            path : "/",
+            apiPath : "/",
             method : "POST",
             cache : false,
             dataType : "json",
@@ -2765,7 +2776,7 @@
                 var _this = this, options = _this.options;
                 var info = {
                     type : options.method,
-                    url : options.path + API.route(apiId),
+                    url : options.apiPath + API.route(apiId),
                     data : data,
                     dataType : options.dataType,
                     cache : options.cache,
