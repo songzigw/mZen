@@ -844,7 +844,7 @@
         // API路由
         route : {}
     }
-    main.setOps = function(ops) {
+    main.setConfig = function(ops) {
         $.extend(this, ops || {});
     };
     main._loadHTML = function(callback) {
@@ -854,7 +854,8 @@
             url : '../html/main.html',
             dataType : 'html',
             success : function(ret) {
-                document.write(ret);
+                $('body').append(ret);
+                //document.write(ret);
                 callback();
             }
         });
