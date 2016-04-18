@@ -1744,7 +1744,7 @@
                 _this.notCount++;
                 _this.webim._msgData.notReadTotal++;
             }
-            switch (msgType) {
+            switch (msg.type) {
                 case IM.msgType.CHAT:
                     msg.avatar = _this.avatar;
                     break;
@@ -1793,9 +1793,9 @@
         return this.record[this.record.length - 1];
     };
     DialogInfo.prototype._setRead = function() {
-        if (_this.notCount > 0) {
-            _this.notCount--;
-            _this.webim._msgData.notReadTotal--;
+        if (this.notCount > 0) {
+            this.notCount--;
+            this.webim._msgData.notReadTotal--;
         }
     };
 
