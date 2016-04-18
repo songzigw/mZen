@@ -432,6 +432,7 @@
                 });
             });
             resizeableMain(els);
+            els.$mainContent.css('overflow', 'auto');
 
             // message
             _this.toggleMainMessage();
@@ -442,7 +443,7 @@
         },
 
         _showNotReadTotal : function() {
-            
+            //.???<span class="aui-badge aui-badge-danger">12</span>
         },
 
         handlerAvatar : function() {
@@ -501,7 +502,7 @@
                 // 点击启动一个新的聊天盒子
                 item.click(function() {
 
-                    // 隐藏所有的盒子???
+                    // 隐藏所有的盒子
                     _this._chatBoxUIs.hideAll();
                     // 去除红色的未读数据
                     item.find('span.mzen-badge-danger').remove();
@@ -700,10 +701,6 @@
         var fh = els.$mainFooter.height();
         // els.$mainPage.height(wh);
         els.$mainContent.height(wh - hh - fh - 1);
-
-        setTimeout(function() {
-            els.$mainContent.css('overflow', 'auto');
-        }, 1);
     }
     
     function resizeableChatbox($chatboxPage) {
@@ -725,11 +722,14 @@
         var hh = $('header', $chatboxPage).height();
         var fh = $('footer', $chatboxPage).height();
         var $chatboxContent = $('#nextalk_content_chatbox', $chatboxPage);
-        $chatboxContent.height(wh - hh - fh - 1);
-        
-        setTimeout(function() {
-            $chatboxContent.css('overflow', 'auto');
-        }, 1);
+        $chatboxContent.height(wh - hh - fh - 1);        
+    }
+
+    function toChatboxContentBottom($cbPage) {
+        var $chatboxContent = $('#nextalk_content_chatbox', $cbPage);
+        var $innerContent = $('>.nextalk-wrap', $chatboxContent);
+        var height = $innerContent.height();
+        $chatboxContent.animate({scrollTop: height}, 1000);
     }
 
     var ChatBoxUI = function(type, id, name, avatar) {
@@ -738,6 +738,7 @@
         _this.name = name;
         _this.avatar = avatar;
         _this.focus = false;
+        _this.times = 0;
         if (id) {
             _this.id = id;
         }
@@ -780,8 +781,13 @@
         _this.$cbPage.show();
         _this.focus = true;
         resizeableChatbox(_this.$cbPage);
+        //toChatboxContentBottom(_this.$cbPage);
 
-        // 如果聊天内容为空，加载内存对话记录和历史对话记录
+        _this.times++;
+        // 如果聊天盒子第一次显示，加载内存对话记录和历史对话记录
+        if (_this.times > 1) {
+            return;
+        }
         var record = IM.getInstance().readAll(_this.type, _this.id);
         for (var i = 0, len = record.length; i < len; i++) {
             var msg = record[i];
@@ -806,6 +812,7 @@
             + '<div class="mzen-chat-left-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
         _this.$boxBody.append(html);
+        toChatboxContentBottom(_this.$cbPage);
     };
     ChatBoxUI.prototype.__send = function(msg) {
         var _this = this;
@@ -816,6 +823,7 @@
             + '<div class="mzen-chat-right-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
         _this.$boxBody.append(html);
+        toChatboxContentBottom(_this.$cbPage);
     }
     ChatBoxUI.prototype._send = function(body) {
         var _this = this, webim = IM.getInstance();
@@ -840,7 +848,10 @@
     };
     ChatBoxUI.prototype.handleHTML = function() {
         var _this = this, $chatboxPage = _this.$cbPage;
-        
+
+        var $chatboxContent = $('#nextalk_content_chatbox', $chatboxPage);
+        $chatboxContent.css('overflow', 'auto');
+
         $('header>a:first', $chatboxPage).click(function() {
             _this.hide();
         });
