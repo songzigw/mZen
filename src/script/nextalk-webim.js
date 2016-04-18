@@ -1643,7 +1643,7 @@
             dInfo = new DialogInfo(msgType, msgDirection, msg);
             _this._msgData.set(msgType, other, dInfo);
         }
-        dInfo.add(msg);
+        dInfo.add(msgDirection, msg);
     };
     IM.prototype.setRead = function(msgType, other, msg) {
         var _this = this;
@@ -1651,7 +1651,11 @@
         _this.getDialogInfo(msgType, other)._setRead();
     };
     IM.prototype.readAll = function(msgType, other) {
-        return this.getDialogInfo(msgType, other)._readAll();
+        var dInfo = this.getDialogInfo(msgType, other);
+        if (!dInfo) {
+            return [];
+        }
+        return dInfo._readAll();
     };
     IM.prototype.getDialogInfo = function(msgType, other) {
         var _this = this;
@@ -1683,8 +1687,6 @@
         _this.avatar = null;
         // 最近一次对话时间
         _this.timestamp = null;
-        // 保存消息方向
-        msg.msgDirection = msgDirection;
 
         switch (msgType) {
             case IM.msgType.CHAT:
@@ -1742,8 +1744,27 @@
                 _this.notCount++;
                 _this.webim._msgData.notReadTotal++;
             }
+            switch (msgType) {
+                case IM.msgType.CHAT:
+                    msg.avatar = _this.avatar;
+                    break;
+                case IM.msgType.ROOM:
+                    var buddy = _this.webim.getBuddy(msg.from);
+                    if (buddy) {
+                        msg.avatar = buddy.avatar;
+                    } else {
+                        msg.avatar = IM.imgs.HEAD;
+                    }
+                    break;
+                case IM.msgType.NOTIFICATION:
+                    msg.avatar = IM.imgs.NOTICE;
+                    break;
+                default:
+                    throw new Error('NexTalkWebIM.msgType out of Bounds.');
+                    break;
+            }
         }
-        msg.msgDirection = msgDirection;
+        msg.direction = msgDirection;
         _this.timestamp = msg.timestamp;
         _this.record[_this.record.length] = msg;
     };
@@ -1751,10 +1772,11 @@
      * 获取所有的往来通话，将未读标识去掉，未读数清零
      */
     DialogInfo.prototype._readAll = function() {
-        for (var i = 0, len = this.record.length; i < len; i++) {
-            var r = this.record[i];
-            if (typeof r.read == 'boolean' && !r.read) {
-                r.read = true;
+        var _this = this;
+        for (var i = 0, len = _this.record.length; i < len; i++) {
+            var msg = _this.record[i];
+            if (typeof msg.read == 'boolean' && !msg.read) {
+                msg.read = true;
                 _this.webim._msgData.notReadTotal--;
             }
         }
@@ -1904,6 +1926,7 @@
                 var msg = data[i];
                 msg.read = false;
                 var direction = IM.msgDirection.RECEIVE;
+                msg.direction = direction;
                 _this._saveMsg(msg.type, direction, msg);
             }
             _this.receiveMsgListener.onMessage(ev, data);
@@ -2125,7 +2148,7 @@
                                 // 可能是网络不可用，或者其他原因???
                                 _this.trigger("login.fail", [ err ]);
                             } 
-                        }, 3000);
+                        }, 1100);
                     });
                 },
 
@@ -2151,6 +2174,7 @@
                 sendMessage : function(msg, callback) {
                     var _this = this;
                     var direction = IM.msgDirection.SEND;
+                    msg.direction = direction;
                     _this._saveMsg(msg.type, direction, msg);
 
                     var api = IM.WebAPI.getInstance();

@@ -276,7 +276,9 @@
         },
 
         hideAll : function() {
-            this[ChatBoxUI.NOTIFICATION].hide();
+            if (this[ChatBoxUI.NOTIFICATION]) {
+                this[ChatBoxUI.NOTIFICATION].hide();
+            }
             for (var key in this[ChatBoxUI.ROOM]) {
                 this[ChatBoxUI.ROOM][key].hide();
             }
@@ -572,7 +574,7 @@
             var dInfo = webim.getDialogInfo(msgType, other);
             conversationHTML(dInfo, msg.body).prependTo($items);
             var $cvnLis = $('>li', $items);
-            if ($cLis.length > 0) {
+            if ($cvnLis.length > 0) {
                 $('.mzen-tips-warning', $frameMessage).hide();
             } else {
                 $('.mzen-tips-warning', $frameMessage).show();
@@ -735,7 +737,7 @@
         _this.type = type;
         _this.name = name;
         _this.avatar = avatar;
-        _this.focues = false;
+        _this.focus = false;
         if (id) {
             _this.id = id;
         }
@@ -776,21 +778,24 @@
     ChatBoxUI.prototype.show = function() {
         var _this = this;
         _this.$cbPage.show();
-        _this.focues = true;
+        _this.focus = true;
         resizeableChatbox(_this.$cbPage);
 
         // 如果聊天内容为空，加载内存对话记录和历史对话记录
         var record = IM.getInstance().readAll(_this.type, _this.id);
-        if (record.msgDirection == IM.msgDirection.SEND) {
-            _this.__send(record);
-        } else {
-            _this.receive(record);
+        for (var i = 0, len = record.length; i < len; i++) {
+            var msg = record[i];
+            if (msg.direction == IM.msgDirection.SEND) {
+                _this.__send(msg);
+            } else {
+                _this.receive(msg);
+            }
         }
     };
     ChatBoxUI.prototype.hide = function() {
         var _this = this;
         _this.$cbPage.hide();
-        _this.focues = false;
+        _this.focus = false;
     };
     ChatBoxUI.prototype.receive = function(msg) {
         var _this = this;
