@@ -273,6 +273,16 @@
                 return;
             }
             _this[boxType][key] = value;
+        },
+
+        hideAll : function() {
+            this[ChatBoxUI.NOTIFICATION].hide();
+            for (var key in this[ChatBoxUI.ROOM]) {
+                this[ChatBoxUI.ROOM][key].hide();
+            }
+            for (var key in this[ChatBoxUI.CHAT]) {
+                this[ChatBoxUI.CHAT][key].hide();
+            }
         }
     };
 
@@ -369,7 +379,7 @@
                 _this._connectServer(_this._ticket);
             });
         },
-        
+
         handlerMain : function() {
             var _this = this, els = _this.els;
             els.$mainCurrUser.click(function() {
@@ -428,7 +438,11 @@
             // settings
             _this.toggleMainSettings();
         },
-        
+
+        _showNotReadTotal : function() {
+            
+        },
+
         handlerAvatar : function() {
             var _this = this, els = _this.els;
             var show = _this.webim.getShow();
@@ -486,8 +500,11 @@
                 item.click(function() {
 
                     // 隐藏所有的盒子???
-                    _this._chatBoxUIs.;
+                    _this._chatBoxUIs.hideAll();
                     // 去除红色的未读数据
+                    item.find('span.mzen-badge-danger').remove();
+                    // 设置底部的未读数据
+                    _this._showNotReadTotal();
 
                     var imgSrc = item.find('img').attr('src');
                     if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
@@ -560,6 +577,8 @@
             } else {
                 $('.mzen-tips-warning', $frameMessage).show();
             }
+            // 设置底部的未读数据
+            _this._showNotReadTotal();
             _this._toggleConversations($cvnLis);
         },
         
