@@ -1406,8 +1406,10 @@
         /** 通知 */
         NOTIFICATION : 'notification'
     };
-    
-    IM.name.NOTIFICATION = '系统通知';
+
+    IM.name = {
+        NOTIFICATION : '系统通知'
+    };
 
     /** 错误码 */
     IM.errCode = {};
