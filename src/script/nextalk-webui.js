@@ -504,10 +504,6 @@
 
                     // 隐藏所有的盒子
                     _this._chatBoxUIs.hideAll();
-                    // 去除红色的未读数据
-                    item.find('span.mzen-badge-danger').remove();
-                    // 设置底部的未读数据
-                    _this._showNotReadTotal();
 
                     var imgSrc = item.find('img').attr('src');
                     if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
@@ -565,6 +561,12 @@
             
             $('>li', $items).each(function(i, el) {
                 var $el = $(el);
+                if ($el.attr('data-toggle') == IM.msgType.NOTIFICATION
+                        && msgType == IM.msgType.NOTIFICATION) {
+                    $el.remove();
+                    // break
+                    return false;
+                }
                 if ($el.attr('data-toggle') == msgType
                         && $el.attr('data-id') == other) {
                     $el.remove();
@@ -729,7 +731,7 @@
         var $chatboxContent = $('#nextalk_content_chatbox', $cbPage);
         var $innerContent = $('>.nextalk-wrap', $chatboxContent);
         var height = $innerContent.height();
-        $chatboxContent.animate({scrollTop: height}, 1000);
+        $chatboxContent.animate({scrollTop : height}, 300);
     }
 
     var ChatBoxUI = function(type, id, name, avatar) {
@@ -781,14 +783,46 @@
         _this.$cbPage.show();
         _this.focus = true;
         resizeableChatbox(_this.$cbPage);
-        //toChatboxContentBottom(_this.$cbPage);
+        toChatboxContentBottom(_this.$cbPage);
+
+        var webim = IM.getInstance();
+        var record = webim.readAll(_this.type, _this.id);
+        // 去除红色的未读数据
+        var dInfo = webim.getDialogInfo(_this.type, _this.id);
+        var els = UI.getInstance().els;
+        var $items = $('.nextalk-message-items', els.$frameMessage);
+        $('>li', $items).each(function(i, el) {
+            var $el = $(el);
+            if ($el.attr('data-toggle') == ChatBoxUI.NOTIFICATION
+                    && _this.type == ChatBoxUI.NOTIFICATION) {
+                if (dInfo.notCount > 0) {
+                    $el.find('span.mzen-badge-danger').text(dInfo.notCount);
+                } else {
+                    $el.find('span.mzen-badge-danger').remove();
+                }
+                // break
+                return false;
+            }
+            if ($el.attr('data-toggle') == _this.type
+                    && $el.attr('data-id') == _this.id) {
+                if (dInfo.notCount > 0) {
+                    $el.find('span.mzen-badge-danger').text(dInfo.notCount);
+                } else {
+                    $el.find('span.mzen-badge-danger').remove();
+                }
+                // break
+                return false;
+            }
+        });
+        // 设置底部的未读数据
+        UI.getInstance()._showNotReadTotal();
 
         _this.times++;
         // 如果聊天盒子第一次显示，加载内存对话记录和历史对话记录
         if (_this.times > 1) {
             return;
         }
-        var record = IM.getInstance().readAll(_this.type, _this.id);
+
         for (var i = 0, len = record.length; i < len; i++) {
             var msg = record[i];
             if (msg.direction == IM.msgDirection.SEND) {
