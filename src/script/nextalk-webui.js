@@ -64,9 +64,6 @@
     UI.prototype._init = function(appKey, options) {
         var _this = this;
         options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
-        
-        // 初始化NexTalkWebIM
-        _this.webim = IM.init(appKey, options);
 
         // 界面元素定义
         var els = _this.els = {};
@@ -95,17 +92,9 @@
 
         _this.handlerLogin();
         _this.handlerMain();
-        
+
         // 界面渲染完成
         // -----------------------------------------------------
-
-        // 定义聊天盒子存储空间
-        _this.chatBoxUIs = {};
-        // 系统通知盒子
-        _this.chatBoxUIs[ChatBoxUI.NOTIFICATION] =
-            new ChatBoxUI(ChatBoxUI.NOTIFICATION);
-        _this.chatBoxUIs[ChatBoxUI.CHAT] = {};
-        _this.chatBoxUIs[ChatBoxUI.ROOM] = {};
 
         // 初始化监听器
         _this._initLisenters();
@@ -114,6 +103,8 @@
             _this.trigger('nextalk.resizeable', []);
         });
 
+        // 初始化NexTalkWebIM
+        _this.webim = IM.init(appKey, options);
         _this.webim.setLoginStatusListener({
             onLogin : function(ev, data) {
                 _this.onLogin(ev, data);
@@ -153,7 +144,7 @@
         
         return _this;
     };
-    
+
     /**
      * 定义或开启部分定时任务
      */
@@ -237,7 +228,7 @@
         // 启动现场状态切换动画
         //_this.showTask.start();
     };
-    
+
     UI.prototype._initLisenters = function() {
         var _this = this;
         
@@ -245,7 +236,7 @@
             resizeableMain(_this.els);
         });
     };
-    
+
     UI.prototype.connectServer = function(ticket) {
         var _this = this;
         _this._ticket = ticket;
@@ -253,13 +244,38 @@
             _this._connectServer(ticket);
         }, 1100);
     };
-    
+
     UI.prototype._connectServer = function(ticket) {
         var _this = this;
         _this.els.$initPage.hide();
         _this.webim.connectServer({ticket : ticket});
     }
-    
+
+    /** 定义聊天盒子存储空间 */
+    UI.prototype._chatBoxUIs = {
+        // 系统通知盒子
+        notification : undefined,
+        // 房间聊天盒子
+        room : {},
+        // 私信聊天盒子
+        chat : {},
+
+        get : function(boxType, key) {
+            if (boxType == ChatBoxUI.NOTIFICATION)
+                return this[boxType];
+            return this[boxType][key];
+        },
+
+        set : function(boxType, key, value) {
+            var _this = this;
+            if (boxType == ChatBoxUI.NOTIFICATION) {
+                _this[boxType] = value;
+                return;
+            }
+            _this[boxType][key] = value;
+        }
+    };
+
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
             var _this = this, els = _this.els;
@@ -320,25 +336,19 @@
             _this.handlerAvatar();
         },
         onMessage : function(ev, data) {
-            var _this = this, boxUIs = _this.chatBoxUIs;
+            var _this = this, boxUIs = _this._chatBoxUIs;
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
-                switch (msg.type) {
-                    case IM.msgType.CHAT:
-                        var chatBoxUI = boxUIs[ChatBoxUI.CHAT][msg.from];
-                        if (chatBoxUI) {
-                            chatBoxUI.receive(msg);
-                            msg.read = true;
-                        }
-                        // 处理会话列表
-                        _this.loadConversations(IM.msgType.CHAT, msg.from, msg);
-                        break;
-                    case IM.msgType.ROOM:
-                        
-                        break;
-                    default:
-                        break;
+                var chatBoxUI = boxUIs.get(msg.type, msg.from);
+                if (chatBoxUI) {
+                    chatBoxUI.receive(msg);
+                    if (chatBoxUI.focus == true) {
+                        // 设置为已读
+                        _this.webim.setRead(msg.type, msg.from, msg);
+                    }
                 }
+                // 处理会话列表
+                _this.loadConversations(msg.type, msg.from, msg);
             }
         },
         onStatus : function(ev, data) {
@@ -474,29 +484,47 @@
 
                 // 点击启动一个新的聊天盒子
                 item.click(function() {
+
+                    // 隐藏所有的盒子???
+                    _this._chatBoxUIs.;
+                    // 去除红色的未读数据
+
+                    var imgSrc = item.find('img').attr('src');
                     if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
-                        _this.chatBoxUIs[ChatBoxUI.NOTIFICATION].show();
+                        var boxUI = _this._chatBoxUIs.get(ChatBoxUI.NOTIFICATION);
+                        if (!boxUI) {
+                            boxUI = new ChatBoxUI(ChatBoxUI.NOTIFICATION
+                                    , undefined
+                                    , IM.name.NOTIFICATION, imgSrc);
+                            _this._chatBoxUIs.set(ChatBoxUI.NOTIFICATION
+                                    , undefined, boxUI);
+                        }
+                        boxUI.show();
                         return;
                     }
+
                     var dataId = item.attr('data-id');
                     if (!dataId || dataId == '') {
                         return;
                     }
+
                     var name = item.attr('data-name');
                     if (item.attr('data-toggle') == ChatBoxUI.ROOM) {
-                        if (!_this.chatBoxUIs[ChatBoxUI.ROOM][dataId]) {
-                            _this.chatBoxUIs[ChatBoxUI.ROOM][dataId] =
-                                new ChatBoxUI(ChatBoxUI.ROOM, dataId, name);
+                        var boxUI = _this._chatBoxUIs.get(ChatBoxUI.ROOM, dataId);
+                        if (!boxUI) {
+                            boxUI = new ChatBoxUI(ChatBoxUI.ROOM, dataId, name, imgSrc);
+                            _this._chatBoxUIs.set(ChatBoxUI.ROOM, dataId, boxUI);
                         }
-                        _this.chatBoxUIs[ChatBoxUI.ROOM][dataId].show();
+                        boxUI.show();
                         return;
                     }
                     if (item.attr('data-toggle') == ChatBoxUI.CHAT) {
-                        if (!_this.chatBoxUIs[ChatBoxUI.CHAT][dataId]) {
-                            _this.chatBoxUIs[ChatBoxUI.CHAT][dataId] =
-                                new ChatBoxUI(ChatBoxUI.CHAT, dataId, name);
+                        var boxUI = _this._chatBoxUIs.get(ChatBoxUI.CHAT, dataId);
+                        if (!boxUI) {
+                            boxUI = new ChatBoxUI(ChatBoxUI.CHAT, dataId, name, imgSrc);
+                            _this._chatBoxUIs.set(ChatBoxUI.CHAT, dataId, boxUI);
                         }
-                        _this.chatBoxUIs[ChatBoxUI.CHAT][dataId].show();
+                        boxUI.show();
                         return;
                     }
                 });
@@ -525,14 +553,14 @@
                 }
             });
             var dInfo = webim.getDialogInfo(msgType, other);
-            conversationHTML(dInfo, msg.body).appendTo($items);
-            var $cLis = $('>li', $items);
-            _this._toggleConversations($cLis);
+            conversationHTML(dInfo, msg.body).prependTo($items);
+            var $cvnLis = $('>li', $items);
             if ($cLis.length > 0) {
                 $('.mzen-tips-warning', $frameMessage).hide();
             } else {
                 $('.mzen-tips-warning', $frameMessage).show();
             }
+            _this._toggleConversations($cvnLis);
         },
         
         loadBuddies : function() {
@@ -566,7 +594,6 @@
 
         return $(html);
     }
-    
     function getDataId(msgType, other) {
         if (msgType == IM.msgType.NOTIFICATION)
             return '';
@@ -684,9 +711,12 @@
         }, 1);
     }
 
-    var ChatBoxUI = function(type, id, name) {
+    var ChatBoxUI = function(type, id, name, avatar) {
         var _this = this;
         _this.type = type;
+        _this.name = name;
+        _this.avatar = avatar;
+        _this.focues = false;
         if (id) {
             _this.id = id;
         }
@@ -702,20 +732,11 @@
             $cbPage.attr('id', ChatBoxUI.NOTIFICATION);
             $('footer', $cbPage).hide();
             _this.avatar = IM.imgs.NOTICE;
-            _this.name = IM.name.NOTIFICATION;
         } else if (type == ChatBoxUI.ROOM) {
             $cbPage.attr('id', ChatBoxUI.ROOM + '_' + id);
             _this.avatar = IM.imgs.GROUP;
-            _this.name = name;
         } else if (type == ChatBoxUI.CHAT) {
             $cbPage.attr('id', ChatBoxUI.CHAT + '_' + id);
-            _this.name = name;
-            var buddy = IM.getInstance().getBuddy(id);
-            if (buddy) {
-                _this.avatar = buddy.avatar;
-            } else {
-                _this.avatar = IM.imgs.HEAD;
-            }
         }
         $('header>.mzen-title', $cbPage).text(_this.name);
         
@@ -736,40 +757,59 @@
     ChatBoxUI.prototype.show = function() {
         var _this = this;
         _this.$cbPage.show();
+        _this.focues = true;
         resizeableChatbox(_this.$cbPage);
+
+        // 如果聊天内容为空，加载内存对话记录和历史对话记录
+        var record = IM.getInstance().readAll(_this.type, _this.id);
+        if (record.msgDirection == IM.msgDirection.SEND) {
+            _this.__send(record);
+        } else {
+            _this.receive(record);
+        }
+    };
+    ChatBoxUI.prototype.hide = function() {
+        var _this = this;
+        _this.$cbPage.hide();
+        _this.focues = false;
     };
     ChatBoxUI.prototype.receive = function(msg) {
         var _this = this;
         var html = '<div class="mzen-chat-receiver">'
             + '<div class="mzen-chat-receiver-avatar">'
-            + '<img src="' + _this.avatar + '"></div>'
+            + '<img src="' + msg.avatar + '"></div>'
             + '<div class="mzen-chat-receiver-cont">'
             + '<div class="mzen-chat-left-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
         _this.$boxBody.append(html);
     };
-    ChatBoxUI.prototype._send = function(body) {
-        var _this = this, webui = UI.getInstance();
-        var webim = webui.webim;
-        var currUser = webim.getCurrUser();
-        
+    ChatBoxUI.prototype.__send = function(msg) {
+        var _this = this;
         var html = '<div class="mzen-chat-sender">'
             + '<div class="mzen-chat-sender-avatar">'
-            + '<img src="' + currUser.avatar + '"></div>'
+            + '<img src="' + msg.avatar + '"></div>'
             + '<div class="mzen-chat-sender-cont">'
             + '<div class="mzen-chat-right-triangle"></div>'
-            + '<span>' + body + '</span></div></div>';
+            + '<span>' + msg.body + '</span></div></div>';
         _this.$boxBody.append(html);
-        
+    }
+    ChatBoxUI.prototype._send = function(body) {
+        var _this = this, webim = IM.getInstance();
+        var webui = UI.getInstance();
+        var currUser = webim.getCurrUser();
+
         var msg = {
             type : _this.type,
             from : currUser.id,
-            to : _this.id,
             nick : currUser.nick,
+            avatar : currUser.avatar,
+            to : _this.id,
             to_nick : _this.name,
+            to_avatar : _this.avatar,
             body : body,
             timestamp : IM.nowStamp()
         };
+        _this.__send(msg);
         webim.sendMessage(msg);
         // 处理会话列表
         webui.loadConversations(msg.type, msg.to, msg);
@@ -778,7 +818,7 @@
         var _this = this, $chatboxPage = _this.$cbPage;
         
         $('header>a:first', $chatboxPage).click(function() {
-            $chatboxPage.hide();
+            _this.hide();
         });
         $('footer form', $chatboxPage).submit(function() {
             var input = $('input', $(this));

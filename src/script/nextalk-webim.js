@@ -1407,9 +1407,16 @@
         NOTIFICATION : 'notification'
     };
 
+    /** 消息放向 */
+    IM.msgDirection = {
+        SEND : 'send',
+        RECEIVE : 'receive'
+    };
+
     IM.name = {
         NOTIFICATION : '系统通知'
     };
+    IM.imgs = {};
 
     /** 错误码 */
     IM.errCode = {};
@@ -1573,7 +1580,7 @@
             return this._dataAccess.rooms;
         }
     });
-    
+
     /**
      * 消息数据
      */
@@ -1586,30 +1593,65 @@
         room : {
             
         },
-        
+        // 系统通知
+        nocification : undefined,
+        // 未读消息总数
+        notReadTotal : 0,
+
         get : function(msgType, key) {
+            if (msgType == IM.msgType.NOTIFICATION)
+                return this[msgType];
             return this[msgType][key];
         },
-        
+
         set : function(msgType, key, value) {
             var _this = this;
-            if (typeof value == "object") {
-                _this[msgType][key] = value;
+            if (msgType == IM.msgType.NOTIFICATION) {
+                _this[msgType] = value;
+                return;
             }
+            _this[msgType][key] = value;
         }
     };
     /**
      * 保存通话记录
      */
-    IM.prototype._saveMsg = function(msgType, other, msg) {
+    IM.prototype._saveMsg = function(msgType, msgDirection, msg) {
         var _this = this;
+        var other = undefined;
+        switch (msgType) {
+            case IM.msgType.CHAT:
+                if (msgDirection == IM.msgDirection.SEND) {
+                    other = msg.to;
+                } else if (msgDirection == IM.msgDirection.RECEIVE) {
+                    other = msg.from;
+                }
+                break;
+            case IM.msgType.ROOM:
+                other = msg.to;
+                break;
+            case IM.msgType.NOTIFICATION:
+                other = IM.msgType.NOTIFICATION;
+                break;
+            default:
+                throw new Error('NexTalkWebIM.msgType out of Bounds.');
+                break;
+        }
         // 获取对话消息
         var dInfo = _this._msgData.get(msgType, other);
         if (!dInfo) {
-            dInfo = new DialogInfo(msgType, other);
+            dInfo = new DialogInfo(msgType, msgDirection, msg);
             _this._msgData.set(msgType, other, dInfo);
         }
         dInfo.add(msg);
+    };
+    IM.prototype.setRead = function(msgType, other, msg) {
+        var _this = this;
+        msg.read = true;
+        _this.getDialogInfo(msgType, other)._setRead();
+    };
+    IM.prototype.readAll = function(msgType, other) {
+        return this.getDialogInfo(msgType, other)._readAll();
     };
     IM.prototype.getDialogInfo = function(msgType, other) {
         var _this = this;
@@ -1619,56 +1661,104 @@
             return undefined;
 
         return dInfo;
-    }    
+    };
+    IM.prototype.getNotReadTotal = function() {
+        return this._msgData.notReadTotal;
+    };
 
     /**
      * 和对方的对话信息
      */
-    var DialogInfo = function(msgType, other) {
+    var DialogInfo = function(msgType, msgDirection, msg) {
         var _this = this;
+        _this.webim = IM.getInstance();
         _this.msgType = msgType;
         // 未读消息数
         _this.notCount = 0;
-        // 对话的对象
-        _this.other = other;
+        // 对话的对象（唯一标示）
+        _this.other = null;
+        // 对话对象的名称
+        _this.name = null;
+        // 对话对象的头像
+        _this.avatar = null;
+        // 最近一次对话时间
         _this.timestamp = null;
-        
-        if (msgType ==IM.msgType.NOTIFICATION) {
-            _this.name = IM.name.NOTIFICATION;
-            _this.avatar = IM.imgs.NOTICE;
-        } else if (msgType == IM.msgType.CHAT) {
-            var buddy = IM.getInstance().getBuddy(other);
-            if (buddy) {
-                _this.name = buddy.nick;
-                _this.avatar = buddy.avatar;
-            } else {
-                _this.avatar = IM.imgs.HEAD;
-            }
-        } else if (msgType == IM.msgType.ROOM) {
-            _this.name = '房间';
-            _this.avatar = IM.imgs.GROUP;
+        // 保存消息方向
+        msg.msgDirection = msgDirection;
+
+        switch (msgType) {
+            case IM.msgType.CHAT:
+                if (msgDirection == IM.msgDirection.SEND) {
+                    _this.other = msg.to;
+                    _this.name = msg.to_nick;
+                    _this.avatar = msg.to_avatar;
+                } else if (msgDirection == IM.msgDirection.RECEIVE) {
+                    _this.other = msg.from;
+                    _this.name = msg.nick;
+                    var buddy = _this.webim.getBuddy(_this.other);
+                    if (buddy) {
+                        _this.avatar = buddy.avatar;
+                    } else {
+                        _this.avatar = IM.imgs.HEAD;
+                    }
+                }
+                break;
+            case IM.msgType.ROOM:
+                _this.other = msg.to;
+                _this.name = msg.to;
+                if (msgDirection == IM.msgDirection.SEND) {
+                    _this.name = msg.to_nick;
+                    _this.avatar = msg.to_avatar;
+                } else if (msgDirection == IM.msgDirection.RECEIVE) {
+                    var room = _this.webim.getRoom(_this.other);
+                    if (room) {
+                        _this.name = room.name;
+                        _this.avatar = room.avatar;
+                    } else {
+                        _this.avatar = IM.imgs.GROUP;
+                    }
+                }
+                break;
+            case IM.msgType.NOTIFICATION:
+                _this.other = IM.msgType.NOTIFICATION;
+                _this.name = IM.name.NOTIFICATION;
+                _this.avatar = IM.imgs.NOTICE;
+                break;
+            default:
+                throw new Error('NexTalkWebIM.msgType out of Bounds.');
+                break;
         }
-        
+
         // 对话的记录
         _this.record = [];
     }
     /**
      * 保存通话记录
      */
-    DialogInfo.prototype.add = function(msg) {
-        var _this = this, webim = IM.getInstance();
-        var uid = webim.getCurrUser().id;
-        if (msg.from != uid) {
-            _this.name = msg.nick;
-            _this.notCount++;
+    DialogInfo.prototype.add = function(msgDirection, msg) {
+        var _this = this;
+        if (msgDirection == IM.msgDirection.RECEIVE) {
+            if (typeof msg.read == 'boolean' && !msg.read) {
+                _this.notCount++;
+                _this.webim._msgData.notReadTotal++;
+            }
         }
+        msg.msgDirection = msgDirection;
         _this.timestamp = msg.timestamp;
         _this.record[_this.record.length] = msg;
     };
     /**
-     * 获取所有的往来通话
+     * 获取所有的往来通话，将未读标识去掉，未读数清零
      */
-    DialogInfo.prototype.getAll = function() {
+    DialogInfo.prototype._readAll = function() {
+        for (var i = 0, len = this.record.length; i < len; i++) {
+            var r = this.record[i];
+            if (typeof r.read == 'boolean' && !r.read) {
+                r.read = true;
+                _this.webim._msgData.notReadTotal--;
+            }
+        }
+        this.notCount = 0;
         return this.record;
     };
     /**
@@ -1679,6 +1769,12 @@
             return undefined;
 
         return this.record[this.record.length - 1];
+    };
+    DialogInfo.prototype._setRead = function() {
+        if (_this.notCount > 0) {
+            _this.notCount--;
+            _this.webim._msgData.notReadTotal--;
+        }
     };
 
     /**
@@ -1713,7 +1809,6 @@
     };
 
     /** 初始化默认图片 */
-    IM.imgs = {};
     IM.prototype._initImgs = function() {
         var path = this.options.resPath;
         IM.imgs.HEAD = path + 'imgs/head_def.png';
@@ -1808,16 +1903,8 @@
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
                 msg.read = false;
-                switch (msg.type) {
-                    case IM.msgType.CHAT:
-                        _this._saveMsg(IM.msgType.CHAT, msg.from, msg);
-                        break;
-    
-                    case IM.msgType.ROOM:
-                        _this._saveMsg(IM.msgType.ROOM, msg.from, msg);
-                    default:
-                        break;
-                }
+                var direction = IM.msgDirection.RECEIVE;
+                _this._saveMsg(msg.type, direction, msg);
             }
             _this.receiveMsgListener.onMessage(ev, data);
         });
@@ -1842,7 +1929,7 @@
         // ???
         //_this.trigger("network.unavailable", [ data ]);
     };
-    
+
     /**
      * 设置登入状态监听器
      */
@@ -1885,7 +1972,7 @@
     IM.prototype._connectServer = function() {
         var _this = this, options = _this.options;
         var conn = _this.getConnection();
-        
+
         _this.trigger("connecting", [ _this._dataAccess ]);
         // 创建通信管道
         var ops = extend({type: options.channelType}, conn);
@@ -1905,12 +1992,12 @@
         _this.channel.onMessage = function(ev, data) {
             _this.handle(data);
         };
-        
+
         // 发起管道连接
         _this.channel.connect();
         // options.channelType = _this.channel.type;
     };
-    
+
     IM.prototype._disconnectServer = function() {
         var _this = this;
         _this.channel.disconnect();
@@ -1938,7 +2025,7 @@
         data.statuses && data.statuses.length
                 && self.trigger("status", [ data.statuses ]);
     };
-    
+
     IM.prototype.online = function(show, callback) {
         var self = this;
         if (show == IM.show.UNAVAILABLE) {
@@ -1948,7 +2035,7 @@
             callback();
             return;
         }
-        
+
         // 检查一下管道连接
         if (self.connStatus == IM.connStatus.CONNECTING) {
             callback();
@@ -1969,7 +2056,7 @@
             callback();
             return;
         }
-        
+
         var api = IM.WebAPI.getInstance();
         var params = {
             ticket : connection.ticket
@@ -2041,19 +2128,19 @@
                         }, 3000);
                     });
                 },
-                
+
                 _sendPresence : function(msg, callback) {
-                    var self = this;
-                    msg.ticket = self.getConnection().ticket;
+                    var _this = this;
+                    msg.ticket = _this.getConnection().ticket;
 
                     var api = IM.WebAPI.getInstance();
                     var params = extend({}, msg);
                     api.presence(params, function(ret, err) {
                         if (ret == "ok") {
                             // save show status
-                            //self._currUser({show : msg.show});
-                            self.getCurrUser().show = msg.show;
-                            self.status.set("s", msg.show);
+                            //_this._currUser({show : msg.show});
+                            _this.getCurrUser().show = msg.show;
+                            _this.status.set("s", msg.show);
                             callback();
                         } else {
                             callback();
@@ -2062,19 +2149,20 @@
                 },
 
                 sendMessage : function(msg, callback) {
-                    var self = this;
+                    var _this = this;
+                    var direction = IM.msgDirection.SEND;
+                    _this._saveMsg(msg.type, direction, msg);
 
-                    self._saveMsg(msg.type, msg.to, msg);
                     var api = IM.WebAPI.getInstance();
                     var params = extend({
-                        ticket : self.getConnection().ticket
+                        ticket : _this.getConnection().ticket
                     }, msg);
                     api.message(params, callback);
                 },
 
                 sendStatus : function(msg, callback) {
-                    var self = this;
-                    msg.ticket = self.getConnection().ticket;
+                    var _this = this;
+                    msg.ticket = _this.getConnection().ticket;
 
                     var api = IM.WebAPI.getInstance();
                     var params = extend({}, msg);
@@ -2082,13 +2170,14 @@
                 },
 
                 _deactivate : function() {
-                    var self = this;
-                    if (!self.getConnection() || !self.getConnection().ticket)
+                    var _this = this;
+                    if (!_this.getConnection()
+                            || !_this.getConnection().ticket)
                         return;
 
                     var api = IM.WebAPI.getInstance();
                     var params = {
-                        ticket : self.getConnection().ticket
+                        ticket : _this.getConnection().ticket
                     };
                     api.deactivate(params, null, {
                         method : "get"
