@@ -51,7 +51,7 @@
     main.go = function() {
         var _this = this;
 
-        IM.WebAPI.route(_this.route);
+        NexTalkWebIM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
             var ui = NexTalkWebUI.init(_this.ticket, {
                 resPath : _this.resPath,
