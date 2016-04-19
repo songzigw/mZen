@@ -1414,7 +1414,8 @@
     };
 
     IM.name = {
-        NOTIFICATION : '系统通知'
+        NOTIFICATION : '系统通知',
+        STRANGER : '陌生人'
     };
     IM.imgs = {};
 
