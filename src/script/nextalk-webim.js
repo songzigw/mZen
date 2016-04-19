@@ -1647,8 +1647,10 @@
     };
     IM.prototype.setRead = function(msgType, other, msg) {
         var _this = this;
-        msg.read = true;
-        _this.getDialogInfo(msgType, other)._setRead();
+        if (typeof msg.read == 'boolean' && !msg.read) {
+            msg.read = true;
+            _this.getDialogInfo(msgType, other)._setRead();
+        }
     };
     IM.prototype.readAll = function(msgType, other) {
         var dInfo = this.getDialogInfo(msgType, other);
@@ -1674,6 +1676,22 @@
      * 和对方的对话信息
      */
     var DialogInfo = function(msgType, msgDirection, msg) {
+        // 入参验证
+        if (msgDirection == IM.msgDirection.SEND) {
+            if (!msg.nick) {
+                throw new Errore('msg.nick not settings.');
+            }
+            if (!msg.avatar) {
+                throw new Errore('msg.avatar not settings.');
+            }
+            if (!msg.to_nick) {
+                throw new Errore('msg.to_nick not settings.');
+            }
+            if (!msg.to_avatar) {
+                throw new Errore('msg.to_avatar not settings.');
+            }
+        }
+
         var _this = this;
         _this.webim = IM.getInstance();
         _this.msgType = msgType;
@@ -1989,11 +2007,44 @@
         // 接收消息
         _this.bind("messages", function(ev, data) {
             console.log("messages: " + JSON.stringify(data));
+            var u = _this.getCurrUser();
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
-                msg.read = false;
                 var direction = IM.msgDirection.RECEIVE;
+                msg.read = false;
                 msg.direction = direction;
+                // 如果是自己发送出去的
+                if (msg.from == u.id) {
+                    direction = IM.msgDirection.SEND;
+                    msg.read = true;
+                    msg.direction = direction;
+                    msg.avatar = u.avatar;
+                    switch (msg.type) {
+                        case IM.msgType.CHAT:
+                            var buddy = _this.getBuddy(msg.to);
+                            if (buddy) {
+                                msg.to_nick = buddy.nick;
+                                msg.to_avatar = buddy.avatar;
+                            } else {
+                                msg.to_nick = IM.name.STRANGER + msg.to;
+                                msg.to_avatar = IM.imgs.HEAD;
+                            }
+                            break;
+                        case IM.msgType.ROOM:
+                            var room = _this.getRoom(msg.to);
+                            if (room) {
+                                msg.to_nick = room.name;
+                                msg.to_avatar = room.avatar;
+                            } else {
+                                msg.to_nick = msg.to;
+                                msg.to_avatar = IM.imgs.GROUP;
+                            }
+                            break;
+                        default:
+                            throw new Error('NexTalkWebIM.msgType out of Bounds.');
+                            break;
+                    }
+                }
                 _this._saveMsg(msg.type, direction, msg);
             }
             _this.receiveMsgListener.onMessage(ev, data);

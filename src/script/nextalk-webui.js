@@ -351,16 +351,31 @@
             var _this = this, boxUIs = _this._chatBoxUIs;
             for (var i = 0; i < data.length; i++) {
                 var msg = data[i];
-                var chatBoxUI = boxUIs.get(msg.type, msg.from);
-                if (chatBoxUI) {
-                    chatBoxUI.receive(msg);
-                    if (chatBoxUI.focus == true) {
-                        // 设置为已读
-                        _this.webim.setRead(msg.type, msg.from, msg);
+                var chatBoxUI;
+                // 如果是自己发送出去的
+                if (msg.direction == IM.msgDirection.SEND) {
+                    chatBoxUI = boxUIs.get(msg.type, msg.to);
+                    if (chatBoxUI) {
+                        chatBoxUI.__send(msg);
+                        if (chatBoxUI.focus == true) {
+                            // 设置为已读
+                            _this.webim.setRead(msg.type, msg.to, msg);
+                        }
                     }
+                    // 处理会话列表
+                    _this.loadConversations(msg.type, msg.to, msg);
+                } else {
+                    chatBoxUI = boxUIs.get(msg.type, msg.from);
+                    if (chatBoxUI) {
+                        chatBoxUI.receive(msg);
+                        if (chatBoxUI.focus == true) {
+                            // 设置为已读
+                            _this.webim.setRead(msg.type, msg.from, msg);
+                        }
+                    }
+                    // 处理会话列表
+                    _this.loadConversations(msg.type, msg.from, msg);
                 }
-                // 处理会话列表
-                _this.loadConversations(msg.type, msg.from, msg);
             }
         },
         onStatus : function(ev, data) {
