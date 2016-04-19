@@ -965,7 +965,7 @@
     "use strict";
     
     if (!window.nextalkResPath) {
-        throw Error('window.nextalkResPath not settings');
+        throw new Error('window.nextalkResPath not settings');
     }
 
     // NexTalkWebUI初始化参数
@@ -994,12 +994,17 @@
             dataType : 'html',
             success : function(ret) {
                 var $ret = $(ret);
-                $('img', $ret).each(function(i, el) {
+                $('img[toggle-data]', $ret).each(function(i, el) {
                     var $el = $(el);
-                    $el.attr('src', main.resPath + $el.attr('src'));
+                    if ($el.attr('toggle-data') == 'login') {
+                        $el.attr('src', main.resPath + 'imgs/logo.png');
+                    } else if ($el.attr('toggle-data') == 'logo') {
+                        $el.attr('src', main.resPath + 'imgs/webim.72x72.png');
+                    } else if ($el.attr('toggle-data') == 'head_def') {
+                        $el.attr('src', main.resPath + 'imgs/head_def.png');
+                    }
                 });
                 $('body').append($ret).css({overflow: 'hidden'});
-                //document.write(ret);
                 callback();
             }
         });

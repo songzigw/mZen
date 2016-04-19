@@ -1,5 +1,5 @@
-if (!nextalkResPath) {
-    throw Error('nextalkResPath not settings');
+if (!window.nextalkResPath) {
+    throw new Error('nextalkResPath not settings');
 }
 
 document.write('<link rel="stylesheet" type="text/css" href="'+nextalkResPath+'css/mzen.css" />');

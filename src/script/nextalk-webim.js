@@ -358,6 +358,14 @@
         }
     }
 
+    var console = window.console || (function() {
+        return {
+            log : function(str) {
+                alert(str);
+            }
+        }
+    })();
+
     /**
      * Detect mobile code from http://detectmobilebrowsers.com/
      */
@@ -1048,27 +1056,27 @@
     /**
      * XMLHttpRequest轮询
      */
-    function comet(url) {
+    function Comet(url) {
         var _this = this;
         _this.URL = url;
         _this._setting();
     }
 
     // The connection has not yet been established.
-    comet.CONNECTING = 0;
+    Comet.CONNECTING = 0;
     // The connection is established and communication is possible.
-    comet.OPEN = 1;
+    Comet.OPEN = 1;
     // The connection has been closed or could not be opened.
-    comet.CLOSED = 2;
+    Comet.CLOSED = 2;
     // Make the class work with custom events
 
-    comet.prototype = {
-        readyState : comet.CLOSED,
+    Comet.prototype = {
+        readyState : Comet.CLOSED,
         send : function(msg) {
         },
         _setting : function() {
             var _this = this;
-            _this.readyState = comet.CLOSED;
+            _this.readyState = Comet.CLOSED;
             // 是否已连接 只读属性
             _this._connecting = false;
             // 设置连接开关避免重复连接
@@ -1085,7 +1093,7 @@
             var _this = this;
             if (_this._connecting)
                 return _this;
-            _this.readyState = comet.CONNECTING;
+            _this.readyState = Comet.CONNECTING;
             _this._connecting = true;
             if (!_this._onPolling) {
                 window.setTimeout(function() {
@@ -1103,7 +1111,7 @@
         },
         _onConnect : function() {
             var _this = this;
-            _this.readyState = comet.OPEN;
+            _this.readyState = Comet.OPEN;
             _this.trigger('open', 'success');
         },
         _onClose : function(m) {
@@ -1181,7 +1189,7 @@
             }
         }
     };
-    ClassEvent.on(comet);
+    ClassEvent.on(Comet);
 
     /**
      * 管道连接
@@ -1286,7 +1294,7 @@
             var _this = this;
             var ops = _this.options;
 
-            var comet = _this.comet = new comet(ops.server
+            var comet = _this.comet = new Comet(ops.server
                     + (/\?/.test(ops.server) ? "&" : "?") + ajax.param({
                         ticket : ops.ticket,
                         domain : ops.domain
@@ -1680,16 +1688,16 @@
         // 入参验证
         if (msgDirection == IM.msgDirection.SEND) {
             if (!msg.nick) {
-                throw new Errore('msg.nick not settings.');
+                throw new Error('msg.nick not settings.');
             }
             if (!msg.avatar) {
-                throw new Errore('msg.avatar not settings.');
+                throw new Error('msg.avatar not settings.');
             }
             if (!msg.to_nick) {
-                throw new Errore('msg.to_nick not settings.');
+                throw new Error('msg.to_nick not settings.');
             }
             if (!msg.to_avatar) {
-                throw new Errore('msg.to_avatar not settings.');
+                throw new Error('msg.to_avatar not settings.');
             }
         }
 
@@ -1825,6 +1833,11 @@
         var _this = this;
         _this._appKey = appKey;
         options = _this.options = extend({}, IM.DEFAULTS, options || {});
+
+        if (!options.resPath) {
+            throw new Error('options.resPath is empty');
+        }
+
         ajax.setup({
             dataType : options.isJsonp ? "jsonp" : "json"
         });
@@ -1888,13 +1901,13 @@
             init : function(urls) {
                 extend(_urls, urls);
                 if (!window.Audio && navigator.userAgent.indexOf('MSIE') >= 0) {
-                    var loginPage = document.getElementById('nextalk-page-login');
+                    var initPage = document.getElementById('nextalk_page_init');
                     var soundEl = document.createElement('bgsound');
                     soundEl.id = 'webim-bgsound';
                     soundEl.src = '#';
                     soundEl.autostart = 'true';
                     soundEl.loop = '1';
-                    loginPage.appendChild(soundEl);
+                    initPage.appendChild(soundEl);
                 }
             },
             play : function(type) {

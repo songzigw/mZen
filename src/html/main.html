@@ -1,8 +1,9 @@
+
         <div class="nextalk-page nextalk-screen-full nextalk-page-login"
             id="nextalk_page_init">
             <div class="mzen-content
                 mzen-flex-col mzen-flex-center">
-            <img alt="logo" src="imgs/logo.png"/>
+            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>
             <p>一起来聊聊</p></div>
         </div>
         
@@ -11,7 +12,7 @@
             style="display: none;">
             <div class="mzen-content
                 mzen-flex-col mzen-flex-center">
-            <img alt="logo" src="imgs/logo.png"/>
+            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>
             <p>正在登入中...</p>
             <button class="mzen-btn mzen-btn-danger">重新登入</button>
             </div>
@@ -29,7 +30,7 @@
         <!--头部集合 BEGIN-->
         <header class="mzen-bar mzen-bar-nav mzen-bar-white">
             <a class="mzen-pull-left mzen-img nextalk-logo">
-            <img class="mzen-img-object" src="imgs/webim.72x72.png" />
+            <img class="mzen-img-object" src="imgs/webim.72x72.png" toggle-data="logo"/>
             </a>
             <div class="mzen-title">
                 消息
@@ -37,7 +38,7 @@
             <div class="mzen-pull-right nextalk-user">
             <a class="mzen-img mzen-tap-active
                     mzen-up-hover">
-            <img class="mzen-img-object" src="imgs/head_def.png" />
+            <img class="mzen-img-object" src="imgs/head_def.png" toggle-data="head_def"/>
             </a>
             <ul class="dropdown-menu">
             <li data-show="available">在线
@@ -64,14 +65,14 @@
         <div class="nextalk-scroll" id="nextalk_content_main">
         
         <div class="mzen-content nextalk-wrap message" id="message_wrap">
-			
-			<div class="mzen-tips mzen-tips-warning" style="display: none;">
+            
+            <div class="mzen-tips mzen-tips-warning" style="display: none;">
                 <div class="mzen-tips-content mzen-ellipsis-1">
                     <i class="mzen-iconfont mzen-icon-warnfill"></i>
                     <span>没有消息...</span>
                 </div>
             </div>
-			
+            
             <ul class="mzen-list-view nextalk-message-items">
                 <!-- 
                 <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover" data-toggle="notification">
@@ -127,11 +128,11 @@
                 <div class="mzen-searchbar-cancel mzen-text-info">取消</div>
             </div>
             <div class="mzen-tips mzen-tips-warning" style="display: none;">
-	            <div class="mzen-tips-content mzen-ellipsis-1">
-	                <i class="mzen-iconfont mzen-icon-warnfill"></i>
-	                <span>没有联系人...</span>
-	            </div>
-	        </div>
+                <div class="mzen-tips-content mzen-ellipsis-1">
+                    <i class="mzen-iconfont mzen-icon-warnfill"></i>
+                    <span>没有联系人...</span>
+                </div>
+            </div>
             <ul class="mzen-user-view">
                 <!-- 
                 <li class="mzen-user-view-cell mzen-img mzen-up-hover">
@@ -236,11 +237,11 @@
             </div>
             <!-- 聊天输入筐BEGIN -->
             <footer class="mzen-nav">
-	            <form class="mzen-form" onsubmit="return false;">
-	            <div class="nextalk mzen-input-row">
+                <form class="mzen-form" onsubmit="return false;">
+                <div class="nextalk mzen-input-row">
                     <input type="text" class="mzen-input" placeholder="输入消息内容..."/>
                 </div>
-	            </form>
-	        </footer>
+                </form>
+            </footer>
             <!-- 聊天输入筐END -->
         </div>
