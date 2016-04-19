@@ -361,7 +361,7 @@
     var console = window.console || (function() {
         return {
             log : function(str) {
-                alert(str);
+                //alert(str);
             }
         }
     })();
