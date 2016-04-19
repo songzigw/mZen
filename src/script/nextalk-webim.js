@@ -1826,16 +1826,83 @@
         
         _this._initListener();
         _this._initTimerTask();
-        _this._initImgs();
+        _this._initResource();
         return _this;
     };
 
     /** 初始化默认图片 */
-    IM.prototype._initImgs = function() {
+    IM.prototype._initResource = function() {
         var path = this.options.resPath;
         IM.imgs.HEAD = path + 'imgs/head_def.png';
         IM.imgs.GROUP = path + 'imgs/group.gif';
         IM.imgs.NOTICE = path + 'imgs/messagescenter_notice.png';
+        sound.init({msg : path + 'sound/msg.mp3'});
+    }
+
+    var sound = (function() {
+        var playSound = true;
+        var webimAudio;
+        var play = function(url) {
+            if (window.Audio) {
+                if (!webimAudio) {
+                    var webimAudio = new Audio();
+                }
+                webimAudio.src = url;
+                webimAudio.play();
+            } else if (navigator.userAgent.indexOf('MSIE') >= 0) {
+                try {
+                    document.getElementById('webim-bgsound').src = url;
+                } catch (e) {}
+            }
+        };
+        var _urls = {
+            lib : "sound.swf",
+            msg : "sound/msg.mp3"
+        };
+        return {
+            enable : function() {
+                playSound = true;
+            },
+            disable : function() {
+                playSound = false;
+            },
+            init : function(urls) {
+                extend(_urls, urls);
+                if (!window.Audio && navigator.userAgent.indexOf('MSIE') >= 0) {
+                    var loginPage = document.getElementById('nextalk-page-login');
+                    var soundEl = document.createElement('bgsound');
+                    soundEl.id = 'webim-bgsound';
+                    soundEl.src = '#';
+                    soundEl.autostart = 'true';
+                    soundEl.loop = '1';
+                    loginPage.appendChild(soundEl);
+                }
+            },
+            play : function(type) {
+                var url = isUrl(type) ? type : _urls[type];
+                playSound && play(url);
+            }
+        }
+    })();
+
+    function HTMLEnCode(str) {
+        var s = "";
+        if (str.length == 0)
+            return "";
+        s = str.replace(/&/g, "&amp;");
+        s = s.replace(/</g, "&lt;");
+        s = s.replace(/>/g, "&gt;");
+        s = s.replace(/    /g, "&nbsp;");
+        s = s.replace(/\'/g, "&#39;");
+        s = s.replace(/\"/g, "&quot;");
+        s = s.replace(/\n/g, "<br />");
+        return s;
+    }
+    function isUrl(str) {
+        return /^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"])*$/.test(str);
+    }
+    function stripHTML(str) {
+        return str ? str.replace(/<(?:.|\s)*?>/g, "") : "";
     }
 
     /** 绑定WebIM客户端存在的各种事件监听 */
@@ -1930,6 +1997,7 @@
                 _this._saveMsg(msg.type, direction, msg);
             }
             _this.receiveMsgListener.onMessage(ev, data);
+            sound.play('msg');
         });
         // 输入状态
         _this.bind("status", function(ev, data) {
