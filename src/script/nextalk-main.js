@@ -102,15 +102,15 @@
     window.nextalkMain = main;
 })();
 
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkResPath
+document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
         + 'css/mzen.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkResPath
+document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
         + 'css/glyphicons.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkResPath
+document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
         + 'css/nextalk-webui.css" />');
-document.write('<script type="text/javascript" src="' + nextalkResPath
+document.write('<script type="text/javascript" src="' + nextalkMain.resPath
         + 'script/jquery.min.js"></script>');
-document.write('<script type="text/javascript" src="' + nextalkResPath
+document.write('<script type="text/javascript" src="' + nextalkMain.resPath
         + 'script/nextalk-webim.js"></script>');
-document.write('<script type="text/javascript" src="' + nextalkResPath
+document.write('<script type="text/javascript" src="' + nextalkMain.resPath
         + 'script/nextalk-webui.js"></script>');
