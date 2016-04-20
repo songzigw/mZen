@@ -5,6 +5,50 @@
 
     "use strict";
 
+    function extend() {
+        // copy reference to target object
+        var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
+
+        // Handle a deep copy situation
+        if (typeof target === "boolean") {
+            deep = target;
+            target = arguments[1] || {};
+            // skip the boolean and the target
+            i = 2;
+        }
+
+        // Handle case when target is a string or something (possible in deep
+        // copy)
+        if (typeof target !== "object" && !isFunction(target))
+            target = {};
+        for (; i < length; i++)
+            // Only deal with non-null/undefined values
+            if ((options = arguments[i]) != null)
+                // Extend the base object
+                for ( var name in options) {
+                    var src = target[name], copy = options[name];
+
+                    // Prevent never-ending loop
+                    if (target === copy)
+                        continue;
+
+                    // Recurse if we're merging object values
+                    if (deep && copy && typeof copy === "object"
+                            && !copy.nodeType)
+                        target[name] = extend(deep,
+                        // Never move original objects, clone them
+                        src || (copy.length != null ? [] : {}), copy);
+
+                    // Don't bring in undefined values
+                    else if (copy !== undefined)
+                        target[name] = copy;
+
+                }
+
+        // Return the modified object
+        return target;
+    }
+
     // NexTalkWebUI初始化参数
     var main = {
         // 通信令牌 暂时不用
@@ -21,7 +65,7 @@
         route : {}
     };
     main.setConfig = function(ops) {
-        $.extend(this, ops || {});
+        extend(this, ops || {});
     };
     main._loadHTML = function(callback) {
         $.ajax({
@@ -61,53 +105,22 @@
             ui.connectServer(_this.ticket);
         });
     };
+    window.nextalkMain = main;
 
     var top = window.top;
     if (top != window.self) {
         // 获取父窗体中的引导程序
         var iframe = top.nextalkIframe;
         main.setConfig(iframe.config);
-
-        // 父窗口中的页面元素
-        var nkMain = $('#nextalk_main', top.document);
-        var nkIframe = $('#nextalk_iframe', top.document);
-
-        var nkMainHeight = -42;
-        var nkIframeHeight = -(iframe.panel.height);
-        slideUp(nkMain, nkMainHeight);
-
-        nkMain.find('a').click(function() {
-            nkMain.hide();
-            slideUp(nkIframe, nkIframeHeight);
-        });
-        nkIframe.find('a').click(function() {
-            nkIframe.hide();
-            slideUp(nkMain, nkMainHeight);
-        });
     }
-
-    function slideUp($el, offset) {
-        $el.css({
-            bottom : offset + 'px'
-        });
-        $el.show();
-        var timerTask = window.setTimeout(function() {
-            $el.css({
-                bottom : '0px'
-            });
-            window.clearTimeout(timerTask);
-        }, 5);
-    }
-
-    window.nextalkMain = main;
 })();
 
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
-        + 'css/mzen.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
-        + 'css/glyphicons.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="' + nextalkMain.resPath
-        + 'css/nextalk-webui.css" />');
+document.write('<link rel="stylesheet" type="text/css" href="'
+        + nextalkMain.resPath + 'css/mzen.css" />');
+document.write('<link rel="stylesheet" type="text/css" href="'
+        + nextalkMain.resPath + 'css/glyphicons.css" />');
+document.write('<link rel="stylesheet" type="text/css" href="'
+        + nextalkMain.resPath + 'css/nextalk-webui.css" />');
 document.write('<script type="text/javascript" src="' + nextalkMain.resPath
         + 'script/jquery.min.js"></script>');
 document.write('<script type="text/javascript" src="' + nextalkMain.resPath

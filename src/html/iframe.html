@@ -3,12 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport"
-    content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
 <title>Chat</title>
 </head>
 <body>
-    <script type="text/javascript" src="../script/nextalk-main.js"></script>
-    <script type="text/javascript">
+	<script type="text/javascript" src="../script/nextalk-main.js"></script>
+	<script type="text/javascript">
+        (function(main, undefined) {
+
+            "use strict";
+
+            var top = window.top;
+            if (top != window.self) {
+                // 获取父窗体中的引导程序
+                var iframe = top.nextalkIframe;
+
+                // 父窗口中的页面元素
+                var nkMain = $('#nextalk_main', top.document);
+                var nkIframe = $('#nextalk_iframe', top.document);
+
+                var nkMainHeight = -42;
+                var nkIframeHeight = -(iframe.panel.height);
+                slideUp(nkMain, nkMainHeight);
+
+                nkMain.find('a').click(function() {
+                    nkMain.hide();
+                    slideUp(nkIframe, nkIframeHeight);
+                });
+                nkIframe.find('a').click(function() {
+                    nkIframe.hide();
+                    slideUp(nkMain, nkMainHeight);
+                });
+            }
+
+            function slideUp($el, offset) {
+                $el.css({
+                    bottom : offset + 'px'
+                });
+                $el.show();
+                var timerTask = window.setTimeout(function() {
+                    $el.css({
+                        bottom : '0px'
+                    });
+                    window.clearTimeout(timerTask);
+                }, 5);
+            }
+        })(nextalkMain);
+
         nextalkMain.go();
     </script>
 </body>
