@@ -14,7 +14,7 @@
 	height: 26px;
 	bottom: 0px;
 	right: 50px;
-	padding: 0px 10px;
+	padding: 0px 20px;
 	border-radius: 2px 2px 0px 0px;
 	transition: all 0.3s ease-in-out 0.1s;
 	-webkit-transition: all 0.3s ease-in-out 0.1s;
@@ -41,7 +41,7 @@
 	width: 23px;
 	height: 17px;
 	border: none;
-	margin: -5px 10px 0 0;
+	margin: -3px 10px 0 0;
 	float: none;
 	position: static;
 }
