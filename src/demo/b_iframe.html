@@ -8,9 +8,10 @@
 </head>
 <body>
     <!-- NexTalkWebIM here -->
-    <script type="text/javascript" src="../script/nextalk-iframe.js"></script>
+    <script type="text/javascript" src="../script/nextalk-main.js"></script>
     <script type="text/javascript">
-        nextalkIframe.config = {
+        nextalkMain.setConfig({
+            iframe : true,
             // 引入资源文件的根路径
             resPath : '/nextalk-webim-song/src/',
             // API根路径
@@ -41,9 +42,8 @@
                 // upload files
                 upload : "upload.do"
             }
-        };
-
-        nextalkIframe.go();
+        });
+        nextalkMain.go();
     </script>
 </body>
 </html>

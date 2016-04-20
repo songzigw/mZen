@@ -1,5 +1,5 @@
 /**
- * 程序入口设置
+ * 程序入口
  */
 (function() {
 
@@ -66,7 +66,57 @@
     };
     main.setConfig = function(ops) {
         extend(this, ops || {});
+        this._loadDep();
     };
+    // 依赖包是否加载完成
+    main._depFlag = false;
+    main._loadDep = function() {
+        var _this = this;
+
+        if (typeof _this.iframe == 'boolean'
+            && _this.iframe == true) {
+            _this._loadDepIframe();
+            return;
+        }
+
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/mzen.css" />');
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/glyphicons.css" />');
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/nextalk-webui.css" />');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/jquery.min.js"></script>');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-webim.js"></script>');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-webui.js"></script>');
+        var task = window.setInterval(function() {
+            if (!$) {
+                return;
+            }
+            if (!NexTalkWebIM) {
+                return;
+            }
+            if (!NexTalkWebUI) {
+                return;
+            }
+            window.clearInterval(task);
+            _this.depFlag = true;
+        }, 200);
+    };
+    main._loadDepIframe = function() {
+        var _this = this;
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-iframe.js"></script>');
+        var task = window.setInterval(function() {
+            if (!nextalkTop) {
+                return;
+            }
+            window.clearInterval(task);
+            _this.depFlag = true;
+        }, 200);
+    }
     main._loadHTML = function(callback) {
         $.ajax({
             type : 'GET',
@@ -94,7 +144,24 @@
     };
     main.go = function() {
         var _this = this;
-
+        var task = window.setInterval(function() {
+            if (_this.depFlag) {
+                window.clearInterval(task);
+                _this._go()
+            }
+        }, 200);
+    };
+    main._go = function() {
+        var _this = this;
+        if (typeof _this.iframe == 'boolean'
+            && _this.iframe == true) {
+            _this._goIframe();
+        } else {
+            _this._goMain();
+        }
+    };
+    main._goMain = function() {
+        var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
             var ui = NexTalkWebUI.init(_this.ticket, {
@@ -104,26 +171,27 @@
             });
             ui.connectServer(_this.ticket);
         });
+    }
+    main._goIframe = function() {
+        var _this = this;
+        nextalkTop.config = {
+            // 引入资源文件的根路径
+            resPath : _this.resPath,
+            // API根路径
+            apiPath : _this.apiPath,
+            // API路由
+            route : _this.route
+        };
+        nextalkTop.go();
+        // 将nextalkMain销毁
+        delete window.nextalkMain;
     };
     window.nextalkMain = main;
 
     var top = window.top;
     if (top != window.self) {
-        // 获取父窗体中的引导程序
-        var iframe = top.nextalkIframe;
-        main.setConfig(iframe.config);
+        // 获取父窗体中的配置
+        main.setConfig(top.nextalkTop.config);
     }
 })();
 
-document.write('<link rel="stylesheet" type="text/css" href="'
-        + nextalkMain.resPath + 'css/mzen.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="'
-        + nextalkMain.resPath + 'css/glyphicons.css" />');
-document.write('<link rel="stylesheet" type="text/css" href="'
-        + nextalkMain.resPath + 'css/nextalk-webui.css" />');
-document.write('<script type="text/javascript" src="' + nextalkMain.resPath
-        + 'script/jquery.min.js"></script>');
-document.write('<script type="text/javascript" src="' + nextalkMain.resPath
-        + 'script/nextalk-webim.js"></script>');
-document.write('<script type="text/javascript" src="' + nextalkMain.resPath
-        + 'script/nextalk-webui.js"></script>');
