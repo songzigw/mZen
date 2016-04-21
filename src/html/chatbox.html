@@ -5,25 +5,59 @@
         <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
         <title>Chat</title>
         <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
+        <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body>
-        <div class="nextalk-page chatbox">
-        <div class="mzen-col-xs-3 mzen-border-r">
-            <div class="mzen-content">
+        
+        <div class="nextalk-page nextalk-screen-full nextalk-page-login"
+            id="nextalk_page_init" style="display: none;">
+            <div class="mzen-content
+                mzen-flex-col mzen-flex-center">
+            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>
+            <p>一起来聊聊</p></div>
+        </div>
+        
+        <div class="nextalk-page nextalk-screen-full nextalk-page-login"
+            id="nextalk_page_login" style="display: none;">
+            <div class="mzen-content
+                mzen-flex-col mzen-flex-center">
+            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>
+            <p>正在登入中...</p>
+            <button class="mzen-btn mzen-btn-danger">重新登入</button>
+            </div>
+        </div>
+        
+        <div class="nextalk-page chatbox" id="nextalk_page_main" style="width: 320px;">
+        
+            <div class="mzen-content mzen-border-r">
             <div class="mzen-searchbar-wrap focus">
                 <div class="mzen-searchbar mzen-border-radius">
+                    <i class="mzen-iconfont mzen-icon-search"></i>
                     <div class="mzen-searchbar-input">
                         <form action="javascript:;" onsubmit="return false;">
-                        <input type="search" placeholder="请输入联系人">
+                        <input type="text" placeholder="请输入联系人">
                         </form>
                     </div>
+                    <i class="mzen-iconfont mzen-icon-roundclosefill"></i>
                 </div>
             </div>
+            
+            <div class="mzen-tips mzen-tips-info nextalk-msg-box">
+	            <div class="mzen-tips-content mzen-ellipsis-1">
+	                <i class="mzen-iconfont mzen-icon-warnfill"></i>
+	                <span>...</span>
+	            </div>
+	        </div>
+            
+            <div class="nextalk-scroll">
             <ul class="mzen-list-view">
                 <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">
-                    <div class="mzen-img-body mzen-ellipsis-1">系统通知</div>
+                    <div class="mzen-img-body">
+                        <p class="mzen-ellipsis-1">系统通知</p>
+                    </div>
+                    <span class="mzen-badge mzen-badge-danger mzen-pull-right">3</span>
                 </li>
                 <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/head_b.jpg">
@@ -69,67 +103,67 @@
                 </li>
             </ul>
             </div>
-        </div>
-        <div class="mzen-col-xs-9">
-            <div class="mzen-content" id="nextalk_page_chatbox">
-                <!--头部集合 BEGIN-->
-		        <header class="mzen-bar mzen-bar-nav mzen-bar-white">
-		            <div class="mzen-pull-left mzen-tap-active nextalk-user">
-		            <a class="mzen-img unavailable">
-		            <img class="mzen-img-object" src="../imgs/head_def.png">
-		            </a>
-		            </div>
-		            <div class="mzen-title">
-		                张三
-		            </div>
-		        </header>
-		        <!--头部集合 END-->
-		        <div class="nextalk-scroll" id="nextalk_content_chatbox">
-		            <div class="mzen-content-padded nextalk-wrap">
-	                    <p class="mzen-text-center">5-21 20:00</p>
-	                    <div class="mzen-chat-sender">
-	                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
-	                        <div class="mzen-chat-sender-cont">
-	                            <div class="mzen-chat-right-triangle"></div>
-	                            <span>Hello!!</span>
-	                        </div>
-	                    </div>
-	                    <div class="mzen-chat-receiver">
-	                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
-	                        <div class="mzen-chat-receiver-cont">
-	                            <div class="mzen-chat-left-triangle"></div>
-	                            <span>你好！</span>
-	                        </div>
-	                    </div>
-	                    <div class="mzen-chat-sender">
-	                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
-	                        <div class="mzen-chat-sender-cont">
-	                            <div class="mzen-chat-right-triangle"></div>
-	                            <span>Hello!!</span>
-	                        </div>
-	                    </div>
-	                    <div class="mzen-chat-receiver">
-	                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
-	                        <div class="mzen-chat-receiver-cont">
-	                            <div class="mzen-chat-left-triangle"></div>
-	                            <span>你好！</span>
-	                        </div>
-	                    </div>
-	                    <p class="mzen-text-center">8-16 20:00</p>
-	                    <div class="mzen-chat-receiver">
-	                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
-	                        <div class="mzen-chat-receiver-cont">
-	                            <div class="mzen-chat-left-triangle"></div>
-	                            <span>我是一个傻瓜！</span>
-	                        </div>
-	                    </div>
-	                </div>
-		        </div>
-		        <!-- 聊天输入筐BEGIN -->
-		        
-                <!-- 聊天输入筐END -->
             </div>
+        
         </div>
+        
+        <div class="nextalk-page nextalk-screen-right chatbox" id="nextalk_page_chatbox" style="width: 500px;">
+            <!--头部集合 BEGIN-->
+            <header class="mzen-bar mzen-bar-nav mzen-bar-white">
+                <div class="mzen-pull-left mzen-tap-active nextalk-user">
+                <a class="mzen-img unavailable">
+                <img class="mzen-img-object" src="../imgs/head_def.png">
+                </a>
+                </div>
+                <div class="mzen-title">
+                    张三
+                </div>
+            </header>
+            <!--头部集合 END-->
+            <div class="nextalk-scroll" id="nextalk_content_chatbox">
+                <div class="mzen-content-padded nextalk-wrap">
+                    <p class="mzen-text-center">5-21 20:00</p>
+                    <div class="mzen-chat-sender">
+                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
+                        <div class="mzen-chat-sender-cont">
+                            <div class="mzen-chat-right-triangle"></div>
+                            <span>Hello!!</span>
+                        </div>
+                    </div>
+                    <div class="mzen-chat-receiver">
+                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
+                        <div class="mzen-chat-receiver-cont">
+                            <div class="mzen-chat-left-triangle"></div>
+                            <span>你好！</span>
+                        </div>
+                    </div>
+                    <div class="mzen-chat-sender">
+                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
+                        <div class="mzen-chat-sender-cont">
+                            <div class="mzen-chat-right-triangle"></div>
+                            <span>Hello!!</span>
+                        </div>
+                    </div>
+                    <div class="mzen-chat-receiver">
+                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
+                        <div class="mzen-chat-receiver-cont">
+                            <div class="mzen-chat-left-triangle"></div>
+                            <span>你好！</span>
+                        </div>
+                    </div>
+                    <p class="mzen-text-center">8-16 20:00</p>
+                    <div class="mzen-chat-receiver">
+                        <div class="mzen-chat-receiver-avatar"><img src="../imgs/head_b.jpg"></div>
+                        <div class="mzen-chat-receiver-cont">
+                            <div class="mzen-chat-left-triangle"></div>
+                            <span>我是一个傻瓜！</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 聊天输入筐BEGIN -->
+            
+            <!-- 聊天输入筐END -->
         </div>
     </body>
     <script type="text/javascript" src="../script/jquery.min.js"></script>

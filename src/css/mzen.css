@@ -2512,7 +2512,7 @@ input.mzen-counter-input {
     line-height: 32px;
     color: #c8c7cc;
     font-size: 14px;
-	width: 100%;
+	/*width: 100%;*/
     position: relative;
     padding-left: 4px;
     -webkit-box-flex: 1;

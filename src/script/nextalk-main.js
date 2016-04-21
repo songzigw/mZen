@@ -171,7 +171,7 @@
             });
             ui.connectServer(_this.ticket);
         });
-    }
+    };
     main._goIframe = function() {
         var _this = this;
         nextalkTop.config = {
