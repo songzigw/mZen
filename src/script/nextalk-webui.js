@@ -9,11 +9,10 @@
 (function(IM, undefined) {
 
     "use strict";
-    
+
     var NexTalkWebUI = function() {};
     var UI = NexTalkWebUI;
     IM.ClassEvent.on(UI);
-    window.NexTalkWebUI = UI;
 
     // ---------------------------------------
 
@@ -955,4 +954,5 @@
         $search.removeClass('focus');
     };
 
+    window.NexTalkWebUI = UI;
 })(NexTalkWebIM);

@@ -8,21 +8,17 @@
         <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
     </head>
     <body>
-        <div class="nextalk-page chatbox" id="nextalk_page_chatbox">
+        <div class="nextalk-page chatbox">
         <div class="mzen-col-xs-3 mzen-border-r">
             <div class="mzen-content">
-            <div class="mzen-searchbar-wrap" id="search">
-                <div class="mzen-searchbar mzen-border-radius" onclick="doSearch()">
-                    <i class="mzen-iconfont mzen-icon-search"></i>
-                    <div class="mzen-searchbar-text">搜索内容</div>
+            <div class="mzen-searchbar-wrap focus">
+                <div class="mzen-searchbar mzen-border-radius">
                     <div class="mzen-searchbar-input">
-                        <form action="javascript:search();">
-                        <input type="search" placeholder="请输入搜索内容" id="search-input">
+                        <form action="javascript:;" onsubmit="return false;">
+                        <input type="search" placeholder="请输入联系人">
                         </form>
                     </div>
-                    <i class="mzen-iconfont mzen-icon-roundclosefill" onclick="clearInput()"></i>
                 </div>
-                <div class="mzen-searchbar-cancel mzen-text-info" onclick="cancelSearch()">取消</div>
             </div>
             <ul class="mzen-list-view">
                 <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">
@@ -75,19 +71,21 @@
             </div>
         </div>
         <div class="mzen-col-xs-9">
-            <div class="mzen-content">
+            <div class="mzen-content" id="nextalk_page_chatbox">
                 <!--头部集合 BEGIN-->
-		        <header class="mzen-bar mzen-bar-nav mzen-bar-white" id="main-header">
-		            <a class="mzen-pull-left mzen-img mzen-tap-active nextalk-user">
+		        <header class="mzen-bar mzen-bar-nav mzen-bar-white">
+		            <div class="mzen-pull-left mzen-tap-active nextalk-user">
+		            <a class="mzen-img unavailable">
 		            <img class="mzen-img-object" src="../imgs/head_def.png">
 		            </a>
+		            </div>
 		            <div class="mzen-title">
 		                张三
 		            </div>
 		        </header>
 		        <!--头部集合 END-->
-		        <div class="mzen-content nextalk-content" id="nextalk_content_chatbox">
-		            <div class="mzen-content-padded">
+		        <div class="nextalk-scroll" id="nextalk_content_chatbox">
+		            <div class="mzen-content-padded nextalk-wrap">
 	                    <p class="mzen-text-center">5-21 20:00</p>
 	                    <div class="mzen-chat-sender">
 	                        <div class="mzen-chat-sender-avatar"><img src="../imgs/head_a.jpg"></div>
@@ -128,6 +126,7 @@
 	                </div>
 		        </div>
 		        <!-- 聊天输入筐BEGIN -->
+		        
                 <!-- 聊天输入筐END -->
             </div>
         </div>

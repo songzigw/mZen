@@ -1364,7 +1364,6 @@
     var NexTalkWebIM = function() {};
     var IM = NexTalkWebIM;
     ClassEvent.on(IM);
-    window.NexTalkWebIM = IM;
     
     extend(IM, {
         log : log,
@@ -3066,4 +3065,5 @@
 
     })(IM);
 
+    window.NexTalkWebIM = IM;
 })(window);

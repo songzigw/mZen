@@ -273,8 +273,8 @@ html, body {
 	border: 1px solid #f9f9f9;
 }
 .mzen-bar-nav .nextalk-user img {
-    height: 38px !important;
-    width: 38px !important;
+    height: 38px;
+    width: 38px;
     border-radius: 50%;
     background-color: white;
 }
