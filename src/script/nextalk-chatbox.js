@@ -596,6 +596,14 @@
         return '<span class="mzen-badge mzen-badge-danger">'+ notCount +'</span>';
     }
 
+    UI.CONVERSATION = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">\
+                            <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">\
+                            <div class="mzen-img-body">\
+                                <p class="mzen-ellipsis-1">系统通知</p>\
+                            </div>\
+                            <span class="mzen-badge mzen-badge-danger mzen-pull-right">3</span>\
+                        </li>';
+    
     function buddyHTML(u) {
         var html = '<li class="mzen-user-view-cell mzen-img mzen-up-hover" '
                 + 'data-toggle="' + ChatBoxUI.CHAT + '" data-id="'
@@ -603,13 +611,6 @@
                 + '<img class="mzen-img-object mzen-pull-left" src="'+u.avatar+'">'
                 + '<div class="mzen-img-body mzen-arrow-right">'
                 + '<span>'+u.nick+'</span></div></li>';
-        var html = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">\
-                        <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">\
-                        <div class="mzen-img-body">\
-                            <p class="mzen-ellipsis-1">系统通知</p>\
-                        </div>\
-                        <span class="mzen-badge mzen-badge-danger mzen-pull-right">3</span>\
-                    </li>';
         return $(html);
     }
 
