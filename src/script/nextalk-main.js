@@ -105,13 +105,13 @@
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-chatbox.js"></script>');
         var task = window.setInterval(function() {
-            if (!$) {
+            if (!window.$) {
                 return;
             }
-            if (!NexTalkWebIM) {
+            if (!window.NexTalkWebIM) {
                 return;
             }
-            if (!NexTalkWebUI) {
+            if (!window.NexTalkWebUI) {
                 return;
             }
             window.clearInterval(task);
@@ -133,13 +133,13 @@
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-webui.js"></script>');
         var task = window.setInterval(function() {
-            if (!$) {
+            if (!window.$) {
                 return;
             }
-            if (!NexTalkWebIM) {
+            if (!window.NexTalkWebIM) {
                 return;
             }
-            if (!NexTalkWebUI) {
+            if (!window.NexTalkWebUI) {
                 return;
             }
             window.clearInterval(task);
@@ -151,7 +151,7 @@
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-iframe.js"></script>');
         var task = window.setInterval(function() {
-            if (!nextalkTop) {
+            if (!window.nextalkTop) {
                 return;
             }
             window.clearInterval(task);
