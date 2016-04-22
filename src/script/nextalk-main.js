@@ -55,7 +55,11 @@
         // ticket : 'ticket',
         // APP_KEY 暂时不用
         // appKey : 'app_key',
-        /** 是否是手机端 */
+        // 以iframe嵌入网页
+        iframe : false,
+        // 简单聊天对话框
+        chatbox : false,
+        // 是否是手机端
         mobile : false,
         // 引入资源文件的根路径
         resPath : window.nextalkResPath,
@@ -69,7 +73,7 @@
         this._loadDep();
     };
     // 依赖包是否加载完成
-    main._depFlag = false;
+    main.depFlag = false;
     main._loadDep = function() {
         var _this = this;
 
@@ -78,7 +82,44 @@
             _this._loadDepIframe();
             return;
         }
+        if (typeof _this.chatbox == 'boolean'
+            && _this.chatbox == true) {
+            _this._loadDepChatbox();
+            return;
+        }
 
+        _this._loadDepMail();
+    };
+    main._loadDepChatbox = function() {
+        var _this = this;
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/mzen.css" />');
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/glyphicons.css" />');
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/nextalk-webui.css" />');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/jquery.min.js"></script>');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-webim.js"></script>');
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-chatbox.js"></script>');
+        var task = window.setInterval(function() {
+            if (!$) {
+                return;
+            }
+            if (!NexTalkWebIM) {
+                return;
+            }
+            if (!NexTalkWebUI) {
+                return;
+            }
+            window.clearInterval(task);
+            _this.depFlag = true;
+        }, 200);
+    };
+    main._loadDepMail = function() {
+        var _this = this;
         document.write('<link rel="stylesheet" type="text/css" href="'
                 + _this.resPath + 'css/mzen.css" />');
         document.write('<link rel="stylesheet" type="text/css" href="'
@@ -116,12 +157,12 @@
             window.clearInterval(task);
             _this.depFlag = true;
         }, 200);
-    }
-    main._loadHTML = function(callback) {
+    };
+    main._loadHTML = function(html, callback) {
         $.ajax({
             type : 'GET',
             cache : false,
-            url : main.resPath + 'html/main.html',
+            url : main.resPath + 'html/'+html+'.html',
             dataType : 'html',
             success : function(ret) {
                 var $ret = $(ret);
@@ -156,6 +197,9 @@
         if (typeof _this.iframe == 'boolean'
             && _this.iframe == true) {
             _this._goIframe();
+        } else if (typeof _this.chatbox == 'boolean'
+            && _this.chatbox == true) {
+            _this._goChatbox();
         } else {
             _this._goMain();
         }
@@ -163,8 +207,20 @@
     main._goMain = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        _this._loadHTML(function() {
-            var ui = NexTalkWebUI.init(_this.ticket, {
+        _this._loadHTML('main', function() {
+            var ui = NexTalkWebUI.init(_this.appKey, {
+                resPath : _this.resPath,
+                apiPath : _this.apiPath,
+                mobile : _this.mobile
+            });
+            ui.connectServer(_this.ticket);
+        });
+    };
+    main._goChatbox = function() {
+        var _this = this;
+        NexTalkWebIM.WebAPI.route(_this.route);
+        _this._loadHTML('chatbox', function() {
+            var ui = NexTalkWebUI.init(_this.appKey, {
                 resPath : _this.resPath,
                 apiPath : _this.apiPath,
                 mobile : _this.mobile
@@ -175,6 +231,7 @@
     main._goIframe = function() {
         var _this = this;
         nextalkTop.config = {
+            chatbox : _this.chatbox,
             // 引入资源文件的根路径
             resPath : _this.resPath,
             // API根路径

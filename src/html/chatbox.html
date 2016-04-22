@@ -1,14 +1,3 @@
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
-        <title>Chat</title>
-        <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
-        <link rel="stylesheet" type="text/css" href="../css/glyphicons.css" />
-        <link rel="stylesheet" type="text/css" href="../css/nextalk-webui.css" />
-    </head>
-    <body>
         
         <div class="nextalk-page nextalk-screen-full nextalk-page-login"
             id="nextalk_page_init" style="display: none;">
@@ -50,7 +39,7 @@
 	            </div>
 	        </div>
             
-            <div class="nextalk-scroll">
+            <div class="nextalk-scroll" id="nextalk_conversations">
             <ul class="mzen-list-view">
                 <li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">
                     <img class="mzen-img-object mzen-pull-left" src="../imgs/messagescenter_notice.png">
@@ -107,7 +96,8 @@
         
         </div>
         
-        <div class="nextalk-page nextalk-screen-right chatbox" id="nextalk_page_chatbox" style="width: 500px;">
+        <div class="nextalk-page nextalk-screen-right chatbox"
+            id="nextalk_page_chatbox" style="display: none;">
             <!--头部集合 BEGIN-->
             <header class="mzen-bar mzen-bar-nav mzen-bar-white">
                 <div class="mzen-pull-left mzen-tap-active nextalk-user">
@@ -162,13 +152,12 @@
                 </div>
             </div>
             <!-- 聊天输入筐BEGIN -->
-            
+            <footer class="mzen-nav">
+                <form class="mzen-form" onsubmit="return false;">
+                <div class="nextalk mzen-input-row">
+                    <input type="text" class="mzen-input" placeholder="输入消息内容..."/>
+                </div>
+                </form>
+            </footer>
             <!-- 聊天输入筐END -->
         </div>
-    </body>
-    <script type="text/javascript" src="../script/jquery.min.js"></script>
-    <script type="text/javascript" src="../script/nextalk-webim.js"></script>
-    <script type="text/javascript">
-        
-    </script>
-</html>

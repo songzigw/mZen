@@ -20,7 +20,7 @@
     UI.VERSION = UI.version = UI.v = "0.0.1";
 
     /** 默认配置信息 */
-    UI.DEFAULTS = $.extend(IM.DEFAULTS, {
+    UI.DEFAULTS = $.extend({}, IM.DEFAULTS, {
         mobile : false
     });
 
@@ -140,7 +140,7 @@
                 _this.onStatus(ev, data);
             }
         });
-        
+
         return _this;
     };
 

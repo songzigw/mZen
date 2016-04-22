@@ -1458,7 +1458,9 @@
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
         channelType : Channel.type.WEBSOCKET,
         isJsonp : true,
-        resPath : '/',
+        // 资源文件根路径
+        resPath : '/src',
+        // API接口根路径
         apiPath : "/"
     };
 

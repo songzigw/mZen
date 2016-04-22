@@ -457,6 +457,7 @@ html, body {
 }
 .chatbox .mzen-list-view:after {
 	border-bottom: 0px;
+	border-top: 0px;
 }
 .chatbox .mzen-searchbar-wrap {
 	height: 45px;
