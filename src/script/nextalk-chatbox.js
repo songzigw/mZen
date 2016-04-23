@@ -76,8 +76,10 @@
             init : function() {
                 var _ui = this;
                 _ui.$html = $(_ui.HTML).hide();
-                var $img = $('[data-toggle=logo]', _ui.$html);
-                $img.attr('src', options.resPath + 'imgs/logo.png');
+                var $imgs = $('[data-toggle=logo]', _ui.$html);
+                $imgs.each(function() {
+                    $(this).attr('src', options.resPath + 'imgs/logo.png');
+                });
                 _ui.$html.appendTo(_this.$body);
             },
             show : function() {
@@ -115,8 +117,10 @@
             },
             _handler : function() {
                 var _ui = this;
-                var $img = $('[data-toggle=logo]', _ui.$html);
-                $img.attr('src', options.resPath + 'imgs/logo.png');
+                var $imgs = $('[data-toggle=logo]', _ui.$html);
+                $imgs.each(function() {
+                    $(this).attr('src', options.resPath + 'imgs/logo.png');
+                });
                 _ui.$btn.click(function() {
                     _this._connectServer(_this._ticket);
                 });
@@ -581,7 +585,7 @@
         var webui = UI.getInstance();
         var $items = this.$items;
 
-        $items.each(function(i, el) {
+        $('>li', $items).each(function(i, el) {
             var item = $(el);
             if (item.data('events') &&
                     item.data('events')['click'])
@@ -634,8 +638,8 @@
         });
     };
     SimpleUI.prototype.loadItem = function(msgType, other, msg) {
-        var _this = this, webim = UI.getInstance();
-        var $items = _this.items;
+        var _this = this, webim = IM.getInstance();
+        var $items = _this.$items;
 
         $('>li', $items).each(function(i, el) {
             var $el = $(el);
@@ -742,8 +746,8 @@
         var $html = $(ChatBoxUI.HTML);
         _this.$html = $html;
 
-        _this.$boxBody = $('>.nextalk-wrap', $html);
-        _this.$boxBody.empty();
+        _this.$bBody = $('.nextalk-wrap', $html);
+        _this.$bBody.empty();
 
         _this.handleHTML();
         $html.appendTo($body);
@@ -765,15 +769,14 @@
                         <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
                             <div class="mzen-pull-left mzen-tap-active nextalk-user">\
                             <a class="mzen-img unavailable">\
-                            <img class="mzen-img-object" src="">\
+                            <img class="mzen-img-object" src="" data-toggle="head">\
                             </a>\
                             </div>\
                             <div class="mzen-title">???</div>\
                         </header>\
                         <!--头部集合 END-->\
                         <div class="nextalk-scroll" id="nextalk_content_chatbox">\
-                            <div class="mzen-content-padded nextalk-wrap">\
-                            </div>\
+                            <div class="mzen-content-padded nextalk-wrap"></div>\
                         </div>\
                         <!-- 聊天输入筐BEGIN -->\
                         <footer class="mzen-nav">\
@@ -833,7 +836,7 @@
         _this.toBottom();
 
         var webim = IM.getInstance();
-        var webui = IM.getInstance();
+        var webui = UI.getInstance();
         var dInfo = webim.getDialogInfo(_this.type, _this.id);
         if (!dInfo) {
             return;
@@ -884,7 +887,7 @@
             + '<div class="mzen-chat-receiver-cont">'
             + '<div class="mzen-chat-left-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
-        _this.$boxBody.append(html);
+        _this.$bBody.append(html);
         _this.toBottom();
     };
     ChatBoxUI.prototype.sendHTML = function(msg) {
@@ -895,7 +898,7 @@
             + '<div class="mzen-chat-sender-cont">'
             + '<div class="mzen-chat-right-triangle"></div>'
             + '<span>' + msg.body + '</span></div></div>';
-        _this.$boxBody.append(html);
+        _this.$bBody.append(html);
         _this.toBottom();
     }
     ChatBoxUI.prototype.sendMsg = function(body) {
@@ -921,6 +924,7 @@
     };
     ChatBoxUI.prototype.handleHTML = function() {
         var _this = this, $html = _this.$html;
+        var ops = UI.getInstance().options;
 
         if (_this.type == ChatBoxUI.NOTIFICATION) {
             $('footer', $html).hide();
@@ -929,6 +933,11 @@
         $html.attr('data-id', _this.id);
         $html.attr('data-name', _this.name);
         $('header>.mzen-title', $html).text(_this.name);
+        $('[data-toggle=head]', $html).each(function() {
+            $(this).attr('src', ops.resPath + 'imgs/head_def.png');
+        });
+        $('>header .mzen-pull-left .img', $html)
+            .attr('src', _this.avatar);
 
         var $content = $('#nextalk_content_chatbox', $html);
         $content.css('overflow', 'auto');
