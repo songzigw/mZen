@@ -574,7 +574,7 @@
         var wh = $w.height();
         var ww = $w.width();
         $html.width(270);
-        var hh = $('header', $html).height();
+        var hh = _this.$header.height();
         _this.$conversations.height(wh - hh);
     };
     SimpleUI.prototype.itemsClick = function() {
@@ -809,7 +809,7 @@
         var wh = $w.height();
         var ww = $w.width();
 
-        $html.width(ww - 270);
+        $html.width(ww - 270 -1);
 
         var hh = $('header', $html).height();
         var fh = $('footer', $html).height();
