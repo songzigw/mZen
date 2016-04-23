@@ -936,7 +936,8 @@
         $('[data-toggle=head]', $html).each(function() {
             $(this).attr('src', ops.resPath + 'imgs/head_def.png');
         });
-        $('>header .mzen-pull-left .img', $html)
+        // 设置在线状态和头像
+        $('>header .mzen-pull-left img', $html)
             .attr('src', _this.avatar);
 
         var $content = $('#nextalk_content_chatbox', $html);
