@@ -1902,13 +1902,15 @@
             init : function(urls) {
                 extend(_urls, urls);
                 if (!window.Audio && navigator.userAgent.indexOf('MSIE') >= 0) {
-                    var initPage = document.getElementById('nextalk_page_init');
                     var soundEl = document.createElement('bgsound');
                     soundEl.id = 'webim-bgsound';
                     soundEl.src = '#';
                     soundEl.autostart = 'true';
                     soundEl.loop = '1';
-                    initPage.appendChild(soundEl);
+                    var welcome = document.getElementById('nextalk_page_welcome');
+                    if (welcome) {
+                        welcome.appendChild(soundEl);
+                    }
                 }
             },
             play : function(type) {

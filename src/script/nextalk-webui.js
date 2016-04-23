@@ -71,7 +71,7 @@
         // 消息通知框
         els.$msgBox = $('.mzen-tips.nextalk-msg-box', els.$body).hide();
         // 初始化页面
-        els.$initPage = $('#nextalk_page_init', els.$body).show();
+        els.$initPage = $('#nextalk_page_welcome', els.$body).show();
         // 登入页面
         els.$loginPage = $('#nextalk_page_login', els.$body).hide();
         els.$loginP = $('.mzen-content p', els.$loginPage);
