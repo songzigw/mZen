@@ -181,11 +181,12 @@
      * 定义或开启部分定时任务
      */
     UI.prototype._initTimerTask = function() {
-        var _this = this;
+        var _this = this, mainUI = _this.mainUI;
         
         // 关闭所有定时任务
         _this.stopAllTask = function() {
             _this.loginTask.stop();
+            _this.showTask.stop();
         };
         
         // 正在登入的动画效果
@@ -216,7 +217,48 @@
                 window.clearInterval(this._interval);
             }
         };
-        
+
+        // 现场状态切换动画
+        _this.showTask = {
+            _interval : null,
+            colors : ['available', 'dnd', 'away',
+                      'invisible', 'chat', 'unavailable'],
+            
+            start : function() {
+                window.clearInterval(this._interval);
+                
+                var $avatar = $('a', mainUI.$currUser);
+                var colors = this.colors;
+                var num = colors.length;
+                for (var k = 0; k < num; k++) {
+                    $avatar.removeClass(colors[k]);
+                }
+                
+                var i = 0;
+                this._interval = window.setInterval(function() {
+                    for (var k = 0; k < num; k++) {
+                        $avatar.removeClass(colors[k]);
+                    }
+                    $avatar.addClass(colors[i]);
+                    i++;
+                    if (i == num) {
+                        i = 0;
+                    }
+                }, 500);
+            },
+            
+            stop : function() {
+                window.clearInterval(this._interval);
+                
+                var $avatar = $('a', mainUI.$currUser);
+                var colors = this.colors;
+                for (var k = 0; k < colors.length; k++) {
+                    $avatar.removeClass(colors[k]);
+                }
+            }
+        };
+        // 启动现场状态切换动画
+        //_this.showTask.start();
     };
 
     UI.prototype._initLisenters = function() {
@@ -283,7 +325,8 @@
 
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
-            var _this = this, mainUI = _this.mainUI;
+            var _this = this;
+            var mainUI = _this.mainUI;
             mainUI.hideTips();
 
             if (_this.webim.loginTime > 0) {
@@ -296,7 +339,7 @@
             _this.loginUI.show();
         },
         onLoginWin : function(ev, data) {
-            var _this = this, mainUI = _this.mainUI;
+            var _this = this;
             _this.loginTask.stop();
             _this.loginUI.hide();
         },
@@ -319,8 +362,9 @@
                 mainUI.hideTips();
             }, 5000);
 
+            mainUI.setCurrName();
             // 加载会话列表
-            _this.loadConversations();
+            mainUI.loadRecently();
         },
         onDisconnected : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
@@ -348,7 +392,7 @@
                         }
                     }
                     // 处理会话列表
-                    _this.loadConversations(msg.type, msg.to, msg);
+                    _this.mainUI.loadItem(msg.type, msg.to, msg);
                 } else {
                     chatBoxUI = boxUIs.get(msg.type, msg.from);
                     if (chatBoxUI) {
@@ -359,7 +403,7 @@
                         }
                     }
                     // 处理会话列表
-                    _this.loadConversations(msg.type, msg.from, msg);
+                    _this.mainUI.loadItem(msg.type, msg.from, msg);
                 }
             }
         },
@@ -383,6 +427,9 @@
     var SimpleUI = function() {
         var _this = this;
         _this.$html = $(SimpleUI.HTML);
+        _this.$header = $('header', this.$html);
+        _this.$title = $('.mzen-title', _this.$header);
+        _this.$currUser = $('.nextalk-user', _this.$header);
         _this.$conversations = $('#nextalk_conversations', _this.$html);
         _this.$items = $('>.mzen-list-view', _this.$conversations);
         _this.msgTipsUI = new MsgTipUI();
@@ -431,12 +478,63 @@
                                 <span class="mzen-badge mzen-badge-danger mzen-pull-right">???</span>\
                              </li>';
     SimpleUI.prototype.handler = function() {
-        var _this = this, $html = this.$html;
+        var _this = this;
+        var webim = IM.getInstance();
+        var webui = UI.getInstance();
+
+        _this.$currUser.click(function() {
+            $('.dropdown-menu', $(this)).slideToggle();
+        });
+        $('.dropdown-menu li', _this.$currUser).each(function(i, el) {
+            $(el).click(function() {
+                webui.showTask.start();
+                var show = $(el).attr('data-show');
+                if (show == IM.show.UNAVAILABLE) {
+                    webim.offline(function() {
+                        _this.handlerAvatar();
+                    });
+                } else {
+                    webim.online(show, function() {
+                        _this.handlerAvatar();
+                    });
+                }
+            });
+        });
+
         _this.$items.empty();
         _this.$conversations.css({
             'background-color' : 'white',
             'overflow' : 'auto'
         });
+    };
+    SimpleUI.prototype.avatar = function() {
+        var _this = this;
+        var webim = IM.getInstance();
+        var webui = UI.getInstance();
+        var show = webim.getShow();
+
+        if (webim.connStatus == IM.connStatus.CONNECTED) {
+            var u = webim.getCurrUser();
+            $('img', _this.$currUser).attr('src', u.avatar);
+            $('img', _this.$currUser).attr('alt', u.nick);
+            $('a', _this.$currUser).attr('title', u.nick);
+        }
+        
+        webui.showTask.stop();
+        $('a', _this.$currUser).addClass(show);
+        
+        $('ul li', _this.$currUser).each(function(i, el) {
+            var $el = $(el);
+            $('.mzen-iconfont', $el).remove();
+            if ($el.attr('data-show') == show) {
+                $(el).append('<i class="mzen-iconfont mzen-icon-check"></i>');
+            }
+        });
+    };
+    SimpleUI.prototype.setCurrName = function() {
+        var webim = IM.getInstance();
+        var u = webim.getCurrUser();
+        this.$title.text(u.nick);
     };
     SimpleUI.prototype.itemHTML = function() {
         var $item = $(SimpleUI.CONVERSATION);
@@ -463,7 +561,7 @@
             }
         }
         return $item;
-    }
+    };
     SimpleUI.prototype.resizable() {
         var _this = this, $html = this.$html;
         var $w = $(window);
@@ -804,7 +902,7 @@
         _this.sendHTML(msg);
         webim.sendMessage(msg);
         // 处理会话列表
-        webui.loadConversations(msg.type, msg.to, msg);
+        webui.mainUI.loadItem(msg.type, msg.to, msg);
     };
     ChatBoxUI.prototype.handleHTML = function() {
         var _this = this, $html = _this.$html;
