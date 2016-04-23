@@ -70,12 +70,14 @@
                             id="nextalk_page_init">\
                             <div class="mzen-content\
                                 mzen-flex-col mzen-flex-center">\
-                            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>\
+                            <img alt="logo" src="" data-toggle="logo"/>\
                             <p>一起来聊聊</p></div>\
                     </div>',
             init : function() {
                 var _ui = this;
-                _ui.$html = $(_ui.HTML);
+                _ui.$html = $(_ui.HTML).hide();
+                var $img = $('[data-toggle=logo]', _ui.$html);
+                $img.attr('src', options.resPath + 'imgs/logo.png');
                 _ui.$html.appendTo(_this.$body);
             },
             show : function() {
@@ -86,21 +88,22 @@
             }
         };
         _this.welcomeUI.init();
+        _this.welcomeUI.show();
         _this.loginUI = {
             HTML : '<div class="nextalk-page nextalk-screen-full nextalk-page-login"\
                             id="nextalk_page_login">\
                             <div class="mzen-content\
                                 mzen-flex-col mzen-flex-center">\
-                            <img alt="logo" src="imgs/logo.png" toggle-data="login"/>\
+                            <img alt="logo" src="" data-toggle="logo"/>\
                             <p>正在登入中...</p>\
                             <button class="mzen-btn mzen-btn-danger">重新登入</button>\
                             </div>\
                     </div>',
             init : function() {
                 var _ui = this;
-                _ui.$html = $(_ui.HTML);
-                _ui.$btn = $('>button', _ui.$html).hide();
-                _ui.$p = $('>p.mzen-btn', _ui.$html);
+                _ui.$html = $(_ui.HTML).hide();
+                _ui.$btn = $('button', _ui.$html).hide();
+                _ui.$p = $('p', _ui.$html);
                 _ui._handler();
                 _ui.$html.appendTo(_this.$body);
             },
@@ -112,6 +115,8 @@
             },
             _handler : function() {
                 var _ui = this;
+                var $img = $('[data-toggle=logo]', _ui.$html);
+                $img.attr('src', options.resPath + 'imgs/logo.png');
                 _ui.$btn.click(function() {
                     _this._connectServer(_this._ticket);
                 });
@@ -277,7 +282,7 @@
         _this._ticket = ticket;
         window.setTimeout(function() {
             _this._connectServer(ticket);
-        }, 500);
+        }, 1500);
     };
 
     UI.prototype._connectServer = function(ticket) {
@@ -334,14 +339,16 @@
                 return;
             }
 
-            _this.loginUI.$btn.hide();
             _this.loginTask.start();
+            _this.loginUI.$btn.hide();
             _this.loginUI.show();
         },
         onLoginWin : function(ev, data) {
             var _this = this;
+            _this.mainUI.setCurrName();
             _this.loginTask.stop();
             _this.loginUI.hide();
+            _this.mainUI.resizable();
         },
         onLoginFail : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
@@ -358,11 +365,8 @@
         onConnected : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
             mainUI.showConnected();
-            setTimeout(function() {
-                mainUI.hideTips();
-            }, 5000);
-
             mainUI.setCurrName();
+            mainUI.avatar();
             // 加载会话列表
             mainUI.loadRecently();
         },
@@ -370,11 +374,13 @@
             var _this = this, mainUI = _this.mainUI;
             mainUI.showDisconnected();
             _this.stopAllTask();
+            mainUI.avatar();
         },
         onNetworkUnavailable : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
             mainUI.showNetwork();
             _this.stopAllTask();
+            mainUI.avatar();
         },
         onMessage : function(ev, data) {
             var _this = this, boxUIs = _this._chatBoxUIs;
@@ -432,16 +438,16 @@
         _this.$currUser = $('.nextalk-user', _this.$header);
         _this.$conversations = $('#nextalk_conversations', _this.$html);
         _this.$items = $('>.mzen-list-view', _this.$conversations);
-        _this.msgTipsUI = new MsgTipUI();
+        _this.msgTipsUI = new MsgTipsUI();
         _this.$conversations.append(_this.msgTipsUI.$html);
+        _this.handler();
     };
-    SimpleUI.HTML = '<div class="nextalk-page chatbox" id="nextalk_page_main">\
-                        <div class="mzen-border-r">\
+    SimpleUI.HTML = '<div class="mzen-border-r nextalk-page chatbox" id="nextalk_page_main">\
                         <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
                                 <div class="mzen-pull-left nextalk-user">\
                                 <a class="mzen-img mzen-tap-active\
                                         mzen-up-hover">\
-                                <img class="mzen-img-object" src=""/>\
+                                <img class="mzen-img-object" src="" data-toggle="head"/>\
                                 </a>\
                                 <ul class="dropdown-menu">\
                                 <li data-show="available">在线\
@@ -463,11 +469,9 @@
                                 </ul>\
                                 </div>\
                                 <div class="mzen-title">???</div>\
-                            </header>\
+                        </header>\
                         <div class="nextalk-scroll" id="nextalk_conversations">\
-                        <ul class="mzen-list-view">\
-                        </ul>\
-                        </div>\
+                        <ul class="mzen-list-view"></ul>\
                         </div>\
                     </div>';
     SimpleUI.CONVERSATION = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">\
@@ -478,24 +482,26 @@
                                 <span class="mzen-badge mzen-badge-danger mzen-pull-right">???</span>\
                              </li>';
     SimpleUI.prototype.handler = function() {
-        var _this = this;
-        var webim = IM.getInstance();
-        var webui = UI.getInstance();
-
+        var _this = this, ops = UI.getInstance().options;
+        $('[data-toggle=head]', _this.$html).each(function() {
+            $(this).attr('src', ops.resPath + 'imgs/head_def.png');
+        });
         _this.$currUser.click(function() {
             $('.dropdown-menu', $(this)).slideToggle();
         });
+        _this.$currUser.find('ul').css('right', 'initial');
         $('.dropdown-menu li', _this.$currUser).each(function(i, el) {
             $(el).click(function() {
-                webui.showTask.start();
+                var webim = IM.getInstance();
+                UI.getInstance().showTask.start();
                 var show = $(el).attr('data-show');
                 if (show == IM.show.UNAVAILABLE) {
                     webim.offline(function() {
-                        _this.handlerAvatar();
+                        _this.avatar();
                     });
                 } else {
                     webim.online(show, function() {
-                        _this.handlerAvatar();
+                        _this.avatar();
                     });
                 }
             });
@@ -562,7 +568,7 @@
         }
         return $item;
     };
-    SimpleUI.prototype.resizable() {
+    SimpleUI.prototype.resizable = function() {
         var _this = this, $html = this.$html;
         var $w = $(window);
         var wh = $w.height();
@@ -571,7 +577,7 @@
         var hh = $('header', $html).height();
         _this.$conversations.height(wh - hh);
     };
-    SimpleUI.prototype.itemsClick() {
+    SimpleUI.prototype.itemsClick = function() {
         var webui = UI.getInstance();
         var $items = this.$items;
 
@@ -641,7 +647,7 @@
             }
         });
         var dInfo = webim.getDialogInfo(msgType, other);
-        itemHTML(dInfo, msg.body).prependTo($items);
+        _this.itemHTML(dInfo, msg.body).prependTo($items);
 
         // 设置底部的未读数据
         _this.showNotReadTotal();
@@ -654,7 +660,7 @@
         var buddies = webim.getBuddies();
         if (buddies && buddies.length > 0) {
             for (var i = 0; i < buddies.length; i++) {
-                $items.append(itemHtml(buddies[i]));
+                $items.append(_this.itemHTML(buddies[i]));
             }
         }
         _this.itemsClick();
@@ -662,16 +668,25 @@
     SimpleUI.prototype.showNotReadTotal = function() {
         //.???<span class="aui-badge aui-badge-danger">12</span>
     };
+    SimpleUI.prototype.showTipsTask = undefined;
     SimpleUI.prototype.showConnecting = function() {
+        window.clearTimeout(this.showTipsTask);
         this.msgTipsUI.show('正在连接...', 'mzen-tips-info');
     };
     SimpleUI.prototype.showConnected = function() {
-        this.msgTipsUI.show('连接成功...', 'mzen-tips-success');
+        var _this = this;
+        window.clearTimeout(_this.showTipsTask);
+        _this.msgTipsUI.show('连接成功...', 'mzen-tips-success');
+        _this.showTipsTask = setTimeout(function() {
+            _this.hideTips();
+        }, 5000);
     };
-    SimpleUI.prototype.showDisconnect = function() {
+    SimpleUI.prototype.showDisconnected = function() {
+        window.clearTimeout(this.showTipsTask);
         this.msgTipsUI.show('连接断开...', 'mzen-tips-danger');
     };
     SimpleUI.prototype.showNetwork = function() {
+        window.clearTimeout(this.showTipsTask);
         this.msgTipsUI.show('网络不可用...', 'mzen-tips-danger');
     };
     SimpleUI.prototype.hideTips = function() {
