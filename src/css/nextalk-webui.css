@@ -157,6 +157,14 @@ html, body {
     right: 0;
     bottom: 0;
 }
+.nextalk-msg-tips {
+    z-index: 12;
+    position: absolute;
+    bottom: 55px;
+    tip: 0;
+    left: 0;
+    right: 0;
+}
 
 .nextalk-page {
 	background-color: #f8f8f8;
