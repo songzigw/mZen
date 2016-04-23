@@ -58,7 +58,7 @@
         // 以iframe嵌入网页
         iframe : false,
         // 简单聊天对话框
-        chatbox : false,
+        simple : false,
         // 是否是手机端
         mobile : false,
         // 引入资源文件的根路径
@@ -82,8 +82,8 @@
             _this._loadDepIframe();
             return;
         }
-        if (typeof _this.chatbox == 'boolean'
-            && _this.chatbox == true) {
+        if (typeof _this.simple == 'boolean'
+            && _this.simple == true) {
             _this._loadDepChatbox();
             return;
         }
@@ -158,11 +158,11 @@
             _this.depFlag = true;
         }, 200);
     };
-    main._loadHTML = function(html, callback) {
+    main._loadHTML = function(callback) {
         $.ajax({
             type : 'GET',
             cache : false,
-            url : main.resPath + 'html/'+html+'.html',
+            url : main.resPath + 'html/main.html',
             dataType : 'html',
             success : function(ret) {
                 var $ret = $(ret);
@@ -197,8 +197,8 @@
         if (typeof _this.iframe == 'boolean'
             && _this.iframe == true) {
             _this._goIframe();
-        } else if (typeof _this.chatbox == 'boolean'
-            && _this.chatbox == true) {
+        } else if (typeof _this.simple == 'boolean'
+            && _this.simple == true) {
             _this._goChatbox();
         } else {
             _this._goMain();
@@ -207,11 +207,12 @@
     main._goMain = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        _this._loadHTML('main', function() {
+        _this._loadHTML(function() {
             var ui = NexTalkWebUI.init(_this.appKey, {
                 resPath : _this.resPath,
                 apiPath : _this.apiPath,
-                mobile : _this.mobile
+                mobile : _this.mobile,
+                simple : _this.simple
             });
             ui.connectServer(_this.ticket);
         });
@@ -219,19 +220,18 @@
     main._goChatbox = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        _this._loadHTML('chatbox', function() {
-            var ui = NexTalkWebUI.init(_this.appKey, {
-                resPath : _this.resPath,
-                apiPath : _this.apiPath,
-                mobile : _this.mobile
-            });
-            ui.connectServer(_this.ticket);
+        var ui = NexTalkWebUI.init(_this.appKey, {
+            resPath : _this.resPath,
+            apiPath : _this.apiPath,
+            mobile : _this.mobile,
+            simple : _this.simple
         });
+        ui.connectServer(_this.ticket);
     };
     main._goIframe = function() {
         var _this = this;
         nextalkTop.config = {
-            chatbox : _this.chatbox,
+            simple : _this.simple,
             // 引入资源文件的根路径
             resPath : _this.resPath,
             // API根路径

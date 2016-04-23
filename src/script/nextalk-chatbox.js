@@ -21,7 +21,8 @@
 
     /** 默认配置信息 */
     UI.DEFAULTS = $.extend({}, IM.DEFAULTS, {
-        mobile : false
+        mobile : false,
+        simple : false
     });
 
     // 实例化NexTalkWebUI类对象----------------
