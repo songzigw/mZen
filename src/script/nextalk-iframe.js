@@ -85,14 +85,14 @@
 
     top.go = function() {
         var _this = this;
+        _this.config.onNotReadChange = function(total) {
+            document.getElementById('nextalk_not_read').innerText = total;
+        };
+        
         var div = document.createElement('div');
         div.innerHTML = this._getBtnHTML() + this._getIfrHTML();
         var body = document.getElementsByTagName('body')[0];
         body.appendChild(div);
-        
-        _this.onNotReadChange = function(total) {
-            document.getElementById('nextalk_not_read').innerText(total);
-        };
         
         var task = window.setInterval(function() {
             var ifw = window['nextalk_iframe'].window;
