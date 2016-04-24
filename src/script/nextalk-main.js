@@ -236,7 +236,12 @@
                 resPath : _this.resPath,
                 apiPath : _this.apiPath,
                 mobile : _this.mobile,
-                simple : _this.simple
+                simple : _this.simple,
+                chatObj : _this.chatObj,
+                chatlinkIds : _this.chatlinkIds,
+                chatlinkEls : _this.chatlinkEls,
+                onPresences : _this.onPresences,
+                onNotReadChange : _this.onNotReadChange
             });
             webui.connectServer(_this.ticket);
         });
@@ -248,7 +253,12 @@
             resPath : _this.resPath,
             apiPath : _this.apiPath,
             mobile : _this.mobile,
-            simple : _this.simple
+            simple : _this.simple,
+            chatObj : _this.chatObj,
+            chatlinkIds : _this.chatlinkIds,
+            chatlinkEls : _this.chatlinkEls,
+            onPresences : _this.onPresences,
+            onNotReadChange : _this.onNotReadChange
         });
         webui.connectServer(_this.ticket);
     };

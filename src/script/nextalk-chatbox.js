@@ -188,6 +188,9 @@
             },
             onStatus : function(ev, data) {
                 _this.onStatus(ev, data);
+                if (_this.options.onPresences) {
+                    _this.options.onPresences(data);
+                }
             }
         });
         
@@ -396,12 +399,13 @@
             // 处理外界元素
             var chatlinkEls = _this.options.chatlinkEls;
             if (chatlinkEls) {
-                for (var i = 0; i < chatlinkEls.lenght; i++) {
+                for (var i = 0; i < chatlinkEls.length; i++) {
                     var $els = $(chatlinkEls[i]);
                     $els.click(function() {
-                        var id = $els.arrt('data-id');
-                        var name = $els.arrt('data-name');
-                        var avatar = $els.arrt('data-avatar');
+                        var $btn = $(this);
+                        var id = $btn.attr('data-id');
+                        var name = $btn.attr('data-name');
+                        var avatar = $btn.attr('data-avatar');
                         if (!avatar || avatar == '') {
                             avatar = IM.imgs.HEAD;
                         }
