@@ -31,12 +31,6 @@
         $ : undefined
     };
 
-    top._getCss = function() {
-        var cssLink = '<link rel="stylesheet" type="text/css" href="'
-                + this.config.resPath + 'css/nextalk-iframe.css" />';
-        return cssLink;
-    };
-
     top._getBtnHTML = function() {
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
@@ -91,9 +85,10 @@
 
     top.go = function() {
         var _this = this;
-        document.write(this._getCss());
-        document.write(this._getBtnHTML());
-        document.write(this._getIfrHTML());
+        var div = document.createElement('div');
+        div.innerHTML = this._getBtnHTML() + this._getIfrHTML();
+        var body = document.getElementsByTagName('body')[0];
+        body.appendChild(div);
         
         var task = window.setInterval(function() {
             var ifw = window['nextalk_iframe'].window;

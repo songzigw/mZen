@@ -2,18 +2,52 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>NexTalk Example.</title>
+<title>NexTalk WebIM Example</title>
+<link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
 
-	<a href="javascript:;" target="_blank" onclick="openChatBox();">弹出聊天框</a>
-	<a href="javascript:;" target="_blank" onclick="openChatBox2();">简易聊天框</a>
-	
-	<a href="iframe.html" target="_blank">网页右下角聊天</a>
-	<a href="window.html" target="_blank">全屏聊天</a>
-	<a href="mobile.html" target="_blank">手机端聊天</a>
-	<script type="text/javascript">
-	    function openChatBox2() {
+    <div class="wrapper">
+
+        <div class="header">
+            <h1>NexTalk WebIM for Example</h1>
+            <p>版本: 5.8 (2016/04/24)</p>
+        </div>
+
+        <div class="content">
+            <h2>1.弹出式聊天</h2>
+            <p><a href="chatbox_btn.html" target="_blank">Demo演示</a>&gt;&gt;&gt;</p>
+            <p>代码演示</p>
+        </div>
+
+        <div class="content">
+            <h2>2.全屏式聊天</h2>
+            <p><a href="full_main.html" target="_blank">Demo演示（完整版）</a>&gt;&gt;&gt;</p>
+            <p><a href="full_simple.html" target="_blank">Demo演示（简易版）</a>&gt;&gt;&gt;</p>
+            <p>代码演示</p>
+        </div>
+
+        <div class="content">
+            <h2>3.窗口右下角</h2>
+            <p><a href="ifr_main.html" target="_blank">Demo演示（完整版）</a>&gt;&gt;&gt;</p>
+            <p><a href="ifr_simple.html" target="_blank">Demo演示（简易版）</a>&gt;&gt;&gt;</p>
+            <p>代码演示</p>
+        </div>
+
+        <div class="content">
+            <h2>4.手机端聊天</h2>
+            <p><a href="mobile.html" target="_blank">Demo演示</a>&gt;&gt;&gt;</p>
+            <p>代码演示</p>
+        </div>
+
+        <div class="footer">
+            <p>© Powered by NexTalk 2014</p>
+        </div>
+        
+    </div>
+
+    <script type="text/javascript">
+        function openChatBox2() {
             openWindow("../html/chatbox.html", "window_chat2", 790, 500);
         }
         function openChatBox() {
@@ -24,12 +58,23 @@
             var iLeft = (window.screen.width - 10 - iWidth) / 2;
             // 获得窗口的垂直位置
             var iTop = (window.screen.height - 30 - iHeight) / 2;
-            window.open(
-	          url,
-	          name,
-	          'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth
-	          + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft
-	          + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
+            window
+                    .open(
+                            url,
+                            name,
+                            'height='
+                                    + iHeight
+                                    + ',innerHeight='
+                                    + iHeight
+                                    + ',width='
+                                    + iWidth
+                                    + ',innerWidth='
+                                    + iWidth
+                                    + ',top='
+                                    + iTop
+                                    + ',left='
+                                    + iLeft
+                                    + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
         }
     </script>
 </body>
