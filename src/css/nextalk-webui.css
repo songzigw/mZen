@@ -156,7 +156,7 @@ html, body {
 .nextalk-msg-box {
 	z-index: 12;
 	position: absolute;
-    bottom: 55px;
+    bottom: 0;
     left: 0;
     right: 0;
 }
