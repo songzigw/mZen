@@ -292,7 +292,7 @@
             var _this = this, els = _this.els;
             hideMsgBox();
 
-            if (_this.webim.loginTime > 0) {
+            if (_this.webim.loginTimes > 0) {
                 showMsgBox('正在连接...', 'mzen-tips-info');
                 return;
             }

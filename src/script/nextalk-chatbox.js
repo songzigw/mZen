@@ -22,7 +22,12 @@
     /** 默认配置信息 */
     UI.DEFAULTS = $.extend({}, IM.DEFAULTS, {
         mobile : false,
-        simple : false
+        simple : false,
+        chatObj : null,
+        chatlinkIds : null,
+        chatlinkEls : null,
+        onPresences : null,
+        onNotReadChange : null
     });
 
     // 实例化NexTalkWebUI类对象----------------
@@ -177,6 +182,9 @@
             },
             onPresences : function(ev, data) {
                 _this.onPresences(ev, data);
+                if (_this.options.onPresences) {
+                    _this.options.onPresences(data);
+                }
             },
             onStatus : function(ev, data) {
                 _this.onStatus(ev, data);
@@ -332,13 +340,25 @@
         }
     };
 
+    UI.prototype.newChatBoxUI = function(id, name, avatar) {
+        var _this = this;
+        // 隐藏所有的盒子
+        _this._chatBoxUIs.hideAll();
+        var boxUI = _this._chatBoxUIs.get(ChatBoxUI.CHAT, id);
+        if (!boxUI) {
+            boxUI = new ChatBoxUI(ChatBoxUI.CHAT, id, name, avatar);
+            _this._chatBoxUIs.set(ChatBoxUI.CHAT, id, boxUI);
+        }
+        boxUI.show();
+    };
+
     $.extend(UI.prototype, {
         onLogin : function(ev, data) {
             var _this = this;
             var mainUI = _this.mainUI;
             mainUI.hideTips();
 
-            if (_this.webim.loginTime > 0) {
+            if (_this.webim.loginTimes > 0) {
                 mainUI.showConnecting();
                 return;
             }
@@ -373,6 +393,22 @@
             mainUI.avatar();
             // 加载会话列表
             mainUI.loadRecently();
+            // 处理外界元素
+            var chatlinkEls = _this.options.chatlinkEls;
+            if (chatlinkEls) {
+                for (var i = 0; i < chatlinkEls.lenght; i++) {
+                    var $els = $(chatlinkEls[i]);
+                    $els.click(function() {
+                        var id = $els.arrt('data-id');
+                        var name = $els.arrt('data-name');
+                        var avatar = $els.arrt('data-avatar');
+                        if (!avatar || avatar == '') {
+                            avatar = IM.imgs.HEAD;
+                        }
+                        _this.newChatBoxUI(id, name, avatar);
+                    });
+                }
+            }
         },
         onDisconnected : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
@@ -659,6 +695,8 @@
     };
     SimpleUI.prototype.loadRecently = function() {
         var _this = this, webim = IM.getInstance();
+        var webui = UI.getInstance();
+        var ops = webui.options;
         var $items = _this.$items.empty();
         
         var buddies = webim.getBuddies();
@@ -667,10 +705,42 @@
                 $items.append(_this.itemHTML(buddies[i]));
             }
         }
+        if (webim.connectedTimes == 1 && ops.chatObj) {
+            $('>li', $items).each(function(i, el) {
+                var $el = $(el);
+                if ($el.attr('data-toggle') == IM.msgType.CHAT
+                        && $el.attr('data-id') == ops.chatObj.id) {
+                    $el.remove();
+                    // break
+                    return false;
+                }
+            });
+            var avatar = ops.chatObj.avatar;
+            if (!avatar || avatar == '') {
+                avatar = IM.imgs.HEAD;
+            }
+            _this.itemHTML({
+                id : ops.chatObj.id,
+                nick : ops.chatObj.name,
+                avatar : avatar}).prependTo($items);
+            var boxUI = webui._chatBoxUIs.get(ChatBoxUI.CHAT, ops.chatObj.id);
+            if (!boxUI) {
+                boxUI = new ChatBoxUI(ChatBoxUI.CHAT, ops.chatObj.id,
+                        ops.chatObj.name, avatar);
+                webui._chatBoxUIs.set(ChatBoxUI.CHAT, ops.chatObj.id, boxUI);
+            }
+            boxUI.show();
+        }
         _this.itemsClick();
     };
     SimpleUI.prototype.showNotReadTotal = function() {
         //.???<span class="aui-badge aui-badge-danger">12</span>
+        var webui = UI.getInstance();
+        var webim = IM.getInstance();
+        var total = webim.getNotReadTotal();
+        if (webui.options.onNotReadChange) {
+            webui.options.onNotReadChange(total);
+        }
     };
     SimpleUI.prototype.showTipsTask = undefined;
     SimpleUI.prototype.showConnecting = function() {

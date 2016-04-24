@@ -61,8 +61,10 @@
         simple : false,
         // 是否是手机端
         mobile : false,
+        // 是否是隐藏式运行
+        hidden : false,
         // 引入资源文件的根路径
-        resPath : window.nextalkResPath,
+        resPath : '/',
         // API根路径
         apiPath : '/',
         // API路由
@@ -84,13 +86,18 @@
         }
         if (typeof _this.simple == 'boolean'
             && _this.simple == true) {
-            _this._loadDepChatbox();
+            _this._loadDepSimple();
+            return;
+        }
+        if (typeof _this.hidden == 'boolean'
+            && _this.hidden == true) {
+            _this._loadDepHidden();
             return;
         }
 
         _this._loadDepMail();
     };
-    main._loadDepChatbox = function() {
+    main._loadDepSimple = function() {
         var _this = this;
         document.write('<link rel="stylesheet" type="text/css" href="'
                 + _this.resPath + 'css/mzen.css" />');
@@ -160,6 +167,18 @@
             _this.depFlag = true;
         }, 200);
     };
+    main._loadDepHidden = function() {
+        var _this = this;
+        document.write('<script type="text/javascript" src="' + _this.resPath
+                + 'script/nextalk-webim.js"></script>');
+        var task = window.setInterval(function() {
+            if (!window.NexTalkWebIM) {
+                return;
+            }
+            window.clearInterval(task);
+            _this.depFlag = true;
+        }, 200);
+    };
     main._loadHTML = function(callback) {
         $.ajax({
             type : 'GET',
@@ -201,7 +220,10 @@
             _this._goIframe();
         } else if (typeof _this.simple == 'boolean'
             && _this.simple == true) {
-            _this._goChatbox();
+            _this._goSimple();
+        } else if (typeof _this.hidden == 'boolean'
+            && _this.hidden == true) {
+            _this._goHidden();
         } else {
             _this._goMain();
         }
@@ -210,34 +232,87 @@
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
-            var ui = NexTalkWebUI.init(_this.appKey, {
+            var webui = NexTalkWebUI.init(_this.appKey, {
                 resPath : _this.resPath,
                 apiPath : _this.apiPath,
                 mobile : _this.mobile,
                 simple : _this.simple
             });
-            ui.connectServer(_this.ticket);
+            webui.connectServer(_this.ticket);
         });
     };
-    main._goChatbox = function() {
+    main._goSimple = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        var ui = NexTalkWebUI.init(_this.appKey, {
+        var webui = NexTalkWebUI.init(_this.appKey, {
             resPath : _this.resPath,
             apiPath : _this.apiPath,
             mobile : _this.mobile,
             simple : _this.simple
         });
-        ui.connectServer(_this.ticket);
+        webui.connectServer(_this.ticket);
+    };
+    main._goHidden = function() {
+        var _this = this;
+        NexTalkWebIM.WebAPI.route(_this.route);
+        var webim = NexTalkWebIM.init(_this.appKey, {
+            resPath : _this.resPath,
+            apiPath : _this.apiPath
+        });
+        webim.setLoginStatusListener({
+            onLogin : function(ev, data) {
+                
+            },
+            onLoginWin : function(ev, data) {
+                
+            },
+            onLoginFail : function(ev, data) {
+                
+            }
+        });
+        webim.setConnStatusListener({
+            onConnecting : function(ev, data) {
+                
+            },
+            onConnected : function(ev, data) {
+                
+            },
+            onDisconnected : function(ev, data) {
+                
+            },
+            onNetworkUnavailable : function(ev, data) {
+                
+            }
+        });
+        webim.setReceiveMsgListener({
+            onMessage : function(ev, data) {
+                
+            },
+            onPresences : function(ev, data) {
+                if (_this.onPresences) {
+                    _this.onPresences(data);
+                }
+            },
+            onStatus : function(ev, data) {
+                
+            }
+        });
+        webim.connectServer({ticket : _this.ticket});
     };
     main._goIframe = function() {
         var _this = this;
         nextalkTop.config = {
-            simple : _this.simple,
             // 引入资源文件的根路径
             resPath : _this.resPath,
             // API根路径
             apiPath : _this.apiPath,
+            // 简易聊天UI
+            simple : _this.simple,
+            // 默认聊天对象
+            chatObj : _this.chatObj,
+            onPresences : _this.onPresences,
+            chatlinkIds : _this.chatlinkIds,
+            chatlinkEls : _this.chatlinkEls,
             // API路由
             route : _this.route
         };

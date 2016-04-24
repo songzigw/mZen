@@ -1849,7 +1849,8 @@
             dataType : 'json'
         });
         
-        _this.loginTime = 0;
+        _this.loginTimes = 0;
+        _this.connectedTimes = 0;
         _this.status = new IM.Status();
         _this.setting = new IM.Setting();
         //_this.presence = new IM.Presence();
@@ -1970,7 +1971,7 @@
         });
         _this.bind("login.win", function(ev, data) {
             console.log("login.win: " + JSON.stringify(data));
-            _this.loginTime++;
+            _this.loginTimes++;
             _this.loginStatusListener.onLoginWin(ev, data);
         });
         _this.bind("login.fail", function(ev, data) {
@@ -1989,6 +1990,7 @@
         // 连接成功
         _this.bind("connected", function(ev, data) {
             console.log("connected: " + JSON.stringify(data));
+            _this.connectedTimes++;
             if (_this.connStatus != IM.connStatus.CONNECTED) {
                 _this.connStatus = IM.connStatus.CONNECTED;
                 if (_this.status.get("s") == IM.show.UNAVAILABLE) {
