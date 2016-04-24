@@ -148,6 +148,8 @@
     };
     main._loadDepIframe = function() {
         var _this = this;
+        document.write('<link rel="stylesheet" type="text/css" href="'
+                + _this.resPath + 'css/nextalk-iframe.css" />');
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-iframe.js"></script>');
         var task = window.setInterval(function() {
