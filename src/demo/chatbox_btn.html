@@ -43,7 +43,35 @@ li {
 
     <script type="text/javascript" src="../script/nextalk-main.js"></script>
     <script type="text/javascript">
-        
+        function openChatBox2() {
+            openWindow("../html/chatbox.html", "window_chat2", 790, 500);
+        }
+        function openChatBox() {
+            openWindow("window.html", "window_chat", 790, 500);
+        }
+        function openWindow(url, name, iWidth, iHeight) {
+            // 获得窗口的水平位置
+            var iLeft = (window.screen.width - 10 - iWidth) / 2;
+            // 获得窗口的垂直位置
+            var iTop = (window.screen.height - 30 - iHeight) / 2;
+            window
+                    .open(
+                            url,
+                            name,
+                            'height='
+                                    + iHeight
+                                    + ',innerHeight='
+                                    + iHeight
+                                    + ',width='
+                                    + iWidth
+                                    + ',innerWidth='
+                                    + iWidth
+                                    + ',top='
+                                    + iTop
+                                    + ',left='
+                                    + iLeft
+                                    + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
+        }
     </script>
 </body>
 </html>
