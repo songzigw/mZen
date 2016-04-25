@@ -8,41 +8,18 @@
 </head>
 <body>
     <div>完整的聊天（右下角）</div>
+    <script type="text/javascript" src="demo.js"></script>
     <script type="text/javascript" src="../script/nextalk-main.js"></script>
     <script type="text/javascript">
         nextalkMain.setConfig({
             // 引入资源文件的根路径
-            resPath : '/nextalk-webim-song/src/',
+            resPath : demo.resPath,
             // API根路径
-            apiPath : '/nextalk-webim-song/',
+            apiPath : demo.apiPath,
             // 嵌入窗口右下角
             iframe : true,
             // API路由
-            route : {
-                online : "online.do",
-                offline : "offline.do",
-                buddies : "buddies.do",
-                remove_buddy : "remove_buddy.do",
-                deactivate : "refresh.do",
-                message : "message.do",
-                presence : "presence.do",
-                status : "status.do",
-                setting : "setting.do",
-                history : "history.do",
-                clear : "clear_history.do",
-                download : "download_history.do",
-                // room actions
-                invite : "invite.do",
-                join : "join.do",
-                leave : "leave.do",
-                block : "block.do",
-                unblock : "unblock.do",
-                members : "members.do",
-                // notifications
-                notifications : "notifications.do",
-                // upload files
-                upload : "upload.do"
-            }
+            route : demo.route
         });
         nextalkMain.go();
     </script>
