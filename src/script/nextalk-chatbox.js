@@ -184,9 +184,6 @@
             },
             onStatus : function(ev, data) {
                 _this.onStatus(ev, data);
-                if (_this.options.onPresences) {
-                    _this.options.onPresences(data);
-                }
             }
         });
         
@@ -391,6 +388,10 @@
             mainUI.avatar();
             // 加载会话列表
             mainUI.loadRecently();
+            // 触发状态事件
+            if (_this.options.onPresences) {
+                _this.options.onPresences(_this.webim.presences);
+            }
             // 处理外界元素
             var chatlinkEls = _this.options.chatlinkEls;
             if (chatlinkEls) {
