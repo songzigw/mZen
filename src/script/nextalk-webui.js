@@ -39,19 +39,13 @@
     };
 
     /**
-     * 初始化NexTalkWebUI，在整个应用全局只需要调用一次。
-     * 
-     * @param {string}
-     *                appKey 开发者的appKey
-     * @param {object}
-     *                options
-     * @example NexTalkWebUI.init("app_key");
+     * 初始化NexTalkWebUI
      */
-    UI.init = function(appKey, options) {
+    UI.init = function(options) {
         if (!UI._instance) {
             UI._instance = new UI();
         }
-        UI.getInstance()._init(appKey, options);
+        UI.getInstance()._init(options);
         return UI.getInstance();
     };
 
@@ -60,7 +54,7 @@
     /**
      * 初始化NexTalkWebUI
      */
-    UI.prototype._init = function(appKey, options) {
+    UI.prototype._init = function(options) {
         var _this = this;
         options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
 
@@ -103,7 +97,7 @@
         });
 
         // 初始化NexTalkWebIM
-        _this.webim = IM.init(appKey, options);
+        _this.webim = IM.init(options);
         _this.webim.setLoginStatusListener({
             onLogin : function(ev, data) {
                 _this.onLogin(ev, data);
@@ -236,18 +230,17 @@
         });
     };
 
-    UI.prototype.connectServer = function(ticket) {
+    UI.prototype.connectServer = function() {
         var _this = this;
-        _this._ticket = ticket;
         window.setTimeout(function() {
-            _this._connectServer(ticket);
+            _this._connectServer();
         }, 1100);
     };
 
-    UI.prototype._connectServer = function(ticket) {
+    UI.prototype._connectServer = function() {
         var _this = this;
         _this.els.$initPage.hide();
-        _this.webim.connectServer({ticket : ticket});
+        _this.webim.connectServer();
     }
 
     /** 定义聊天盒子存储空间 */
@@ -392,7 +385,7 @@
         handlerLogin : function() {
             var _this = this, els = _this.els;
             els.$loginBtn.click(function() {
-                _this._connectServer(_this._ticket);
+                _this._connectServer();
             });
         },
 

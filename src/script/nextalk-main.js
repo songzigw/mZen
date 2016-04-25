@@ -55,20 +55,26 @@
         // ticket : 'ticket',
         // APP_KEY 暂时不用
         // appKey : 'app_key',
-        // 以iframe嵌入网页
-        iframe : false,
-        // 简单聊天对话框
-        simple : false,
-        // 是否是手机端
-        mobile : false,
         // 是否是隐藏式运行
         hidden : false,
+        // 以iframe嵌入网页右下角
+        iframe : false,
+        // 是否是手机端
+        mobile : false,
+        // 简单聊天对话框
+        simple : false,
         // 引入资源文件的根路径
         resPath : '/',
         // API根路径
         apiPath : '/',
         // API路由
-        route : {}
+        route : {},
+        // 默认聊天对象
+        chatObj : null,
+        chatlinkIds : null,
+        chatlinkEls : null,
+        onPresences : null,
+        onNotReadChange : null
     };
     main.setConfig = function(ops) {
         extend(this, ops || {});
@@ -232,7 +238,7 @@
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
         _this._loadHTML(function() {
-            var webui = NexTalkWebUI.init(_this.appKey, {
+            var webui = NexTalkWebUI.init({
                 resPath : _this.resPath,
                 apiPath : _this.apiPath,
                 mobile : _this.mobile,
@@ -243,13 +249,13 @@
                 onPresences : _this.onPresences,
                 onNotReadChange : _this.onNotReadChange
             });
-            webui.connectServer(_this.ticket);
+            webui.connectServer();
         });
     };
     main._goSimple = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        var webui = NexTalkWebUI.init(_this.appKey, {
+        var webui = NexTalkWebUI.init({
             resPath : _this.resPath,
             apiPath : _this.apiPath,
             mobile : _this.mobile,
@@ -260,14 +266,15 @@
             onPresences : _this.onPresences,
             onNotReadChange : _this.onNotReadChange
         });
-        webui.connectServer(_this.ticket);
+        webui.connectServer();
     };
     main._goHidden = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
-        var webim = NexTalkWebIM.init(_this.appKey, {
+        var webim = NexTalkWebIM.init({
             resPath : _this.resPath,
-            apiPath : _this.apiPath
+            apiPath : _this.apiPath,
+            chatlinkIds : _this.chatlinkIds
         });
         webim.setLoginStatusListener({
             onLogin : function(ev, data) {
@@ -307,7 +314,7 @@
                 
             }
         });
-        webim.connectServer({ticket : _this.ticket});
+        webim.connectServer();
     };
     main._goIframe = function() {
         var _this = this;
@@ -330,12 +337,13 @@
         // 将nextalkMain销毁
         delete window.nextalkMain;
     };
-    window.nextalkMain = main;
 
     var top = window.top;
     if (top != window.self) {
         // 获取父窗体中的配置
         main.setConfig(top.nextalkTop.config);
     }
+
+    window.nextalkMain = main;
 })();
 

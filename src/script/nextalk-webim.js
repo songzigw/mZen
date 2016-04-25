@@ -1457,11 +1457,18 @@
         // 消息管道类型
         // 默认为Websocket->XMLHttpRequest(XHR)Polling层层降级方式.
         channelType : Channel.type.WEBSOCKET,
-        isJsonp : true,
+        // 是否支持跨域访问
+        isJsonp : false,
+        // 通信令牌 暂时不用
+        // ticket : 'ticket',
+        // APP_KEY 暂时不用
+        // appKey : 'app_key',
         // 资源文件根路径
         resPath : '/src',
         // API接口根路径
-        apiPath : "/"
+        apiPath : "/",
+        // 聊天热线，多个ID逗号","分割
+        chatlinkIds : null
     };
 
     // 实例化NexTalkWebIM类对象----------------
@@ -1479,19 +1486,13 @@
     };
 
     /**
-     * 初始化NexTalkWebIM，在整个应用全局只需要调用一次。
-     * 
-     * @param {string}
-     *                appKey 开发者的appKey
-     * @param {object}
-     *                options
-     * @example NexTalkWebIM.init("app_key");
+     * 初始化NexTalkWebIM
      */
-    IM.init = function(appKey, options) {
+    IM.init = function(options) {
         if (!IM._instance) {
             IM._instance = new IM();
         }
-        IM.getInstance()._init(appKey, options);
+        IM.getInstance()._init(options);
         return IM.getInstance();
     };
 
@@ -1830,9 +1831,8 @@
     /**
      * 初始化NexTalkWebIM
      */
-    IM.prototype._init = function(appKey, options) {
+    IM.prototype._init = function(options) {
         var _this = this;
-        _this._appKey = appKey;
         options = _this.options = extend({}, IM.DEFAULTS, options || {});
 
         if (!options.resPath) {
@@ -1846,7 +1846,7 @@
         // 初始化Web业务服务API
         IM.WebAPI.init({
             apiPath : options.apiPath,
-            dataType : 'json'
+            dataType : ajax.settings.dataType
         });
         
         _this.loginTimes = 0;
@@ -2115,7 +2115,7 @@
     /**
      * 连接服务器
      */
-    IM.prototype.connectServer = function(params) {
+    IM.prototype.connectServer = function() {
         var _this = this, options = _this.options;
         // 如果服务器已经连上
         if (_this.connStatus == IM.connStatus.CONNECTED ||
@@ -2123,6 +2123,10 @@
             return;
         }
 
+        var params = {};
+        if (options.chatlinkIds) {
+            params.chatlinkIds = options.chatlinkIds;
+        }
         // 连接前请先登入成功
         _this.login(params, function() {
             // 登入成功，开始连接
@@ -2204,8 +2208,7 @@
         }
         if (self.connStatus != IM.connStatus.CONNECTED) {
             self.status.set("s", show);
-            var ticket = self.getConnection().ticket;
-            self.connectServer({ticket : ticket});
+            self.connectServer();
         } else {
             self._sendPresence({show : show}, callback);
         }

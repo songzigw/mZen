@@ -1,5 +1,5 @@
 /*!
- * nextalk-chatbox.js v0.0.1
+ * nextalk-webui.js v0.0.1
  * http://nextalk.im/
  *
  * Copyright (c) 2014 NexTalk
@@ -21,10 +21,12 @@
 
     /** 默认配置信息 */
     UI.DEFAULTS = $.extend({}, IM.DEFAULTS, {
+        // 是否是手机端
         mobile : false,
+        // 简单聊天对话框
         simple : false,
+        // 默认聊天对象
         chatObj : null,
-        chatlinkIds : null,
         chatlinkEls : null,
         onPresences : null,
         onNotReadChange : null
@@ -45,25 +47,19 @@
     };
 
     /**
-     * 初始化NexTalkWebUI，在整个应用全局只需要调用一次。
-     * 
-     * @param {string}
-     *                appKey 开发者的appKey
-     * @param {object}
-     *                options
-     * @example NexTalkWebUI.init("app_key");
+     * 初始化NexTalkWebUI
      */
-    UI.init = function(appKey, options) {
+    UI.init = function(options) {
         if (!UI._instance) {
             UI._instance = new UI();
         }
-        UI.getInstance()._init(appKey, options);
+        UI.getInstance()._init(options);
         return UI.getInstance();
     };
 
     UI.prototype.version = UI.VERSION;
 
-    UI.prototype._init = function(appKey, options) {
+    UI.prototype._init = function(options) {
         var _this = this;
         options = _this.options = $.extend({}, UI.DEFAULTS, options || {});
 
@@ -127,7 +123,7 @@
                     $(this).attr('src', options.resPath + 'imgs/logo.png');
                 });
                 _ui.$btn.click(function() {
-                    _this._connectServer(_this._ticket);
+                    _this._connectServer();
                 });
             }
         };
@@ -150,7 +146,7 @@
         _this._initTimerTask();
 
         // 初始化NexTalkWebIM
-        _this.webim = IM.init(appKey, options);
+        _this.webim = IM.init(options);
         _this.webim.setLoginStatusListener({
             onLogin : function(ev, data) {
                 _this.onLogin(ev, data);
@@ -292,18 +288,17 @@
         });
     };
 
-    UI.prototype.connectServer = function(ticket) {
+    UI.prototype.connectServer = function() {
         var _this = this;
-        _this._ticket = ticket;
         window.setTimeout(function() {
-            _this._connectServer(ticket);
+            _this._connectServer();
         }, 1500);
     };
 
-    UI.prototype._connectServer = function(ticket) {
+    UI.prototype._connectServer = function() {
         var _this = this;
         _this.welcomeUI.hide();
-        _this.webim.connectServer({ticket : ticket});
+        _this.webim.connectServer();
     }
 
     /** 定义聊天盒子存储空间 */
