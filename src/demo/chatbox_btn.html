@@ -108,6 +108,8 @@ li {
                     for (var key in data) {
                         if (data[key] != 'unavailable') {
                             document.getElementById('webim-chatid-state-'+key).innerText = '在线';
+                        } else {
+                            document.getElementById('webim-chatid-state-'+key).innerText = '下线';
                         }
                     }
                 }
