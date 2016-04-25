@@ -292,7 +292,9 @@
                 
             },
             onConnected : function(ev, data) {
-                
+                if (_this.onPresences) {
+                    _this.onPresences(webim.presences);
+                }
             },
             onDisconnected : function(ev, data) {
                 
