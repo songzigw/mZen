@@ -154,14 +154,14 @@ html, body {
 }
 
 .nextalk-msg-box {
-	z-index: 12;
+	z-index: 6;
 	position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
 }
 .nextalk-msg-tips {
-    z-index: 12;
+    z-index: 6;
     position: absolute;
     /*top: 0;*/
     bottom: 0;
@@ -205,7 +205,7 @@ html, body {
 }
 .nextalk-page.nextalk-screen-full {
     left: 0;
-    z-index: 6;
+    z-index: 12;
 }
 
 .nextalk-scroll {
