@@ -57,6 +57,16 @@
         return UI.getInstance();
     };
 
+    UI.$ = function(html) {
+        var $h = $(html);
+        $('img', $h).each(function(i, el) {
+            $(el).error(function() {
+                $(this).attr('src', IM.imgs.HEAD);
+            });
+        });
+        return $h;
+    };
+
     UI.prototype.version = UI.VERSION;
 
     UI.prototype._init = function(options) {
@@ -76,7 +86,7 @@
                     </div>',
             init : function() {
                 var _ui = this;
-                _ui.$html = $(_ui.HTML).hide();
+                _ui.$html = UI.$(_ui.HTML).hide();
                 var $imgs = $('[data-toggle=logo]', _ui.$html);
                 $imgs.each(function() {
                     $(this).attr('src', options.resPath + 'imgs/logo.png');
@@ -104,7 +114,7 @@
                     </div>',
             init : function() {
                 var _ui = this;
-                _ui.$html = $(_ui.HTML).hide();
+                _ui.$html = UI.$(_ui.HTML).hide();
                 _ui.$btn = $('button', _ui.$html).hide();
                 _ui.$p = $('p', _ui.$html);
                 _ui._handler();
@@ -236,7 +246,7 @@
             _interval : null,
             colors : ['available', 'dnd', 'away',
                       'invisible', 'chat', 'unavailable'],
-            
+
             start : function() {
                 window.clearInterval(this._interval);
                 
@@ -259,7 +269,7 @@
                     }
                 }, 500);
             },
-            
+
             stop : function() {
                 window.clearInterval(this._interval);
                 
@@ -271,7 +281,7 @@
             }
         };
         // 启动现场状态切换动画
-        //_this.showTask.start();
+        _this.showTask.start();
     };
 
     UI.prototype._initLisenters = function() {
@@ -335,14 +345,14 @@
         }
     };
 
-    UI.prototype.newChatBoxUI = function(id, name, avatar) {
+    UI.prototype.openChatBoxUI = function(boxType, id, name, avatar) {
         var _this = this;
         // 隐藏所有的盒子
         _this._chatBoxUIs.hideAll();
-        var boxUI = _this._chatBoxUIs.get(ChatBoxUI.CHAT, id);
+        var boxUI = _this._chatBoxUIs.get(boxType, id);
         if (!boxUI) {
-            boxUI = new ChatBoxUI(ChatBoxUI.CHAT, id, name, avatar);
-            _this._chatBoxUIs.set(ChatBoxUI.CHAT, id, boxUI);
+            boxUI = new ChatBoxUI(boxType, id, name, avatar);
+            _this._chatBoxUIs.set(boxType, id, boxUI);
         }
         boxUI.show();
     };
@@ -405,7 +415,7 @@
                         if (!avatar || avatar == '') {
                             avatar = IM.imgs.HEAD;
                         }
-                        _this.newChatBoxUI(id, name, avatar);
+                        _this.openChatBoxUI(ChatBoxUI.CHAT, id, name, avatar);
                     });
                 }
             }
@@ -472,7 +482,7 @@
      */
     var SimpleUI = function() {
         var _this = this;
-        _this.$html = $(SimpleUI.HTML);
+        _this.$html = UI.$(SimpleUI.HTML);
         _this.$header = $('header', this.$html);
         _this.$title = $('.mzen-title', _this.$header);
         _this.$currUser = $('.nextalk-user', _this.$header);
@@ -571,7 +581,7 @@
             $('img', _this.$currUser).attr('alt', u.nick);
             $('a', _this.$currUser).attr('title', u.nick);
         }
-        
+
         webui.showTask.stop();
         $('a', _this.$currUser).addClass(show);
         
@@ -589,7 +599,7 @@
         this.$title.text(u.nick);
     };
     SimpleUI.prototype.itemHTML = function() {
-        var $item = $(SimpleUI.CONVERSATION);
+        var $item = UI.$(SimpleUI.CONVERSATION);
         if (arguments.length == 1) {
             var user = arguments[0];
             $item.attr('data-toggle', ChatBoxUI.CHAT);
@@ -635,20 +645,11 @@
 
             // 点击启动一个新的聊天盒子
             item.click(function() {
-                // 隐藏所有的盒子
-                webui._chatBoxUIs.hideAll();
-
                 var imgSrc = item.find('img').attr('src');
                 if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
-                    var boxUI = webui._chatBoxUIs.get(ChatBoxUI.NOTIFICATION);
-                    if (!boxUI) {
-                        boxUI = new ChatBoxUI(ChatBoxUI.NOTIFICATION
-                                , ChatBoxUI.NOTIFICATION
-                                , IM.name.NOTIFICATION, imgSrc);
-                        webui._chatBoxUIs.set(ChatBoxUI.NOTIFICATION
-                                , ChatBoxUI.NOTIFICATION, boxUI);
-                    }
-                    boxUI.show();
+                    webui.openChatBoxUI(ChatBoxUI.NOTIFICATION,
+                            ChatBoxUI.NOTIFICATION,
+                            IM.name.NOTIFICATION, imgSrc);
                     return;
                 }
 
@@ -659,21 +660,13 @@
 
                 var name = item.attr('data-name');
                 if (item.attr('data-toggle') == ChatBoxUI.ROOM) {
-                    var boxUI = webui._chatBoxUIs.get(ChatBoxUI.ROOM, dataId);
-                    if (!boxUI) {
-                        boxUI = new ChatBoxUI(ChatBoxUI.ROOM, dataId, name, imgSrc);
-                        webui._chatBoxUIs.set(ChatBoxUI.ROOM, dataId, boxUI);
-                    }
-                    boxUI.show();
+                    webui.openChatBoxUI(ChatBoxUI.ROOM,
+                            dataId, name, imgSrc);
                     return;
                 }
                 if (item.attr('data-toggle') == ChatBoxUI.CHAT) {
-                    var boxUI = webui._chatBoxUIs.get(ChatBoxUI.CHAT, dataId);
-                    if (!boxUI) {
-                        boxUI = new ChatBoxUI(ChatBoxUI.CHAT, dataId, name, imgSrc);
-                        webui._chatBoxUIs.set(ChatBoxUI.CHAT, dataId, boxUI);
-                    }
-                    boxUI.show();
+                    webui.openChatBoxUI(ChatBoxUI.CHAT,
+                            dataId, name, imgSrc);
                     return;
                 }
             });
@@ -729,13 +722,8 @@
                 id : ops.chatObj.id,
                 nick : ops.chatObj.name,
                 avatar : avatar}).prependTo($items);
-            var boxUI = webui._chatBoxUIs.get(ChatBoxUI.CHAT, ops.chatObj.id);
-            if (!boxUI) {
-                boxUI = new ChatBoxUI(ChatBoxUI.CHAT, ops.chatObj.id,
-                        ops.chatObj.name, avatar);
-                webui._chatBoxUIs.set(ChatBoxUI.CHAT, ops.chatObj.id, boxUI);
-            }
-            boxUI.show();
+            webui.openChatBoxUI(ChatBoxUI.CHAT, ops.chatObj.id,
+                    ops.chatObj.name, avatar);
         }
         _this.itemsClick();
     };
@@ -778,7 +766,7 @@
      */
     var MsgTipsUI = function() {
         var _this = this;
-        _this.$html = $(MsgTipsUI.HTML);
+        _this.$html = UI.$(MsgTipsUI.HTML);
         _this.$html.hide();
     };
     MsgTipsUI.HTML = '<div class="mzen-tips mzen-tips-info nextalk-msg-tips">\
@@ -819,7 +807,7 @@
         _this.times = 0;
 
         var $body = UI.getInstance().$body;
-        var $html = $(ChatBoxUI.HTML);
+        var $html = UI.$(ChatBoxUI.HTML);
         _this.$html = $html;
 
         _this.$bBody = $('.nextalk-wrap', $html);
@@ -864,20 +852,22 @@
                         </footer>\
                         <!-- 聊天输入筐END -->\
                       </div>';
-    ChatBoxUI.SEND = '<p class="mzen-text-center">???</p>\
+    ChatBoxUI.SEND = '<p class="mzen-text-center"><span class="time">???</span></p>\
                       <div class="mzen-chat-sender">\
                         <div class="mzen-chat-sender-avatar"><img src=""></div>\
+                        <div style="padding-right:70px;text-align:right;" class="nick">???</div>\
                         <div class="mzen-chat-sender-cont">\
                             <div class="mzen-chat-right-triangle"></div>\
-                            <span>???</span>\
+                            <span class="body">???</span>\
                         </div>\
                       </div>';
-    ChatBoxUI.RECEIVE = '<p class="mzen-text-center">???</p>\
+    ChatBoxUI.RECEIVE = '<p class="mzen-text-center"><span class="time">???</span></p>\
                          <div class="mzen-chat-receiver">\
                             <div class="mzen-chat-receiver-avatar"><img src=""></div>\
+                            <div style="padding-left:70px;text-align:left;" class="nick">???</div>\
                             <div class="mzen-chat-receiver-cont">\
                                 <div class="mzen-chat-left-triangle"></div>\
-                                <span>???</span>\
+                                <span class="body">???</span>\
                             </div>\
                          </div>';
 
@@ -957,26 +947,24 @@
     };
     ChatBoxUI.prototype.receiveHTML = function(msg) {
         var _this = this;
-        var html = '<div class="mzen-chat-receiver">'
-            + '<div class="mzen-chat-receiver-avatar">'
-            + '<img src="' + msg.avatar + '"></div>'
-            + '<div class="mzen-chat-receiver-cont">'
-            + '<div class="mzen-chat-left-triangle"></div>'
-            + '<span>' + msg.body + '</span></div></div>';
-        _this.$bBody.append(html);
+        var $receive = UI.$(ChatBoxUI.RECEIVE);
+        $receive.find('.time').text(msg.timestamp);
+        $receive.find('.nick').text(msg.nick);
+        $receive.find('img').attr('src', msg.avatar);
+        $receive.find('.body').text(msg.body);
+        _this.$bBody.append($receive);
         _this.toBottom();
     };
     ChatBoxUI.prototype.sendHTML = function(msg) {
         var _this = this;
-        var html = '<div class="mzen-chat-sender">'
-            + '<div class="mzen-chat-sender-avatar">'
-            + '<img src="' + msg.avatar + '"></div>'
-            + '<div class="mzen-chat-sender-cont">'
-            + '<div class="mzen-chat-right-triangle"></div>'
-            + '<span>' + msg.body + '</span></div></div>';
-        _this.$bBody.append(html);
+        var $send = UI.$(ChatBoxUI.SEND);
+        $send.find('.time').text(msg.timestamp);
+        $send.find('.nick').text(msg.nick);
+        $send.find('img').attr('src', msg.avatar);
+        $send.find('.body').text(msg.body);
+        _this.$bBody.append($send);
         _this.toBottom();
-    }
+    };
     ChatBoxUI.prototype.sendMsg = function(body) {
         var _this = this, webim = IM.getInstance();
         var webui = UI.getInstance();
