@@ -479,12 +479,12 @@
         _this.$conversations = $('#nextalk_conversations', _this.$html);
         _this.$items = $('>.mzen-list-view', _this.$conversations);
         _this.msgTipsUI = new MsgTipsUI();
-        _this.$conversations.append(_this.msgTipsUI.$html);
+        _this.$html.append(_this.msgTipsUI.$html);
         _this.handler();
     };
     SimpleUI.HTML = '<div class="mzen-border-r nextalk-page chatbox" id="nextalk_page_main">\
                         <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
-                                <div class="mzen-pull-left nextalk-user">\
+                                <div class="mzen-pull-right nextalk-user">\
                                 <a class="mzen-img mzen-tap-active\
                                         mzen-up-hover">\
                                 <img class="mzen-img-object" src="" data-toggle="head"/>\
@@ -509,6 +509,9 @@
                                 </ul>\
                                 </div>\
                                 <div class="mzen-title">???</div>\
+                                <a class="mzen-pull-left mzen-img nextalk-logo">\
+                                <img class="mzen-img-object" src="" data-toggle="logo"/>\
+                                </a>\
                         </header>\
                         <div class="nextalk-scroll" id="nextalk_conversations">\
                         <ul class="mzen-list-view"></ul>\
@@ -523,13 +526,16 @@
                              </li>';
     SimpleUI.prototype.handler = function() {
         var _this = this, ops = UI.getInstance().options;
+        $('[data-toggle=logo]', _this.$html).each(function() {
+            $(this).attr('src', ops.resPath + 'imgs/webim.72x72.png');
+        });
         $('[data-toggle=head]', _this.$html).each(function() {
             $(this).attr('src', ops.resPath + 'imgs/head_def.png');
         });
         _this.$currUser.click(function() {
             $('.dropdown-menu', $(this)).slideToggle();
         });
-        _this.$currUser.find('ul').css('right', 'initial');
+        //_this.$currUser.find('ul').css('right', 'initial');
         $('.dropdown-menu li', _this.$currUser).each(function(i, el) {
             $(el).click(function() {
                 var webim = IM.getInstance();
