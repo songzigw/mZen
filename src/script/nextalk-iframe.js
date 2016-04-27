@@ -37,7 +37,7 @@
                 + this.config.resPath + 'imgs/chat.png" />' + '<span>聊天</span></a>'
                 + '<span class="nextalk-alert" id="nextalk_not_read">5</span></div>';
         return btnHTML;
-    }
+    };
 
     var h = 20;
     top._getIfrHTML = function() {
@@ -102,7 +102,19 @@
                 toggleHTML();
             }
         }, 200);
-    }
+    };
+    top.openChatBoxUI = function(uid, nick, avatar) {
+        if (!uid || !nick || !avatar) {
+            throw new Error('args: uid, nick, avatar.');
+        }
+        if (avatar == '') {
+            avatar = NexTalkWebIM.imgs.HEAD;
+        }
+        var ifw = window['nextalk_iframe'].window;
+        if (ifw || ifw.NexTalkWebUI) {
+            ifw.NexTalkWebUI.getInstance().openChatBoxUI('chat', uid, nick, avatar);
+        }
+    };
 
     win.nextalkTop = top;
 })(window);

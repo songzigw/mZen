@@ -27,7 +27,6 @@
         simple : false,
         // 默认聊天对象
         chatObj : null,
-        chatlinkEls : null,
         onPresences : null,
         onNotReadChange : null
     });
@@ -405,23 +404,6 @@
             // 触发状态事件
             if (_this.options.onPresences) {
                 _this.options.onPresences(_this.webim.presences);
-            }
-            // 处理外界元素
-            var chatlinkEls = _this.options.chatlinkEls;
-            if (chatlinkEls) {
-                for (var i = 0; i < chatlinkEls.length; i++) {
-                    var $els = $(chatlinkEls[i]);
-                    $els.click(function() {
-                        var $btn = $(this);
-                        var id = $btn.attr('data-id');
-                        var name = $btn.attr('data-name');
-                        var avatar = $btn.attr('data-avatar');
-                        if (!avatar || avatar == '') {
-                            avatar = IM.imgs.HEAD;
-                        }
-                        _this.openChatBoxUI(ChatBoxUI.CHAT, id, name, avatar);
-                    });
-                }
             }
         },
         onDisconnected : function(ev, data) {

@@ -65,15 +65,6 @@
             // 简易版本
             simple : true,
             chatlinkIds : '1,2,3,4,5,6,7,8,9',
-            chatlinkEls : [document.getElementById('webim-chatid-1'),
-                           document.getElementById('webim-chatid-2'),
-                           document.getElementById('webim-chatid-3'),
-                           document.getElementById('webim-chatid-4'),
-                           document.getElementById('webim-chatid-5'),
-                           document.getElementById('webim-chatid-6'),
-                           document.getElementById('webim-chatid-7'),
-                           document.getElementById('webim-chatid-8'),
-                           document.getElementById('webim-chatid-9')],
             onPresences : function(data) {
                 if (data) {
                     for (var key in data) {
@@ -89,6 +80,36 @@
             route : demo.route
         });
         nextalkMain.go();
+
+        // 给聊天按钮设置单击事件
+        // 注意传递参数 uid nick avatar
+        document.getElementById('webim-chatid-1').onclick = function() {
+            nextalkMain.openChatBoxUI(1, 'user1', '');
+        };
+        document.getElementById('webim-chatid-2').onclick = function() {
+            nextalkMain.openChatBoxUI(2, 'user2', '');
+        };
+        document.getElementById('webim-chatid-3').onclick = function() {
+            nextalkMain.openChatBoxUI(3, 'user3', '');
+        };
+        document.getElementById('webim-chatid-4').onclick = function() {
+            nextalkMain.openChatBoxUI(4, 'user4', '');
+        };
+        document.getElementById('webim-chatid-5').onclick = function() {
+            nextalkMain.openChatBoxUI(5, 'user5', '');
+        };
+        document.getElementById('webim-chatid-6').onclick = function() {
+            nextalkMain.openChatBoxUI(6, 'user6', '');
+        };
+        document.getElementById('webim-chatid-7').onclick = function() {
+            nextalkMain.openChatBoxUI(7, 'user7', '');
+        };
+        document.getElementById('webim-chatid-8').onclick = function() {
+            nextalkMain.openChatBoxUI(8, 'user8', '');
+        };
+        document.getElementById('webim-chatid-9').onclick = function() {
+            nextalkMain.openChatBoxUI(9, 'user9', '');
+        };
     </script>
 
 </body>

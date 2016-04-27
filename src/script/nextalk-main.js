@@ -28,7 +28,6 @@
         // 默认聊天对象
         chatObj : null,
         chatlinkIds : null,
-        chatlinkEls : null,
         onPresences : null,
         onNotReadChange : null
     };
@@ -168,7 +167,6 @@
             simple : _this.simple,
             chatObj : _this.chatObj,
             chatlinkIds : _this.chatlinkIds,
-            chatlinkEls : _this.chatlinkEls,
             onPresences : _this.onPresences,
             onNotReadChange : _this.onNotReadChange
         });
@@ -182,50 +180,26 @@
             apiPath : _this.apiPath,
             chatlinkIds : _this.chatlinkIds
         });
-        webim.setLoginStatusListener({
-            onLogin : function(ev, data) {
-                
-            },
-            onLoginWin : function(ev, data) {
-                
-            },
-            onLoginFail : function(ev, data) {
-                
-            }
-        });
+        //webim.setLoginStatusListener({});
         webim.setConnStatusListener({
-            onConnecting : function(ev, data) {
-                
-            },
             onConnected : function(ev, data) {
                 if (_this.onPresences) {
                     _this.onPresences(webim.presences);
                 }
-            },
-            onDisconnected : function(ev, data) {
-                
-            },
-            onNetworkUnavailable : function(ev, data) {
-                
             }
         });
         webim.setReceiveMsgListener({
-            onMessage : function(ev, data) {
-                
-            },
             onPresences : function(ev, data) {
                 if (_this.onPresences) {
                     _this.onPresences(data);
                 }
-            },
-            onStatus : function(ev, data) {
-                
             }
         });
         webim.connectServer();
     };
     main._goIframe = function() {
         var _this = this;
+        main.openChatBoxUI = nextalkTop.openChatBoxUI;
         nextalkTop.config = {
             // 引入资源文件的根路径
             resPath : _this.resPath,
@@ -235,15 +209,19 @@
             simple : _this.simple,
             // 默认聊天对象
             chatObj : _this.chatObj,
-            onPresences : _this.onPresences,
-            chatlinkIds : _this.chatlinkIds,
-            chatlinkEls : _this.chatlinkEls,
             // API路由
-            route : _this.route
+            route : _this.route,
+            onPresences : _this.onPresences,
+            chatlinkIds : _this.chatlinkIds
         };
         nextalkTop.go();
         // 将nextalkMain销毁
-        delete window.nextalkMain;
+        for (var key in main) {
+            if (key != 'openChatBoxUI') {
+                delete main[key];
+            }
+        }
+        //delete window.nextalkMain;
     };
 
     var top = window.top;
