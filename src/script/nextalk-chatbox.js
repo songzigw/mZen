@@ -148,6 +148,7 @@
             _this.mainUI = new MainUI();
         }
         _this.$body.append(_this.mainUI.$html);
+        _this.mainUI.resizable();
 
         // 界面渲染完成
         // -----------------------------------------------------
@@ -378,7 +379,6 @@
             _this.mainUI.setCurrName();
             _this.loginTask.stop();
             _this.loginUI.hide();
-            _this.mainUI.resizable();
         },
         onLoginFail : function(ev, data) {
             var _this = this, mainUI = _this.mainUI;
@@ -653,7 +653,7 @@
             'background-color' : 'white',
             'overflow' : 'auto'
         });
-        
+
         //$('.nextalk-buddies-items',
         //        _this.$frameBuddies).empty();
         $('#set_version', _this.$frameSettings).text(UI.v);
@@ -720,24 +720,25 @@
     MainUI.prototype.resizable = function() {
         var _this = this, $html = this.$html;
         var webui = UI.getInstance();
+        var mobile = webui.options.mobile;
+
         var $w = $(window);
         var wh = $w.height();
         var ww = $w.width();
-        var mobile = webui.options.mobile;
 
-        if (mobile) {
-            $html.width(ww);
-        } else {
+        if (!mobile) {
             if (ww <= 320) {
-                $html.width(ww);
+                $html.css('width', '100%');
             } else {
                 $html.width(270);
             }
+        } else {
+            $html.css('width', '100%');
         }
 
         var hh = _this.$header.height();
         var fh = _this.$footer.height();
-        _this.$contentMain.height(wh - hh - fh);
+        _this.$contentMain.height(wh - hh - fh - 1);
     };
     MainUI.prototype.itemsClick = function($items) {
         var webui = UI.getInstance();
@@ -1059,10 +1060,23 @@
     };
     SimpleUI.prototype.resizable = function() {
         var _this = this, $html = this.$html;
+        var webui = UI.getInstance();
+        var mobile = webui.options.mobile;
+        
         var $w = $(window);
         var wh = $w.height();
         var ww = $w.width();
-        $html.width(270);
+
+        if (!mobile) {
+            if (ww <= 320) {
+                $html.css('width', '100%');
+            } else {
+                $html.width(270);
+            }
+        } else {
+            $html.css('width', '100%');
+        }
+
         var hh = _this.$header.height();
         _this.$conversations.height(wh - hh);
     };
@@ -1312,13 +1326,23 @@
                          </div>';
 
     ChatBoxUI.prototype.resizable = function() {
-        var _this = this;
-        var $html = _this.$html;
+        var _this = this, $html = _this.$html;
+        var webui = UI.getInstance();
+        var mobile = webui.options.mobile;
+
         var $w = $(window);
         var wh = $w.height();
         var ww = $w.width();
 
-        $html.width(ww - 270 -1);
+        if (!mobile) {
+            if (ww <= 320) {
+                $html.css('width', '100%');
+            } else {
+                $html.width(ww - 270 - 2);
+            }
+        } else {
+            $html.css('width', '100%');
+        }
 
         var hh = $('header', $html).height();
         var fh = $('footer', $html).height();
