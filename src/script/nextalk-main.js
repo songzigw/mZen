@@ -5,50 +5,6 @@
 
     "use strict";
 
-    function extend() {
-        // copy reference to target object
-        var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
-
-        // Handle a deep copy situation
-        if (typeof target === "boolean") {
-            deep = target;
-            target = arguments[1] || {};
-            // skip the boolean and the target
-            i = 2;
-        }
-
-        // Handle case when target is a string or something (possible in deep
-        // copy)
-        if (typeof target !== "object" && !isFunction(target))
-            target = {};
-        for (; i < length; i++)
-            // Only deal with non-null/undefined values
-            if ((options = arguments[i]) != null)
-                // Extend the base object
-                for ( var name in options) {
-                    var src = target[name], copy = options[name];
-
-                    // Prevent never-ending loop
-                    if (target === copy)
-                        continue;
-
-                    // Recurse if we're merging object values
-                    if (deep && copy && typeof copy === "object"
-                            && !copy.nodeType)
-                        target[name] = extend(deep,
-                        // Never move original objects, clone them
-                        src || (copy.length != null ? [] : {}), copy);
-
-                    // Don't bring in undefined values
-                    else if (copy !== undefined)
-                        target[name] = copy;
-
-                }
-
-        // Return the modified object
-        return target;
-    }
-
     // NexTalkWebUI初始化参数
     var main = {
         // 通信令牌 暂时不用
@@ -77,7 +33,11 @@
         onNotReadChange : null
     };
     main.setConfig = function(ops) {
-        extend(this, ops || {});
+        if (ops) {
+            for (var key in ops) {
+                this[key] = ops[key];
+            }
+        }
         this._loadDep();
     };
     // 依赖包是否加载完成
@@ -85,51 +45,18 @@
     main._loadDep = function() {
         var _this = this;
 
+		if (typeof _this.hidden == 'boolean'
+            && _this.hidden == true) {
+            _this._loadDepHidden();
+            return;
+        }
         if (typeof _this.iframe == 'boolean'
             && _this.iframe == true) {
             _this._loadDepIframe();
             return;
         }
-        if (typeof _this.simple == 'boolean'
-            && _this.simple == true) {
-            _this._loadDepSimple();
-            return;
-        }
-        if (typeof _this.hidden == 'boolean'
-            && _this.hidden == true) {
-            _this._loadDepHidden();
-            return;
-        }
 
         _this._loadDepMail();
-    };
-    main._loadDepSimple = function() {
-        var _this = this;
-        document.write('<link rel="stylesheet" type="text/css" href="'
-                + _this.resPath + 'css/mzen.css" />');
-        document.write('<link rel="stylesheet" type="text/css" href="'
-                + _this.resPath + 'css/glyphicons.css" />');
-        document.write('<link rel="stylesheet" type="text/css" href="'
-                + _this.resPath + 'css/nextalk-webui.css" />');
-        document.write('<script type="text/javascript" src="' + _this.resPath
-                + 'script/jquery.min.js"></script>');
-        document.write('<script type="text/javascript" src="' + _this.resPath
-                + 'script/nextalk-webim.js"></script>');
-        document.write('<script type="text/javascript" src="' + _this.resPath
-                + 'script/nextalk-chatbox.js"></script>');
-        var task = window.setInterval(function() {
-            if (!window.$) {
-                return;
-            }
-            if (!window.NexTalkWebIM) {
-                return;
-            }
-            if (!window.NexTalkWebUI) {
-                return;
-            }
-            window.clearInterval(task);
-            _this.depFlag = true;
-        }, 200);
     };
     main._loadDepMail = function() {
         var _this = this;
@@ -144,7 +71,7 @@
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-webim.js"></script>');
         document.write('<script type="text/javascript" src="' + _this.resPath
-                + 'script/nextalk-webui.js"></script>');
+                + 'script/nextalk-chatbox.js"></script>');
         var task = window.setInterval(function() {
             if (!window.$) {
                 return;
@@ -224,9 +151,6 @@
         if (typeof _this.iframe == 'boolean'
             && _this.iframe == true) {
             _this._goIframe();
-        } else if (typeof _this.simple == 'boolean'
-            && _this.simple == true) {
-            _this._goSimple();
         } else if (typeof _this.hidden == 'boolean'
             && _this.hidden == true) {
             _this._goHidden();
@@ -235,24 +159,6 @@
         }
     };
     main._goMain = function() {
-        var _this = this;
-        NexTalkWebIM.WebAPI.route(_this.route);
-        _this._loadHTML(function() {
-            var webui = NexTalkWebUI.init({
-                resPath : _this.resPath,
-                apiPath : _this.apiPath,
-                mobile : _this.mobile,
-                simple : _this.simple,
-                chatObj : _this.chatObj,
-                chatlinkIds : _this.chatlinkIds,
-                chatlinkEls : _this.chatlinkEls,
-                onPresences : _this.onPresences,
-                onNotReadChange : _this.onNotReadChange
-            });
-            webui.connectServer();
-        });
-    };
-    main._goSimple = function() {
         var _this = this;
         NexTalkWebIM.WebAPI.route(_this.route);
         var webui = NexTalkWebUI.init({
