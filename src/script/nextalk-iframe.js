@@ -109,7 +109,7 @@
         }
         var ifw = window['nextalk_iframe'].window;
         if (ifw || ifw.NexTalkWebIM) {
-            if (avatar == '') {
+            if (!avatar || avatar == '') {
                 avatar = ifw.NexTalkWebIM.imgs.HEAD;
             }
             ifw.NexTalkWebUI.getInstance().openChatBoxUI('chat', uid, nick, avatar);
