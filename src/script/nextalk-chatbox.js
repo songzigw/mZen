@@ -59,6 +59,16 @@
 
     UI.$ = function(html) {
         var $h = $(html);
+        var path = UI.getInstance().options.resPath;
+        $('img[data-toggle=logo_index]', $h).each(function() {
+            $(this).attr('src', path + 'imgs/logo.png');
+        });
+        $('img[data-toggle=logo]', $h).each(function() {
+            $(this).attr('src', path + 'imgs/webim.72x72.png');
+        });
+        $('img[data-toggle=head]', $h).each(function() {
+            $(this).attr('src', path + 'imgs/head_def.png');
+        });
         $('img', $h).each(function(i, el) {
             $(el).error(function() {
                 $(this).attr('src', IM.imgs.HEAD);
@@ -81,16 +91,12 @@
                             id="nextalk_page_init">\
                             <div class="mzen-content\
                                 mzen-flex-col mzen-flex-center">\
-                            <img alt="logo" src="" data-toggle="logo"/>\
+                            <img alt="logo" src="" data-toggle="logo_index"/>\
                             <p>一起来聊聊</p></div>\
                     </div>',
             init : function() {
                 var _ui = this;
                 _ui.$html = UI.$(_ui.HTML).hide();
-                var $imgs = $('[data-toggle=logo]', _ui.$html);
-                $imgs.each(function() {
-                    $(this).attr('src', options.resPath + 'imgs/logo.png');
-                });
                 _ui.$html.appendTo(_this.$body);
             },
             show : function() {
@@ -102,12 +108,12 @@
         };
         _this.welcomeUI.init();
         _this.welcomeUI.show();
+
         _this.loginUI = {
             HTML : '<div class="nextalk-page nextalk-screen-full nextalk-page-login"\
                             id="nextalk_page_login">\
-                            <div class="mzen-content\
-                                mzen-flex-col mzen-flex-center">\
-                            <img alt="logo" src="" data-toggle="logo"/>\
+                            <div class="mzen-content mzen-flex-col mzen-flex-center">\
+                            <img alt="logo" src="" data-toggle="logo_index"/>\
                             <p>正在登入中...</p>\
                             <button class="mzen-btn mzen-btn-danger">重新登入</button>\
                             </div>\
@@ -128,10 +134,6 @@
             },
             _handler : function() {
                 var _ui = this;
-                var $imgs = $('[data-toggle=logo]', _ui.$html);
-                $imgs.each(function() {
-                    $(this).attr('src', options.resPath + 'imgs/logo.png');
-                });
                 _ui.$btn.click(function() {
                     _this._connectServer();
                 });
@@ -211,7 +213,7 @@
             _this.loginTask.stop();
             _this.showTask.stop();
         };
-        
+
         // 正在登入的动画效果
         _this.loginTask = {
             _interval : null,
@@ -396,8 +398,10 @@
             mainUI.showConnected();
             mainUI.setCurrName();
             mainUI.avatar();
-            // 加载会话列表
+            // 加载最近会话列表
             mainUI.loadRecently();
+            // 加载联系人列表
+            mainUI.loadBuddies();
             // 触发状态事件
             if (_this.options.onPresences) {
                 _this.options.onPresences(_this.webim.presences);
@@ -475,15 +479,468 @@
      * 完整的聊天界面
      */
     var MainUI = function() {
-        
+        var _this = this;
+        _this.$html = UI.$(MainUI.HTML);
+        _this.$header = $('header', _this.$html);
+        _this.$title = $('.mzen-title', _this.$header);
+        _this.$currUser = $('.nextalk-user', _this.$header);
+        _this.$contentMain = $('#nextalk_content_main', _this.$html);
+        _this.$frameMessage = $('#message_wrap', _this.$html);
+        _this.$frameBuddies = $('#buddies_wrap', _this.$html);
+        _this.$frameSettings = $('#settings_wrap', _this.$html);
+
+        _this.msgTipsUI = new MsgTipsUI();
+        _this.$html.append(_this.msgTipsUI.$html);
+        _this.$footer = $('footer', _this.$html);
+        _this.handler();
     };
+    MainUI.HTML =  '<div class="nextalk-page" id="nextalk_page_main">\
+                    <!--头部集合 BEGIN-->\
+                    <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
+                        <a class="mzen-pull-left mzen-img nextalk-logo">\
+                        <img class="mzen-img-object" src="" data-toggle="logo"/>\
+                        </a>\
+                        <div class="mzen-title">消息</div>\
+                        <div class="mzen-pull-right nextalk-user">\
+                        <a class="mzen-img mzen-tap-active\
+                                mzen-up-hover">\
+                        <img class="mzen-img-object" src="" data-toggle="head"/>\
+                        </a>\
+                        <ul class="dropdown-menu">\
+                        <li data-show="available">在线\
+                            <i class="nextalk-show available"></i>\
+                        </li>\
+                        <li data-show="dnd">忙碌\
+                            <i class="nextalk-show dnd"></i>\
+                        </li>\
+                        <li data-show="away">离开\
+                            <i class="nextalk-show away"></i>\
+                        </li>\
+                        <li data-show="invisible">隐身\
+                            <i class="nextalk-show invisible"></i>\
+                        </li>\
+                        <li data-show="unavailable">离线\
+                            <i class="nextalk-show unavailable"></i>\
+                            <i class="mzen-iconfont mzen-icon-check"></i>\
+                        </li>\
+                        </ul>\
+                        </div>\
+                    </header>\
+                    <!--头部集合 END-->\
+                    <div class="nextalk-scroll" id="nextalk_content_main">\
+                    <div class="mzen-content nextalk-wrap message" id="message_wrap">\
+                        <ul class="mzen-list-view nextalk-message-items"></ul>\
+                    </div>\
+                    <div class="mzen-content nextalk-wrap buddies" id="buddies_wrap" style="display: none;">\
+                        <div class="mzen-searchbar-wrap" id="nextalk_search">\
+                            <div class="mzen-searchbar mzen-border-radius">\
+                                <i class="mzen-iconfont mzen-icon-search"></i>\
+                                <div class="mzen-searchbar-text">请输入搜索内容</div>\
+                                <div class="mzen-searchbar-input">\
+                                    <form>\
+                                    <input type="text" placeholder="请输入搜索内容" />\
+                                    </form>\
+                                </div>\
+                                <i class="mzen-iconfont mzen-icon-roundclosefill"></i>\
+                            </div>\
+                            <div class="mzen-searchbar-cancel mzen-text-info">取消</div>\
+                        </div>\
+                        <ul class="mzen-user-view"></ul>\
+                    </div>\
+                    <div class="mzen-content nextalk-wrap" id="settings_wrap" style="display: none;">\
+                        <ul class="mzen-list-view">\
+                            <li class="mzen-list-view-cell mzen-switch-body mzen-tap-active">\
+                                <div class="mzen-switch-title">\
+                                    <label>收到新消息时播放提示音</label>\
+                                </div>\
+                                <input type="checkbox" class="mzen-switch mzen-switch-danger mzen-pull-right" checked>\
+                            </li>\
+                            <li class="mzen-list-view-cell mzen-switch-body mzen-tap-active">\
+                                <div class="mzen-switch-title">\
+                                    <label>保持聊天窗口始终打开</label>\
+                                </div>\
+                                <input type="checkbox" class="mzen-switch mzen-pull-right" checked />\
+                            </li>\
+                            <li class="mzen-list-view-cell mzen-switch-body mzen-tap-active">\
+                                <div class="mzen-switch-title">\
+                                    <label>收缩工具条</label>\
+                                </div>\
+                                <input type="checkbox" class="mzen-switch mzen-pull-right" checked>\
+                            </li>\
+                            <li class="mzen-list-view-cell mzen-switch-body mzen-tap-active">\
+                                <div class="mzen-switch-title">\
+                                    <label>新消息时自动弹出聊天窗口</label>\
+                                </div>\
+                                <input type="checkbox" class="mzen-switch mzen-pull-right">\
+                            </li>\
+                        </ul>\
+                        <ul class="mzen-list-view">\
+                            <li class="mzen-list-view-cell tap-active">\
+                                <div class="mzen-arrow-right">\
+                                    <p>Powered by <a href="http://nextalk.im" target="_blank">NexTalk</a> <span id="set_version">5.5</span></p>\
+                                </div>\
+                            </li>\
+                        </ul>\
+                    </div>\
+                    </div>\
+                    <!--底部导航 BEGIN-->\
+                    <footer class="mzen-nav">\
+                        <ul class="mzen-bar-tab">\
+                            <li data-toggle="message" class="active">\
+                                <span class="mzen-iconfont mzen-icon-message"></span>\
+                                <p>消息</p>\
+                            </li>\
+                            <li data-toggle="buddies">\
+                                <span class="mzen-iconfont mzen-icon-friend"></span>\
+                                <p>联系人</p>\
+                            </li>\
+                            <li data-toggle="settings">\
+                                <span class="mzen-iconfont mzen-icon-settings"></span>\
+                                <p>设置</p>\
+                            </li>\
+                        </ul>\
+                    </footer>\
+                    <!--底部导航 END-->\
+                    </div>';
+    MainUI.CONVERSATION = '<li class="mzen-list-view-cell mzen-img mzen-tap-active mzen-up-hover">\
+                           <img class="mzen-img-object mzen-pull-left" src="">\
+                           <div class="mzen-img-body mzen-arrow-right">\
+                           <label data-toggle="name"></label>\
+                           <em class="mzen-pull-right msg-time" data-toggle="timestamp"></em>\
+                           <span class="mzen-badge mzen-badge-danger" data-toggle="not-count"></span>\
+                           <p class="mzen-ellipsis-1" data-toggle="body"></p></div></li>';
+    MainUI.BUDDY = '<li class="mzen-user-view-cell mzen-img mzen-up-hover">\
+                    <img class="mzen-img-object mzen-pull-left" src="" />\
+                    <div class="mzen-img-body mzen-arrow-right">\
+                    <span data-toggle="nick"></span>\
+                    <i class="nextalk-show unavailable"></i></div></li>';
+    MainUI.prototype.handler = function() {
+        var _this = this, ops = UI.getInstance().options;
+        _this.$currUser.click(function() {
+            $('.dropdown-menu', $(this)).slideToggle();
+        });
+        $('.dropdown-menu li', _this.$currUser).each(function(i, el) {
+            $(el).click(function() {
+                var webim = IM.getInstance();
+                UI.getInstance().showTask.start();
+                var show = $(el).attr('data-show');
+                if (show == IM.show.UNAVAILABLE) {
+                    webim.offline(function() {
+                        _this.avatar();
+                    });
+                } else {
+                    webim.online(show, function() {
+                        _this.avatar();
+                    });
+                }
+            });
+        });
+
+        $('ul.mzen-bar-tab>li', _this.$footer).each(function(i, el) {
+            $(el).css({
+                cursor : 'pointer'
+            }).click(function() {
+                _this.$frameMessage.hide();
+                _this.$frameBuddies.hide();
+                _this.$frameSettings.hide();
+                $('ul.mzen-bar-tab>li', _this.$footer).each(function() {
+                    $(this).removeClass('active');
+                });
+
+                var tit = $('.mzen-title', _this.$header);
+                var tog = $(this).attr('data-toggle');
+                if (tog == 'message') {
+                    $(this).addClass('active');
+                    tit.text('消息');
+                    _this.$frameMessage.show();
+                } else if (tog == 'buddies') {
+                    $(this).addClass('active');
+                    tit.text('联系人');
+                    _this.$frameBuddies.show();
+                } else if (tog == 'settings') {
+                    $(this).addClass('active');
+                    tit.text('设置');
+                    _this.$frameSettings.show();
+                }
+            });
+        });
+
+        _this.$items = $('.nextalk-message-items',
+                _this.$frameMessage).empty();
+        _this.$contentMain.css({
+            'background-color' : 'white',
+            'overflow' : 'auto'
+        });
+        
+        //$('.nextalk-buddies-items',
+        //        _this.$frameBuddies).empty();
+        $('#set_version', _this.$frameSettings).text(UI.v);
+    };
+    MainUI.prototype.avatar = function() {
+        var _this = this;
+        var webim = IM.getInstance();
+        var webui = UI.getInstance();
+        var show = webim.getShow();
+
+        if (webim.connStatus == IM.connStatus.CONNECTED) {
+            var u = webim.getCurrUser();
+            $('img', _this.$currUser).attr('src', u.avatar);
+            $('img', _this.$currUser).attr('alt', u.nick);
+            $('a', _this.$currUser).attr('title', u.nick);
+        }
+
+        webui.showTask.stop();
+        $('a', _this.$currUser).addClass(show);
+
+        $('ul li', _this.$currUser).each(function(i, el) {
+            var $el = $(el);
+            $('.mzen-iconfont', $el).remove();
+            if ($el.attr('data-show') == show) {
+                $(el).append('<i class="mzen-iconfont mzen-icon-check"></i>');
+            }
+        });
+    };
+    MainUI.prototype.setCurrName = function() {
+        var webim = IM.getInstance();
+        var u = webim.getCurrUser();
+        this.$title.text(u.nick);
+    };
+    MainUI.prototype.itemHTML = function() {
+        var $item = UI.$(MainUI.CONVERSATION);
+        if (arguments.length == 1) {
+            var user = arguments[0];
+            $item.attr('data-toggle', ChatBoxUI.CHAT);
+            $item.attr('data-id', user.id);
+            $item.attr('data-name', user.nick);
+            $('img', $item).attr('src', user.avatar);
+            $('[data-toggle=name]', $item).text(user.nick);
+            $('[data-toggle=timestamp]', $item).text(IM.nowStamp());
+            $('[data-toggle=not-count]', $item).remove();
+            $('[data-toggle=body]', $item).text('开始聊天');
+        } else if (arguments.length == 2) {
+            var dInfo = arguments[0];
+            var body = arguments[1];
+            $item.attr('data-toggle', dInfo.msgType);
+            $item.attr('data-id', dInfo.other);
+            $item.attr('data-name', dInfo.name);
+            $('img', $item).attr('src', dInfo.avatar);
+            $('[data-toggle=name]', $item).text(dInfo.name);
+            $('[data-toggle=timestamp]', $item).text(dInfo.timestamp);
+            $('[data-toggle=body]', $item).text(body);
+            if (dInfo.notCount != 0) {
+                $('[data-toggle=not-count]', $item).text(dInfo.notCount);
+            } else {
+                $('[data-toggle=not-count]', $item).remove();
+            }
+        }
+        return $item;
+    };
+    MainUI.prototype.resizable = function() {
+        var _this = this, $html = this.$html;
+        var webui = UI.getInstance();
+        var $w = $(window);
+        var wh = $w.height();
+        var ww = $w.width();
+        var mobile = webui.options.mobile;
+
+        if (mobile) {
+            $html.width(ww);
+        } else {
+            if (ww <= 320) {
+                $html.width(ww);
+            } else {
+                $html.width(270);
+            }
+        }
+
+        var hh = _this.$header.height();
+        var fh = _this.$footer.height();
+        _this.$contentMain.height(wh - hh - fh);
+    };
+    MainUI.prototype.itemsClick = function($items) {
+        var webui = UI.getInstance();
+        if (!$items) {
+            $items = this.$items;
+        }
+
+        $('>li', $items).each(function(i, el) {
+            var item = $(el);
+            if (item.data('events')
+                    && item.data('events')['click'])
+                return;
+
+            // 点击启动一个新的聊天盒子
+            item.click(function() {
+                    var imgSrc = item.find('img').attr(
+                            'src');
+                    if (item.attr('data-toggle') == ChatBoxUI.NOTIFICATION) {
+                        webui.openChatBoxUI(
+                                ChatBoxUI.NOTIFICATION,
+                                ChatBoxUI.NOTIFICATION,
+                                IM.name.NOTIFICATION,
+                                imgSrc);
+                        return;
+                    }
+
+                    var dataId = item.attr('data-id');
+                    if (!dataId || dataId == '') {
+                        return;
+                    }
+
+                    var name = item.attr('data-name');
+                    if (item.attr('data-toggle') == ChatBoxUI.ROOM) {
+                        webui.openChatBoxUI(ChatBoxUI.ROOM,
+                                dataId, name, imgSrc);
+                        return;
+                    }
+                    if (item.attr('data-toggle') == ChatBoxUI.CHAT) {
+                        webui.openChatBoxUI(ChatBoxUI.CHAT,
+                                dataId, name, imgSrc);
+                        return;
+                    }
+                });
+        });
+    };
+    MainUI.prototype.loadItem = function(msgType, other, msg) {
+        var _this = this, webim = IM.getInstance();
+        var $items = _this.$items;
+
+        $('>li', $items).each(
+                function(i, el) {
+                    var $el = $(el);
+                    if ($el.attr('data-toggle') == msgType
+                            && $el.attr('data-id') == other) {
+                        $el.remove();
+                        // break
+                        return false;
+                    }
+                });
+        var dInfo = webim.getDialogInfo(msgType, other);
+        _this.itemHTML(dInfo, msg.body).prependTo($items);
+
+        // 设置底部的未读数据
+        _this.showNotReadTotal();
+        _this.itemsClick();
+    };
+    MainUI.prototype.loadRecently = function() {
+        var _this = this, webim = IM.getInstance();
+        var webui = UI.getInstance();
+        var ops = webui.options;
+        var $items = _this.$items.empty();
+
+        var buddies = webim.getBuddies();
+        if (buddies && buddies.length > 0) {
+            for (var i = 0; i < buddies.length; i++) {
+                $items.append(_this.itemHTML(buddies[i]));
+            }
+        }
+        if (webim.connectedTimes == 1 && ops.chatObj) {
+            $('>li', $items).each(
+                    function(i, el) {
+                        var $el = $(el);
+                        if ($el.attr('data-toggle') == IM.msgType.CHAT
+                                && $el.attr('data-id') == ops.chatObj.id) {
+                            $el.remove();
+                            // break
+                            return false;
+                        }
+                    });
+            var avatar = ops.chatObj.avatar;
+            if (!avatar || avatar == '') {
+                avatar = IM.imgs.HEAD;
+            }
+            _this.itemHTML({
+                id : ops.chatObj.id,
+                nick : ops.chatObj.name,
+                avatar : avatar
+            }).prependTo($items);
+            webui.openChatBoxUI(ChatBoxUI.CHAT, ops.chatObj.id,
+                    ops.chatObj.name, avatar);
+        }
+        _this.itemsClick();
+    };
+    MainUI.prototype.loadBuddies = function() {
+        var _this = this, webim = IM.getInstance();
+        var $items = _this.$frameBuddies
+            .find('.mzen-user-view').empty();
+
+        var buddies = webim.getBuddies();
+        if (buddies && buddies.length > 0) {
+            for (var i = 0; i < buddies.length; i++) {
+                $items.append(_this.buddyHTML(buddies[i]));
+            }
+        }
+        _this.itemsClick($items);
+    };
+    MainUI.prototype.buddyHTML = function(user) {
+        var $item = UI.$(MainUI.BUDDY);
+        $item.attr('data-toggle', ChatBoxUI.CHAT);
+        $item.attr('data-id', user.id);
+        $item.attr('data-name', user.nick);
+        $('img', $item).attr('src', user.avatar);
+        $('[data-toggle=nick]', $item).text(user.nick);
+        $('i', $item).removeClass('unavailable');
+        if (user.show == IM.show.AVAILABLE) {
+            $('i', $item).addClass('available');
+        }
+        if (user.show == IM.show.DND) {
+            $('i', $item).addClass('dnd');
+        }
+        if (user.show == IM.show.AWAY) {
+            $('i', $item).addClass('away');
+        }
+        if (user.show == IM.show.INVISIBLE) {
+            $('i', $item).addClass('invisible');
+        }
+        if (user.show == IM.show.CHAT) {
+            $('i', $item).addClass('chat');
+        }
+        if (user.show == IM.show.UNAVAILABLE) {
+            $('i', $item).addClass('unavailable');
+        }
+        return $item;
+    };
+    MainUI.prototype.showNotReadTotal = function() {
+        //.???<span class="aui-badge aui-badge-danger">12</span>
+        var webui = UI.getInstance();
+        var webim = IM.getInstance();
+        var total = webim.getNotReadTotal();
+        if (webui.options.onNotReadChange) {
+            webui.options.onNotReadChange(total);
+        }
+    };
+    MainUI.prototype.showTipsTask = undefined;
+    MainUI.prototype.showConnecting = function() {
+        window.clearTimeout(this.showTipsTask);
+        this.msgTipsUI.show('正在连接...', 'mzen-tips-info');
+    };
+    MainUI.prototype.showConnected = function() {
+        var _this = this;
+        window.clearTimeout(_this.showTipsTask);
+        _this.msgTipsUI.show('连接成功...', 'mzen-tips-success');
+        _this.showTipsTask = setTimeout(function() {
+            _this.hideTips();
+        }, 5000);
+    };
+    MainUI.prototype.showDisconnected = function() {
+        window.clearTimeout(this.showTipsTask);
+        this.msgTipsUI.show('连接断开...', 'mzen-tips-danger');
+    };
+    MainUI.prototype.showNetwork = function() {
+        window.clearTimeout(this.showTipsTask);
+        this.msgTipsUI.show('网络不可用...', 'mzen-tips-danger');
+    };
+    MainUI.prototype.hideTips = function() {
+        this.msgTipsUI.hide();
+    };
+
     /**
      * 简单的聊天界面
      */
     var SimpleUI = function() {
         var _this = this;
         _this.$html = UI.$(SimpleUI.HTML);
-        _this.$header = $('header', this.$html);
+        _this.$header = $('header', _this.$html);
         _this.$title = $('.mzen-title', _this.$header);
         _this.$currUser = $('.nextalk-user', _this.$header);
         _this.$conversations = $('#nextalk_conversations', _this.$html);
@@ -536,12 +993,6 @@
                              </li>';
     SimpleUI.prototype.handler = function() {
         var _this = this, ops = UI.getInstance().options;
-        $('[data-toggle=logo]', _this.$html).each(function() {
-            $(this).attr('src', ops.resPath + 'imgs/webim.72x72.png');
-        });
-        $('[data-toggle=head]', _this.$html).each(function() {
-            $(this).attr('src', ops.resPath + 'imgs/head_def.png');
-        });
         _this.$currUser.click(function() {
             $('.dropdown-menu', $(this)).slideToggle();
         });
@@ -633,9 +1084,11 @@
         var hh = _this.$header.height();
         _this.$conversations.height(wh - hh);
     };
-    SimpleUI.prototype.itemsClick = function() {
+    SimpleUI.prototype.itemsClick = function($items) {
         var webui = UI.getInstance();
-        var $items = this.$items;
+        if (!$items) {
+            $items = this.$items;
+        }
 
         $('>li', $items).each(function(i, el) {
             var item = $(el);
@@ -726,6 +1179,9 @@
                     ops.chatObj.name, avatar);
         }
         _this.itemsClick();
+    };
+    SimpleUI.prototype.loadBuddies = function() {
+        
     };
     SimpleUI.prototype.showNotReadTotal = function() {
         //.???<span class="aui-badge aui-badge-danger">12</span>
@@ -831,7 +1287,9 @@
                             id="nextalk_page_chatbox" style="display: none;">\
                         <!--头部集合 BEGIN-->\
                         <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
-                            <div class="mzen-pull-left mzen-tap-active nextalk-user">\
+                            <a class="mzen-pull-left mzen-tap-active mzen-up-hover">\
+                            <span class="mzen-iconfont mzen-icon-left"></span></a>\
+                            <div class="mzen-pull-right mzen-tap-active nextalk-user">\
                             <a class="mzen-img unavailable">\
                             <img class="mzen-img-object" src="" data-toggle="head">\
                             </a>\
@@ -855,7 +1313,7 @@
     ChatBoxUI.SEND = '<p class="mzen-text-center"><span class="time">???</span></p>\
                       <div class="mzen-chat-sender">\
                         <div class="mzen-chat-sender-avatar"><img src=""></div>\
-                        <div style="padding-right:70px;text-align:right;" class="nick">???</div>\
+                        <div style="padding-right:60px;text-align:right;" class="nick">???</div>\
                         <div class="mzen-chat-sender-cont">\
                             <div class="mzen-chat-right-triangle"></div>\
                             <span class="body">???</span>\
@@ -997,19 +1455,17 @@
         $html.attr('data-id', _this.id);
         $html.attr('data-name', _this.name);
         $('header>.mzen-title', $html).text(_this.name);
-        $('[data-toggle=head]', $html).each(function() {
-            $(this).attr('src', ops.resPath + 'imgs/head_def.png');
-        });
-        // 设置在线状态和头像
-        $('>header .mzen-pull-left img', $html)
-            .attr('src', _this.avatar);
-
         var $content = $('#nextalk_content_chatbox', $html);
         $content.css('overflow', 'auto');
 
-        $('header>a:first', $html).click(function() {
-            _this.hide();
-        });
+        $('>header .mzen-pull-left', $html).click(
+                function() {
+                    _this.hide();
+                });
+        // 设置在线状态和头像
+        $('>header .mzen-pull-right img', $html)
+            .attr('src', _this.avatar);
+
         $('footer form', $html).submit(function() {
             var input = $('input', $(this));
             if ($.trim(input.val()) != '') {

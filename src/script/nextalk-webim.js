@@ -1867,6 +1867,8 @@
         IM.imgs.HEAD = path + 'imgs/head_def.png';
         IM.imgs.GROUP = path + 'imgs/group.gif';
         IM.imgs.NOTICE = path + 'imgs/messagescenter_notice.png';
+        IM.imgs.LOGO_INDEX = path + 'imgs/logo.png';
+        IM.imgs.LOGO = path + 'imgs/webim.72x72.png';
         sound.init({msg : path + 'sound/msg.mp3'});
     }
 
