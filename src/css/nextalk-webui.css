@@ -81,10 +81,6 @@ html, body {
   padding: 0;
 }
 
-.mzen-list-view-cell > a.mzen-arrow-right > .mzen-badge {
-  right: 15px;
-}
-
 .mzen-user-view:last-child {
   margin-bottom: 0;
 }
@@ -437,16 +433,18 @@ html, body {
     padding: 7px 7px;
 }
 
-.message .mzen-list-view-cell > a.mzen-arrow-right > .mzen-badge {
+.message .mzen-list-view-cell > a.mzen-arrow-right > .mzen-badge,
+.message .mzen-list-view-cell > div.mzen-arrow-right > .mzen-badge {
     right: 18px;
 }
 
-.message .mzen-list-view-cell > div.mzen-arrow-right > .mzen-badge {
+footer.mzen-nav >ul.mzen-bar-tab > li > .mzen-badge {
     position: absolute;
-    top: 50%;
-    right: 18px;
+    top: 25%;
+    right: 28%;
+    z-index: 1;
     -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+          transform: translateY(-50%);
 }
 
 .chatbox .mzen-list-view .mzen-img-object {

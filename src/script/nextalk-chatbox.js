@@ -569,6 +569,8 @@
                     <footer class="mzen-nav">\
                         <ul class="mzen-bar-tab">\
                             <li data-toggle="message" class="active">\
+                                <span class="mzen-badge mzen-badge-danger"\
+                                data-toggle="notReadTotal" style="display:none;"></span>\
                                 <span class="mzen-iconfont mzen-icon-message"></span>\
                                 <p>消息</p>\
                             </li>\
@@ -884,10 +886,15 @@
         return $item;
     };
     MainUI.prototype.showNotReadTotal = function() {
-        //.???<span class="aui-badge aui-badge-danger">12</span>
         var webui = UI.getInstance();
         var webim = IM.getInstance();
         var total = webim.getNotReadTotal();
+        var $not = $('[data-toggle=notReadTotal]', this.$footer);
+        if (total == 0) {
+            $not.hide();
+        } else {
+            $not.show().text(total);
+        }
         if (webui.options.onNotReadChange) {
             webui.options.onNotReadChange(total);
         }
