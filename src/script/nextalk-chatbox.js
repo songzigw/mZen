@@ -26,9 +26,7 @@
         // 简单聊天对话框
         simple : false,
         // 默认聊天对象
-        chatObj : null,
-        onPresences : null,
-        onNotReadChange : null
+        chatObj : null
     });
 
     // 实例化NexTalkWebUI类对象----------------
@@ -190,8 +188,8 @@
             },
             onPresences : function(ev, data) {
                 _this.onPresences(ev, data);
-                if (_this.options.onPresences) {
-                    _this.options.onPresences(data);
+                if (_this.onChatlinks) {
+                    _this.onChatlinks(data);
                 }
             },
             onStatus : function(ev, data) {
@@ -288,6 +286,9 @@
 
     UI.prototype._initLisenters = function() {
         var _this = this;
+
+        _this.onChatlinks = function(data) {};
+        _this.onUnread = function(data) {};
 
         _this.bind('nextalk.resizable', function(ev, data) {
             _this.mainUI.resizable();
@@ -402,8 +403,8 @@
             // 加载联系人列表
             mainUI.loadBuddies();
             // 触发状态事件
-            if (_this.options.onPresences) {
-                _this.options.onPresences(_this.webim.presences);
+            if (_this.onChatlinks) {
+                _this.onChatlinks(_this.webim.presences);
             }
         },
         onDisconnected : function(ev, data) {
@@ -570,7 +571,7 @@
                         <ul class="mzen-bar-tab">\
                             <li data-toggle="message" class="active">\
                                 <span class="mzen-badge mzen-badge-danger"\
-                                data-toggle="notReadTotal" style="display:none;"></span>\
+                                data-toggle="unreadTotal" style="display:none;"></span>\
                                 <span class="mzen-iconfont mzen-icon-message"></span>\
                                 <p>消息</p>\
                             </li>\
@@ -591,7 +592,7 @@
                            <div class="mzen-img-body mzen-arrow-right">\
                            <label data-toggle="name"></label>\
                            <em class="mzen-pull-right msg-time" data-toggle="timestamp"></em>\
-                           <span class="mzen-badge mzen-badge-danger" data-toggle="not-count"></span>\
+                           <span class="mzen-badge mzen-badge-danger" data-toggle="notCount"></span>\
                            <p class="mzen-ellipsis-1" data-toggle="body"></p></div></li>';
     MainUI.BUDDY = '<li class="mzen-user-view-cell mzen-img mzen-up-hover">\
                     <img class="mzen-img-object mzen-pull-left" src="" />\
@@ -699,7 +700,7 @@
             $('img', $item).attr('src', user.avatar);
             $('[data-toggle=name]', $item).text(user.nick);
             $('[data-toggle=timestamp]', $item).text(IM.nowStamp());
-            $('[data-toggle=not-count]', $item).remove();
+            $('[data-toggle=notCount]', $item).remove();
             $('[data-toggle=body]', $item).text('开始聊天');
         } else if (arguments.length == 2) {
             var dInfo = arguments[0];
@@ -712,9 +713,9 @@
             $('[data-toggle=timestamp]', $item).text(dInfo.timestamp);
             $('[data-toggle=body]', $item).text(body);
             if (dInfo.notCount != 0) {
-                $('[data-toggle=not-count]', $item).text(dInfo.notCount);
+                $('[data-toggle=notCount]', $item).text(dInfo.notCount);
             } else {
-                $('[data-toggle=not-count]', $item).remove();
+                $('[data-toggle=notCount]', $item).remove();
             }
         }
         return $item;
@@ -804,7 +805,7 @@
         _this.itemHTML(dInfo, msg.body).prependTo($items);
 
         // 设置底部的未读数据
-        _this.showNotReadTotal();
+        _this.showUnreadTotal();
         _this.itemsClick();
     };
     MainUI.prototype.loadRecently = function() {
@@ -885,18 +886,18 @@
         }
         return $item;
     };
-    MainUI.prototype.showNotReadTotal = function() {
+    MainUI.prototype.showUnreadTotal = function() {
         var webui = UI.getInstance();
         var webim = IM.getInstance();
-        var total = webim.getNotReadTotal();
-        var $not = $('[data-toggle=notReadTotal]', this.$footer);
+        var total = webim.getUnreadTotal();
+        var $not = $('[data-toggle=unreadTotal]', this.$footer);
         if (total == 0) {
             $not.hide();
         } else {
             $not.show().text(total);
         }
-        if (webui.options.onNotReadChange) {
-            webui.options.onNotReadChange(total);
+        if (webui.onUnread) {
+            webui.onUnread(total);
         }
     };
     MainUI.prototype.showTipsTask = undefined;
@@ -1145,7 +1146,7 @@
         _this.itemHTML(dInfo, msg.body).prependTo($items);
 
         // 设置底部的未读数据
-        _this.showNotReadTotal();
+        _this.showUnreadTotal();
         _this.itemsClick();
     };
     SimpleUI.prototype.loadRecently = function() {
@@ -1186,13 +1187,12 @@
     SimpleUI.prototype.loadBuddies = function() {
         
     };
-    SimpleUI.prototype.showNotReadTotal = function() {
-        //.???<span class="aui-badge aui-badge-danger">12</span>
+    SimpleUI.prototype.showUnreadTotal = function() {
         var webui = UI.getInstance();
         var webim = IM.getInstance();
-        var total = webim.getNotReadTotal();
-        if (webui.options.onNotReadChange) {
-            webui.options.onNotReadChange(total);
+        var total = webim.getUnreadTotal();
+        if (webui.onUnread) {
+            webui.onUnread(total);
         }
     };
     SimpleUI.prototype.showTipsTask = undefined;
@@ -1395,7 +1395,7 @@
             }
         });
         // 设置底部的未读数据
-        webui.mainUI.showNotReadTotal();
+        webui.mainUI.showUnreadTotal();
 
         // 如果聊天盒子第一次显示，加载内存对话记录和历史对话记录
         if (_this.times > 1) {

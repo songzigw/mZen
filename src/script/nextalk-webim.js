@@ -1604,7 +1604,7 @@
         // 系统通知
         nocification : undefined,
         // 未读消息总数
-        notReadTotal : 0,
+        unreadTotal : 0,
 
         get : function(msgType, key) {
             if (msgType == IM.msgType.NOTIFICATION)
@@ -1676,8 +1676,8 @@
 
         return dInfo;
     };
-    IM.prototype.getNotReadTotal = function() {
-        return this._msgData.notReadTotal;
+    IM.prototype.getUnreadTotal = function() {
+        return this._msgData.unreadTotal;
     };
 
     /**
@@ -1768,7 +1768,7 @@
         if (msgDirection == IM.msgDirection.RECEIVE) {
             if (typeof msg.read == 'boolean' && !msg.read) {
                 _this.notCount++;
-                _this.webim._msgData.notReadTotal++;
+                _this.webim._msgData.unreadTotal++;
             }
             switch (msg.type) {
                 case IM.msgType.CHAT:
@@ -1803,7 +1803,7 @@
             var msg = _this.record[i];
             if (typeof msg.read == 'boolean' && !msg.read) {
                 msg.read = true;
-                _this.webim._msgData.notReadTotal--;
+                _this.webim._msgData.unreadTotal--;
             }
         }
         this.notCount = 0;
@@ -1821,7 +1821,7 @@
     DialogInfo.prototype._setRead = function() {
         if (this.notCount > 0) {
             this.notCount--;
-            this.webim._msgData.notReadTotal--;
+            this.webim._msgData.unreadTotal--;
         }
     };
 

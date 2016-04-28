@@ -28,8 +28,8 @@
         // 默认聊天对象
         chatObj : null,
         chatlinkIds : null,
-        onPresences : null,
-        onNotReadChange : null
+        onChatlinks : null,
+        onUnread : null
     };
     main.setConfig = function(ops) {
         if (ops) {
@@ -165,11 +165,10 @@
             apiPath : _this.apiPath,
             mobile : _this.mobile,
             simple : _this.simple,
-            chatObj : _this.chatObj,
-            chatlinkIds : _this.chatlinkIds,
-            onPresences : _this.onPresences,
-            onNotReadChange : _this.onNotReadChange
+            chatObj : _this.chatObj
         });
+        webui.onChatlinks = _this.onChatlinks;
+        webui.onUnread = _this.onUnread;
         webui.connectServer();
     };
     main._goHidden = function() {
@@ -183,15 +182,15 @@
         //webim.setLoginStatusListener({});
         webim.setConnStatusListener({
             onConnected : function(ev, data) {
-                if (_this.onPresences) {
-                    _this.onPresences(webim.presences);
+                if (_this.onChatlinks) {
+                    _this.onChatlinks(webim.presences);
                 }
             }
         });
         webim.setReceiveMsgListener({
             onPresences : function(ev, data) {
-                if (_this.onPresences) {
-                    _this.onPresences(data);
+                if (_this.onChatlinks) {
+                    _this.onChatlinks(webim.presences);
                 }
             }
         });
@@ -211,8 +210,8 @@
             chatObj : _this.chatObj,
             // API路由
             route : _this.route,
-            onPresences : _this.onPresences,
-            chatlinkIds : _this.chatlinkIds
+            chatlinkIds : _this.chatlinkIds,
+            onChatlinks : _this.onChatlinks
         };
         nextalkTop.go();
         // 将nextalkMain销毁

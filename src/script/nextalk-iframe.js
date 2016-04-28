@@ -35,7 +35,7 @@
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
                 + this.config.resPath + 'imgs/chat.png" />' + '<span>聊天</span></a>'
-                + '<span class="nextalk-alert" id="nextalk_not_read">5</span></div>';
+                + '<span class="nextalk-alert" id="nextalk_unread">5</span></div>';
         return btnHTML;
     };
 
@@ -85,8 +85,8 @@
 
     top.go = function() {
         var _this = this;
-        _this.config.onNotReadChange = function(total) {
-            document.getElementById('nextalk_not_read').innerText = total;
+        _this.config.onUnread = function(total) {
+            document.getElementById('nextalk_unread').innerText = total;
         };
         
         var div = document.createElement('div');
