@@ -43,7 +43,7 @@
     top._getIfrHTML = function() {
         var ifrHTML = '<div class="nextalk-iframe" id="nextalk_iframe" '
                 + 'style="width:'+ this.panel.width + 'px;height:' + this.panel.height + 'px;">'
-                + '<div class="nextalk-minimize" style="width:100%;heigth:' + h + 'px;">'
+                + '<div class="nextalk-minimize" style="width:100%;height:' + h + 'px;">'
                 + '<a class="" title="最小化">-</a></div>'
                 + '<div style="width:100%;height:' + (this.panel.height - h) + 'px;">'
                 + '<iframe src="'
