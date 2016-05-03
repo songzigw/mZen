@@ -31,7 +31,11 @@ nextalkMain.setConfig({
         reject : "index.php?action=reject_ask",
         // upload files
         upload : "static/images/upload.php"
-    }
+    },
+    // 嵌入窗口右下角
+    iframe : _IMC.iframe,
+    // 简易版本
+    simple : _IMC.simple
 });
 
 // 聊天按钮对应的Uid
