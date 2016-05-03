@@ -9,34 +9,8 @@ li {
 	margin: 6px 0;
 }
 </style>
-<script type="text/javascript">
-    function openChatBox(id, name, avatar) {
-        openWindow("chatbox_simple.html?id=" + id + "&name=" + name
-                + "&avatar=" + avatar, "window_chat", 790, 500);
-    }
-    function openWindow(url, name, iWidth, iHeight) {
-        // 获得窗口的水平位置
-        var iLeft = (window.screen.width - 10 - iWidth) / 2;
-        // 获得窗口的垂直位置
-        var iTop = (window.screen.height - 30 - iHeight) / 2;
-        window.open(url, name, 'height='
-                            + iHeight
-                            + ',innerHeight='
-                            + iHeight
-                            + ',width='
-                            + iWidth
-                            + ',innerWidth='
-                            + iWidth
-                            + ',top='
-                            + iTop
-                            + ',left='
-                            + iLeft
-                            + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
-    }
-</script>
 </head>
 <body>
-
 	<div class="wrapper">
 
 		<div class="content">
@@ -95,6 +69,29 @@ li {
     <script type="text/javascript" src="demo.js"></script>
 	<script type="text/javascript" src="../script/nextalk-main.js"></script>
 	<script type="text/javascript">
+	    function openChatBox(id, name, avatar) {
+	        openWindow("chatbox_simple.html?id=" + id + "&name=" + name
+	                + "&avatar=" + avatar, "window_chat", 790, 500);
+	    }
+	    function openWindow(url, name, iWidth, iHeight) {
+	        // 获得窗口的水平位置
+	        var iLeft = (window.screen.width - 10 - iWidth) / 2;
+	        // 获得窗口的垂直位置
+	        var iTop = (window.screen.height - 30 - iHeight) / 2;
+	        window.open(url, name, 'height='
+	                            + iHeight
+	                            + ',innerHeight='
+	                            + iHeight
+	                            + ',width='
+	                            + iWidth
+	                            + ',innerWidth='
+	                            + iWidth
+	                            + ',top='
+	                            + iTop
+	                            + ',left='
+	                            + iLeft
+	                            + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
+	    }
         nextalkMain.setConfig({
             // 引入资源文件的根路径
             resPath : demo.resPath,
