@@ -37,7 +37,6 @@
                 this[key] = ops[key];
             }
         }
-        this._loadDep();
     };
     // 依赖包是否加载完成
     main.depFlag = false;
@@ -111,32 +110,8 @@
             _this.depFlag = true;
         }, 200);
     };
-    main._loadHTML = function(callback) {
-        $.ajax({
-            type : 'GET',
-            cache : false,
-            url : main.resPath + 'html/main.html',
-            dataType : 'html',
-            success : function(ret) {
-                var $ret = $(ret);
-                $('img[toggle-data]', $ret).each(function(i, el) {
-                    var $el = $(el);
-                    if ($el.attr('toggle-data') == 'login') {
-                        $el.attr('src', main.resPath + 'imgs/logo.png');
-                    } else if ($el.attr('toggle-data') == 'logo') {
-                        $el.attr('src', main.resPath + 'imgs/webim.72x72.png');
-                    } else if ($el.attr('toggle-data') == 'head_def') {
-                        $el.attr('src', main.resPath + 'imgs/head_def.png');
-                    }
-                });
-                $('body').append($ret).css({
-                    overflow : 'hidden'
-                });
-                callback();
-            }
-        });
-    };
     main.go = function() {
+        this._loadDep();
         var _this = this;
         var task = window.setInterval(function() {
             if (_this.depFlag) {

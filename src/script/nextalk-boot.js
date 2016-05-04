@@ -65,10 +65,10 @@ nextalkMain.onChatlinks = function(data) {
 // 注意传递参数 uid nick avatar
 var uids = _IMC.chatlinkIds.split(',');
 for (var i = 0; i < uids.length; i++) {
-    var chatEl = document.getElementById('webim-chatid-' + uids[i]);
+    var uid = uids[i];
+    var chatEl = document.getElementById('webim-chatid-' + uid);
     if (!chatEl) continue;
     chatEl.onclick = function() {
-        var uid = uids[i];
         if (_IMC.window == true) {
             nextalkMain.openChatBoxWin(uid, 'user' + uid, '');
         } else {
