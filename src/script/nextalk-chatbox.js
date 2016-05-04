@@ -1079,7 +1079,7 @@
             if (ww <= 320) {
                 $html.css('width', '100%');
             } else {
-                $html.width(270);
+                $html.width(220);
             }
         } else {
             $html.css('width', '100%');
@@ -1336,6 +1336,7 @@
         var _this = this, $html = _this.$html;
         var webui = UI.getInstance();
         var mobile = webui.options.mobile;
+        var simple = webui.options.simple;
 
         var $w = $(window);
         var wh = $w.height();
@@ -1345,7 +1346,11 @@
             if (ww <= 320) {
                 $html.css('width', '100%');
             } else {
-                $html.width(ww - 270 - 2);
+                if (!simple) {
+                    $html.width(ww - 270 - 2);
+                } else {
+                    $html.width(ww - 220 - 2);
+                }
             }
         } else {
             $html.css('width', '100%');
