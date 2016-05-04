@@ -275,17 +275,25 @@ html, body {
 
 .mzen-bar-nav .nextalk-user a {
 	display: block;
-	height: 40px !important;
-    width: 40px !important;
-    margin-top: 3px;
-    border-radius: 5px;
+	height: 32px !important;
+    width: 32px !important;
+    border-radius: 3px;
 	border: 1px solid #f9f9f9;
+	position: absolute;
+    right: 10px;
+	top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    text-align: center;
+    vertical-align: middle;
 }
 .mzen-bar-nav .nextalk-user img {
-    height: 38px;
-    width: 38px;
+    height: 30px;
+    width: 30px;
     border-radius: 50%;
     background-color: white;
+    margin-left: auto;
+    margin-right: auto;
 }
 .mzen-bar-nav .nextalk-user a.available {
   border: 1px solid #5cb85c;
@@ -456,6 +464,7 @@ footer.mzen-nav >ul.mzen-bar-tab > li > .mzen-badge {
 .chatbox .mzen-list-view-cell {
 	padding: 6px 10px;
 	line-height: 38px;
+	vertical-align: middle;
 	cursor: pointer;
 }
 .chatbox .mzen-list-view-cell:after {
