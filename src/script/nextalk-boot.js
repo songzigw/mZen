@@ -40,7 +40,7 @@ nextalkMain.setConfig({
     mobile : _IMC.mobile
 });
 
-nextalkMain.chatObj = chatObj;
+nextalkMain.chatObj = window.chatObj;
 // 聊天按钮对应的Uid
 nextalkMain.chatlinkIds = _IMC.chatlinkIds;
 // 当聊天对象状态变化
