@@ -68,11 +68,17 @@ for (var i = 0; i < uids.length; i++) {
     var uid = uids[i];
     var chatEl = document.getElementById('webim-chatid-' + uid);
     if (!chatEl) continue;
+    chatEl.setAttribute('data-id', uid);
+    chatEl.setAttribute('data-nick', 'user'+uid);
+    chatEl.setAttribute('data-avatar', '');
     chatEl.onclick = function() {
+        var dId = this.getAttribute('data-id');
+        var dNick = this.getAttribute('data-nick');
+        var avatar = this.getAttribute('data-avatar');
         if (_IMC.window == true) {
-            nextalkMain.openChatBoxWin(uid, 'user' + uid, '');
+            nextalkMain.openChatBoxWin(dId, dNick, avatar);
         } else {
-            nextalkMain.openChatBoxUI(uid, 'user' + uid, '');
+            nextalkMain.openChatBoxUI(dId, dNick, avatar);
         }
     };
 }
