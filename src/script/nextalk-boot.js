@@ -64,10 +64,11 @@ for (var i = 0; i < uids.length; i++) {
     var chatEl = document.getElementById('webim-chatid-' + uids[i]);
     if (!chatEl) continue;
     chatEl.onclick = function() {
+        var uid = uids[i];
         if (_IMC.window == true) {
-            nextalkMain.openChatBoxWin(uids[i], 'user' + uids[i], '');
+            nextalkMain.openChatBoxWin(uid, 'user' + uid, '');
         } else {
-            nextalkMain.openChatBoxUI(uids[i], 'user' + uids[i], '');
+            nextalkMain.openChatBoxUI(uid, 'user' + uid, '');
         }
     };
 }
