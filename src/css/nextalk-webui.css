@@ -448,28 +448,25 @@ footer.mzen-nav >ul.mzen-bar-tab > li > .mzen-badge {
 }
 
 .chatbox .mzen-list-view .mzen-img-object {
-    width: 30px;
-    height: 30px;
+    width: 38px;
+    height: 38px;
     border-radius: 3px;
-    margin-right: 8px;
+    background-color: #cfcfcf;
 }
 .chatbox .mzen-list-view-cell {
-	padding: 6px 15px;
-	line-height: 30px;
+	padding: 6px 10px;
+	line-height: 38px;
 	cursor: pointer;
 }
 .chatbox .mzen-list-view-cell:after {
-	border-bottom: 0px;
-	border-top: 0px;
+	/*border-bottom: 0px;
+	border-top: 0px;*/
 }
 .chatbox .mzen-list-view-cell:before {
-    border-bottom: 0px;
-    border-top: 0px;
+    /*border-bottom: 0px;
+    border-top: 0px;*/
 }
 .chatbox .mzen-list-view:after {
-	border-bottom: 0px;
-	border-top: 0px;
-}
-.chatbox .mzen-searchbar-wrap {
-	height: 45px;
+	/*border-bottom: 0px;
+	border-top: 0px;*/
 }

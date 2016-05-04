@@ -940,7 +940,7 @@
         _this.$html.append(_this.msgTipsUI.$html);
         _this.handler();
     };
-    SimpleUI.HTML = '<div class="mzen-border-r nextalk-page chatbox" id="nextalk_page_main">\
+    SimpleUI.HTML = '<div class="nextalk-page chatbox" id="nextalk_page_main">\
                         <header class="mzen-bar mzen-bar-nav mzen-bar-white">\
                                 <div class="mzen-pull-right nextalk-user">\
                                 <a class="mzen-img mzen-tap-active\
