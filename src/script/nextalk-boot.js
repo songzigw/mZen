@@ -36,9 +36,11 @@ nextalkMain.setConfig({
     iframe : _IMC.iframe,
     // 简易版本
     simple : _IMC.simple,
-    chatObj : chatObj
+    hidden : _IMC.hidden,
+    mobile : _IMC.mobile
 });
 
+nextalkMain.chatObj = chatObj;
 // 聊天按钮对应的Uid
 nextalkMain.chatlinkIds = _IMC.chatlinkIds;
 // 当聊天对象状态变化
