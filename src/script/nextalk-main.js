@@ -165,7 +165,8 @@
             apiPath : _this.apiPath,
             mobile : _this.mobile,
             simple : _this.simple,
-            chatObj : _this.chatObj
+            chatObj : _this.chatObj,
+            chatlinkIds : _this.chatlinkIds
         });
         webui.onChatlinks = _this.onChatlinks;
         webui.onUnread = _this.onUnread;
@@ -214,12 +215,6 @@
             onChatlinks : _this.onChatlinks
         };
         nextalkTop.go();
-        // 将nextalkMain销毁
-        for (var key in main) {
-            if (key != 'openChatBoxUI') {
-                delete main[key];
-            }
-        }
         //delete window.nextalkMain;
     };
 
@@ -228,8 +223,6 @@
                 this.resPath + "html/chatbox.html?id=" + id
                 + "&name=" + name
                 + "&avatar=" + avatar,
-                + "&res_path=" + this.resPath,
-                + "&api_path=" + this.apiPath,
                 "window_chat", 790, 500);
     };
     main.openWindow = function(url, name, iWidth, iHeight) {

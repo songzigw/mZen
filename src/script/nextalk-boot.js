@@ -40,32 +40,35 @@ nextalkMain.setConfig({
 
 // 聊天按钮对应的Uid
 nextalkMain.chatlinkIds = _IMC.chatlinkIds;
-try {
-    // 当聊天对象状态变化
-    nextalkMain.onChatlinks = function(data) {
-        if (data) {
-            for ( var key in data) {
-                if (data[key] != 'unavailable') {
-                    document.getElementById('webim-chatid-' + key).innerText = '在线';
-                } else {
-                    document.getElementById('webim-chatid-' + key).innerText = '下线';
-                }
+// 当聊天对象状态变化
+nextalkMain.onChatlinks = function(data) {
+    if (data) {
+        for (var key in data) {
+            var el = document.getElementById('webim-chatid-' + key);
+            if (!el) continue;
+            if (data[key] != 'unavailable') {
+                //el.innerText = '在线';
+            } else {
+                //el.innerText = '下线';
             }
         }
-    };
-    // 给聊天按钮设置单击事件
-    // 注意传递参数 uid nick avatar
-    var uids = _IMC.chatlinkIds.split(',');
-    for (var i = 0; i < uids.length; i++) {
-        document.getElementById('webim-chatid-' + uids[i]).onclick = function() {
-            if (_IMC.window == true) {
-                nextalkMain.openChatBoxWin(uids[i], 'user' + uids[i], '');
-            } else {
-                nextalkMain.openChatBoxUI(uids[i], 'user' + uids[i], '');
-            }
-        };
     }
-} catch (e) {
+};
+// 给聊天按钮设置单击事件
+// 注意传递参数 uid nick avatar
+var uids = _IMC.chatlinkIds.split(',');
+for (var i = 0; i < uids.length; i++) {
+    var chatEl = document.getElementById('webim-chatid-' + uids[i]);
+    if (!chatEl) continue;
+    chatEl.onclick = function() {
+        if (_IMC.window == true) {
+            nextalkMain.openChatBoxWin(uids[i], 'user' + uids[i], '');
+        } else {
+            nextalkMain.openChatBoxUI(uids[i], 'user' + uids[i], '');
+        }
+    };
 }
 
-nextalkMain.go();
+if (_IMC.go == true) {
+    nextalkMain.go();
+}

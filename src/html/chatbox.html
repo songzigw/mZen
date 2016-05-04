@@ -7,7 +7,7 @@
 <title>Chat</title>
 </head>
 <body>
-    <script type="text/javascript" src="../script/nextalk-main.js"></script>
+    <script type="text/javascript" src="/webim/index.php?action=boot&go=false"></script>
     <script type="text/javascript">
         function getParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -20,16 +20,10 @@
             avatar : getParam('avatar')
         };
         nextalkMain.setConfig({
-            // 引入资源文件的根路径
-            resPath : getParam('res_path'),
-            // API根路径
-            apiPath : getParam('api_path'),
             // 简易版本
             simple : true,
             // 默认聊天对象
-            chatObj : chatObj,
-            // API路由
-            route : demo.route
+            chatObj : chatObj
         });
         nextalkMain.go();
     </script>
