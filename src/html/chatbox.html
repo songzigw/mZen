@@ -7,7 +7,6 @@
 <title>Chat</title>
 </head>
 <body>
-    <script type="text/javascript" src="/webim/index.php?action=boot&go=false"></script>
     <script type="text/javascript">
         function getParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -19,14 +18,14 @@
             name : getParam('name'),
             avatar : getParam('avatar')
         };
-        nextalkMain.setConfig({
+        //nextalkMain.setConfig({
             // 简易版本
-            simple : true,
+        //    simple : true,
             // 默认聊天对象
-            chatObj : chatObj
-        });
-        nextalkMain.go();
+        //    chatObj : chatObj
+        //});
+        //nextalkMain.go();
     </script>
-
+    <script type="text/javascript" src="/webim/index.php?action=boot&go=false"></script>
 </body>
 </html>

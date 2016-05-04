@@ -35,7 +35,8 @@ nextalkMain.setConfig({
     // 嵌入窗口右下角
     iframe : _IMC.iframe,
     // 简易版本
-    simple : _IMC.simple
+    simple : _IMC.simple,
+    chatObj : chatObj
 });
 
 // 聊天按钮对应的Uid
@@ -69,6 +70,4 @@ for (var i = 0; i < uids.length; i++) {
     };
 }
 
-if (_IMC.go == true) {
-    nextalkMain.go();
-}
+nextalkMain.go();
