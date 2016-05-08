@@ -90,24 +90,26 @@ nextalkMain.onChatlinks = function(data) {
 };
 // 给聊天按钮设置单击事件
 // 注意传递参数 uid nick avatar
-var uids = _IMC.chatlinkIds.split(',');
-for (var i = 0; i < uids.length; i++) {
-    var uid = uids[i];
-    var chatEl = document.getElementById('webim-chatid-' + uid);
-    if (!chatEl) continue;
-    chatEl.setAttribute('data-id', uid);
-    chatEl.setAttribute('data-nick', 'user'+uid);
-    chatEl.setAttribute('data-avatar', '');
-    chatEl.onclick = function() {
-        var dId = this.getAttribute('data-id');
-        var dNick = this.getAttribute('data-nick');
-        var avatar = this.getAttribute('data-avatar');
-        if (_IMC.window == true) {
-            openChatBoxWin(dId, dNick, avatar);
-        } else {
-            nextalkMain.openChatBoxUI(dId, dNick, avatar);
-        }
-    };
+if (_IMC.chatlinkIds) {
+    var uids = _IMC.chatlinkIds.split(',');
+    for (var i = 0; i < uids.length; i++) {
+        var uid = uids[i];
+        var chatEl = document.getElementById('webim-chatid-' + uid);
+        if (!chatEl) continue;
+        chatEl.setAttribute('data-id', uid);
+        chatEl.setAttribute('data-nick', 'user'+uid);
+        chatEl.setAttribute('data-avatar', '');
+        chatEl.onclick = function() {
+            var dId = this.getAttribute('data-id');
+            var dNick = this.getAttribute('data-nick');
+            var avatar = this.getAttribute('data-avatar');
+            if (_IMC.window == true) {
+                openChatBoxWin(dId, dNick, avatar);
+            } else {
+                nextalkMain.openChatBoxUI(dId, dNick, avatar);
+            }
+        };
+    }
 }
 
 nextalkMain.go();
