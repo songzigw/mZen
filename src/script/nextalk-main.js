@@ -69,7 +69,7 @@
         document.write('<script type="text/javascript" src="' + _this.resPath
                 + 'script/nextalk-webim.js"></script>');
         document.write('<script type="text/javascript" src="' + _this.resPath
-                + 'script/nextalk-chatbox.js"></script>');
+                + 'script/nextalk-webui.js"></script>');
         var task = window.setInterval(function() {
             if (!window.$) {
                 return;
@@ -191,33 +191,6 @@
         };
         nextalkTop.go();
         //delete window.nextalkMain;
-    };
-
-    main.openChatBoxWin = function(id, name, avatar) {
-        this.openWindow(
-                this.resPath + "html/chatbox.html?id=" + id
-                + "&name=" + name
-                + "&avatar=" + avatar,
-                "window_chat", 790, 500);
-    };
-    main.openWindow = function(url, name, iWidth, iHeight) {
-        // 获得窗口的水平位置
-        var iLeft = (window.screen.width - 10 - iWidth) / 2;
-        // 获得窗口的垂直位置
-        var iTop = (window.screen.height - 30 - iHeight) / 2;
-        window.open(url, name, 'height='
-                            + iHeight
-                            + ',innerHeight='
-                            + iHeight
-                            + ',width='
-                            + iWidth
-                            + ',innerWidth='
-                            + iWidth
-                            + ',top='
-                            + iTop
-                            + ',left='
-                            + iLeft
-                            + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
     };
 
     var top = window.top;

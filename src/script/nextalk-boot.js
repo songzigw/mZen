@@ -1,3 +1,31 @@
+var openChatBoxWin = function(id, name, avatar) {
+    this.openWindow(
+            _IMC.apiPath + "index.php?action=chatbox"
+            + "&id=" + id
+            + "&name=" + name
+            + "&avatar=" + avatar,
+            "window_chat", 790, 500);
+};
+var openWindow = function(url, name, iWidth, iHeight) {
+    // 获得窗口的水平位置
+    var iLeft = (window.screen.width - 10 - iWidth) / 2;
+    // 获得窗口的垂直位置
+    var iTop = (window.screen.height - 30 - iHeight) / 2;
+    window.open(url, name, 'height='
+                        + iHeight
+                        + ',innerHeight='
+                        + iHeight
+                        + ',width='
+                        + iWidth
+                        + ',innerWidth='
+                        + iWidth
+                        + ',top='
+                        + iTop
+                        + ',left='
+                        + iLeft
+                        + ',toolbar=no,menubar=no,scrollbars=no,resizeable=no,location=no,status=no');
+};
+
 nextalkMain.setConfig({
     // 引入资源文件的根路径
     resPath : _IMC.resPath,
@@ -40,10 +68,9 @@ nextalkMain.setConfig({
     mobile : _IMC.mobile
 });
 
-if (window.chatObj) {
-    nextalkMain.chatObj = window.chatObj;
+if (_IMC.chatObj) {
+    nextalkMain.chatObj = _IMC.chatObj;
     nextalkMain.iframe = false;
-    nextalkMain.simple = true;
 }
 // 聊天按钮对应的Uid
 nextalkMain.chatlinkIds = _IMC.chatlinkIds;
@@ -76,7 +103,7 @@ for (var i = 0; i < uids.length; i++) {
         var dNick = this.getAttribute('data-nick');
         var avatar = this.getAttribute('data-avatar');
         if (_IMC.window == true) {
-            nextalkMain.openChatBoxWin(dId, dNick, avatar);
+            openChatBoxWin(dId, dNick, avatar);
         } else {
             nextalkMain.openChatBoxUI(dId, dNick, avatar);
         }

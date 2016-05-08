@@ -10,7 +10,7 @@
 
     "use strict";
 
-    var top = {
+    var iframe = {
         config : {
             // 通信令牌 暂时不用
             //ticket : 'ticket',
@@ -31,7 +31,7 @@
         $ : undefined
     };
 
-    top._getBtnHTML = function() {
+    iframe._getBtnHTML = function() {
         var btnHTML = '<div class="nextalk-main" id="nextalk_main">'
                 + '<a class="nextalk-btn">' + '<img class="nextalk-ico" src="'
                 + this.config.resPath + 'imgs/chat.png" />' + '<span>聊天</span></a>'
@@ -40,7 +40,7 @@
     };
 
     var h = 20;
-    top._getIfrHTML = function() {
+    iframe._getIfrHTML = function() {
         var ifrHTML = '<div class="nextalk-iframe" id="nextalk_iframe" '
                 + 'style="width:'+ this.panel.width + 'px;height:' + this.panel.height + 'px;">'
                 + '<div class="nextalk-minimize" style="width:100%;height:' + h + 'px;">'
@@ -66,11 +66,11 @@
         }, 5);
     }
     function toggleHTML() {
-        var nkMain = top.$('#nextalk_main', document);
-        var nkIframe = top.$('#nextalk_iframe', document);
+        var nkMain = iframe.$('#nextalk_main', document);
+        var nkIframe = iframe.$('#nextalk_iframe', document);
 
         var nkMainHeight = -42;
-        var nkIframeHeight = -(top.panel.height);
+        var nkIframeHeight = -(iframe.panel.height);
         slideUp(nkMain, nkMainHeight);
 
         nkMain.find('a').click(function() {
@@ -83,7 +83,7 @@
         });
     }
 
-    top.go = function() {
+    iframe.go = function() {
         var _this = this;
         _this.config.onUnread = function(total) {
             document.getElementById('nextalk_unread').innerText = total;
@@ -103,7 +103,7 @@
             }
         }, 200);
     };
-    top.openChatBoxUI = function(uid, nick, avatar) {
+    iframe.openChatBoxUI = function(uid, nick, avatar) {
         if (!uid || !nick) {
             throw new Error('args: uid, nick, avatar.');
         }
@@ -116,5 +116,5 @@
         }
     };
 
-    win.nextalkTop = top;
+    win.nextalkTop = iframe;
 })(window);
