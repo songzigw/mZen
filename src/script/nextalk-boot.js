@@ -67,7 +67,9 @@ nextalkMain.setConfig({
     hidden : _IMC.hidden,
     mobile : _IMC.mobile
 });
-
+if (_IMC.channelType) {
+    nextalkMain.channelType = _IMC.channelType
+}
 if (_IMC.chatObj) {
     nextalkMain.chatObj = _IMC.chatObj;
     nextalkMain.iframe = false;
