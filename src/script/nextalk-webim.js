@@ -1241,8 +1241,8 @@
     /** 管道类型 */
     Channel.type = {};
     (function(type) {
-        type[type["XHR_POLLING"] = 0] = "XHR_POLLING";
-        type[type["WEBSOCKET"] = 1] = "WEBSOCKET";
+        type.XHR_POLLING = "XHR_POLLING";
+        type.WEBSOCKET = "WEBSOCKET";
     })(Channel.type);
 
     Channel.DEFAULTS = {
