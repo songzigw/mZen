@@ -116,5 +116,5 @@
         }
     };
 
-    win.nextalkTop = iframe;
+    win.nextalkIframe = iframe;
 })(window);
