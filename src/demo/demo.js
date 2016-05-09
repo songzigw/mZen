@@ -1,29 +1,32 @@
 var demo = {
-    resPath : '/nextalk-webim-song/src/',
-    apiPath : '/nextalk-webim-song/',
+    resPath : '/webim-for-php5/webim/static/',
+    apiPath : '/webim-for-php5/webim/',
     route : {
-        online : "online.do",
-        offline : "offline.do",
-        buddies : "buddies.do",
-        remove_buddy : "remove_buddy.do",
-        deactivate : "refresh.do",
-        message : "message.do",
-        presence : "presence.do",
-        status : "status.do",
-        setting : "setting.do",
-        history : "history.do",
-        clear : "clear_history.do",
-        download : "download_history.do",
+        online : "index.php?action=online",
+        offline : "index.php?action=offline",
+        deactivate : "index.php?action=refresh",
+        message : "index.php?action=message",
+        presence : "index.php?action=presence",
+        status : "index.php?action=status",
+        setting : "index.php?action=setting",
+        history : "index.php?action=history",
+        clear : "index.php?action=clear_history",
+        download : "index.php?action=download_history",
+        buddies : "index.php?action=buddies",
         // room actions
-        invite : "invite.do",
-        join : "join.do",
-        leave : "leave.do",
-        block : "block.do",
-        unblock : "unblock.do",
-        members : "members.do",
+        invite : "index.php?action=invite",
+        join : "index.php?action=join",
+        leave : "index.php?action=leave",
+        block : "index.php?action=block",
+        unblock : "index.php?action=unblock",
+        members : "index.php?action=members",
         // notifications
-        notifications : "notifications.do",
+        notifications : "index.php?action=notifications",
+        // asks
+        asks : "index.php?action=asks",
+        accept : "index.php?action=accept_ask",
+        reject : "index.php?action=reject_ask",
         // upload files
-        upload : "upload.do"
+        upload : "static/images/upload.php"
     }
 };
