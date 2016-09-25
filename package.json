@@ -36,8 +36,8 @@
     "dependencies": {
         "zepto": "*"
     },
-    config: {},
-    directories: {},
-    main: {},
-    bin: {}
+    "config": {},
+    "directories": {},
+    "main": {},
+    "bin": {}
 }

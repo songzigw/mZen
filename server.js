@@ -1,6 +1,6 @@
 /*!
  * @auth zhangsong
- * @date: 2016年3月24日
+ * @date 2016年3月24日
  */
 var http = require('http');
 var path = require('path');
@@ -52,7 +52,7 @@ app.use("/proxy", function (req, res) {
     });
 });
 
-app.use(express.static(__dirname + '/src'));
+app.use(express.static(__dirname));
 
 app.listen(3000);
 console.log("Server is launching at http://localhost:3000");
