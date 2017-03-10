@@ -5,83 +5,68 @@
 
 .mzen {
 
-    // Container widths
-    //
-    // Set the container width, and override it for fixed navbars in media queries.
-    
-    .container {
-      .container-fixed();
-    
-      @media (min-width: @screen-sm-min) {
-        width: @container-sm;
-      }
-      @media (min-width: @screen-md-min) {
-        width: @container-md;
-      }
-      @media (min-width: @screen-lg-min) {
-        width: @container-lg;
-      }
+    .m-grid-row {
+        overflow: hidden;
+        margin: 0;
+    }
+    .m-grid-row-padded {
+        margin-left: 0rem;
+        margin-right: 0rem;
+        
+        [class*=m-grid-col-xs-] {
+            //margin: 0.125rem;
+        }
+    }
+    .m-grid-col-xs-1,
+    .m-grid-col-xs-2,
+    .m-grid-col-xs-4,
+    .m-grid-col-xs-5,
+    .m-grid-col-xs-6,
+    .m-grid-col-xs-7,
+    .m-grid-col-xs-8,
+    .m-grid-col-xs-9,
+    .m-grid-col-xs-10,
+    .m-grid-col-xs-11,
+    .m-grid-col-xs-12 {
+        position: relative;
+        float: left;
     }
     
-    
-    // Fluid container
-    //
-    // Utilizes the mixin meant for fixed width containers, but without any defined
-    // width for fluid, full width layouts.
-    
-    .container-fluid {
-      .container-fixed();
+    .m-grid-col-xs-12 {
+        width: 100%;
     }
-    
-    
-    // Row
-    //
-    // Rows contain and clear the floats of your columns.
-    
-    .row {
-      .make-row();
+    .m-grid-col-xs-11 {
+        width: 91.66666667%;
     }
-    
+    .m-grid-col-xs-10 {
+        width: 83.33333333%;
+    }
+    .m-grid-col-xs-9 {
+        width: 75%;
+    }
+    .m-grid-col-xs-8 {
+        width: 66.66666667%;
+    }
+    .m-grid-col-xs-7 {
+        width: 58.33333333%;
+    }
+    .m-grid-col-xs-6 {
+        width: 50%;
+    }
+    .m-grid-col-xs-5 {
+        width: 41.66666667%;
+    }
+    .m-grid-col-xs-4 {
+        width: 33.33333333%;
+    }
+    .m-grid-col-xs-3 {
+        width: 25%;
+    }
+    .m-grid-col-xs-2 {
+        width: 16.66666667%;
+    }
+    .m-grid-col-xs-1 {
+        width: 8.33333333%;
+    }
 }
 
-// Columns
-//
-// Common styles for small and large grid columns
-
-.make-grid-columns();
-
-
-// Extra small grid
-//
-// Columns, offsets, pushes, and pulls for extra small devices like
-// smartphones.
-
-.make-grid(xs);
-
-
-// Small grid
-//
-// Columns, offsets, pushes, and pulls for the small device range, from phones
-// to tablets.
-
-@media (min-width: @screen-sm-min) {
-  .make-grid(sm);
-}
-
-
-// Medium grid
-//
-// Columns, offsets, pushes, and pulls for the desktop device range.
-
-@media (min-width: @screen-md-min) {
-  .make-grid(md);
-}
-
-
-// Large grid
-//
-// Columns, offsets, pushes, and pulls for the large desktop device range.
-
-@media (min-width: @screen-lg-min) {
-  .make-grid(lg);
-}
