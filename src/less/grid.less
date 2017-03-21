@@ -5,68 +5,113 @@
 
 .mzen {
 
-    .m-grid-row {
+    .mz-row {
         overflow: hidden;
         margin: 0;
     }
-    .m-grid-row-padded {
-        margin-left: 0rem;
-        margin-right: 0rem;
+    .mz-row-padded {
+        margin-left: -0.125rem;
+        margin-right: -0.125rem;
         
-        [class*=m-grid-col-xs-] {
-            //margin: 0.125rem;
+        [class*=mz-col-xs-] {
+            padding: 0.125rem;
         }
     }
-    .m-grid-col-xs-1,
-    .m-grid-col-xs-2,
-    .m-grid-col-xs-4,
-    .m-grid-col-xs-5,
-    .m-grid-col-xs-6,
-    .m-grid-col-xs-7,
-    .m-grid-col-xs-8,
-    .m-grid-col-xs-9,
-    .m-grid-col-xs-10,
-    .m-grid-col-xs-11,
-    .m-grid-col-xs-12 {
+    .mz-col-xs-1,
+    .mz-col-xs-2,
+    .mz-col-xs-3,
+    .mz-col-xs-4,
+    .mz-col-xs-5,
+    .mz-col-xs-6,
+    .mz-col-xs-7,
+    .mz-col-xs-8,
+    .mz-col-xs-9,
+    .mz-col-xs-10,
+    .mz-col-xs-11,
+    .mz-col-xs-12 {
         position: relative;
         float: left;
     }
     
-    .m-grid-col-xs-12 {
+    .mz-col-xs-12 {
         width: 100%;
     }
-    .m-grid-col-xs-11 {
+    .mz-col-xs-11 {
         width: 91.66666667%;
     }
-    .m-grid-col-xs-10 {
+    .mz-col-xs-10 {
         width: 83.33333333%;
     }
-    .m-grid-col-xs-9 {
+    .mz-col-xs-9 {
         width: 75%;
     }
-    .m-grid-col-xs-8 {
+    .mz-col-xs-8 {
         width: 66.66666667%;
     }
-    .m-grid-col-xs-7 {
+    .mz-col-xs-7 {
         width: 58.33333333%;
     }
-    .m-grid-col-xs-6 {
+    .mz-col-xs-6 {
         width: 50%;
     }
-    .m-grid-col-xs-5 {
+    .mz-col-xs-5 {
         width: 41.66666667%;
     }
-    .m-grid-col-xs-4 {
+    .mz-col-xs-4 {
         width: 33.33333333%;
     }
-    .m-grid-col-xs-3 {
+    .mz-col-xs-3 {
         width: 25%;
     }
-    .m-grid-col-xs-2 {
+    .mz-col-xs-2 {
         width: 16.66666667%;
     }
-    .m-grid-col-xs-1 {
+    .mz-col-xs-1 {
         width: 8.33333333%;
     }
+
+.mz-grid {
+    width: 100%;
+    background-color: #ffffff;
+    display: table;
+    table-layout: fixed;
+}
+.mz-grid [class*=mz-col-] {
+    display: table-cell;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    padding: 1rem 0;
+}
+.mz-grid [class*=mz-col-xs-]:active {
+    background-color: #f5f5f5;
+}
+.mz-grid .mz-iconfont {
+    position: relative;
+    z-index: 20;
+    top: 0;
+    height: 1.4rem;
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+}
+.mz-grid .mz-grid-label {
+    display: block;
+    font-size: 0.7rem;
+    position: relative;
+    margin-top: 0.25rem;
+}
+.mz-grid .mz-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 60%;
+    z-index: 99;
+}
+.mz-grid .mz-dot {
+    position: absolute;
+    top: 0.5rem;
+    right: 20%;
+    z-index: 99;
+}
+
 }
 

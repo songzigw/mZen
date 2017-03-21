@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Grid</title>
+    <link rel="shortcut icon" href="../imgs/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../css/mzen.css" />
+</head>
+<body class="mzen">
+    <section class="mz-grid mz-margin-b-15">
+        <div class="mz-row">
+            <div class="mz-col-xs-4">
+                <div class="mz-badge">88</div>
+                <i class="mz-iconfont mz-icon-home"></i>
+                <div class="mz-grid-label">首页</div>
+            </div>
+            <div class="mz-col-xs-4">
+                <i class="mz-iconfont mz-icon-gear"></i>
+                <div class="mz-grid-label">设置</div>
+            </div>
+            <div class="mz-col-xs-4">
+                <i class="mz-iconfont mz-icon-map"></i>
+                <div class="mz-grid-label">地图</div>
+            </div>
+            <div class="mz-col-xs-4">
+                <i class="mz-iconfont mz-icon-calendar"></i>
+                <div class="mz-grid-label">日历</div>
+            </div>
+            <div class="mz-col-xs-4">
+                <div class="mz-badge"></div>
+                <i class="mz-iconfont mz-icon-date"></i>
+                <div class="mz-grid-label">日期</div>
+            </div>
+            <div class="mz-col-xs-4">
+                <div class="mz-dot"></div>
+                <i class="mz-iconfont mz-icon-cart"></i>
+                <div class="mz-grid-label">购物车</div>
+            </div>
+        </div>
+    </section>
+    <section class="mz-grid">
+        <div class="mz-row">
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-home"></i>
+                <div class="mz-grid-label">首页</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-gear"></i>
+                <div class="mz-grid-label">设置</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-map"></i>
+                <div class="mz-grid-label">地图</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-calendar"></i>
+                <div class="mz-grid-label">日历</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-date"></i>
+                <div class="mz-grid-label">日期</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-cart"></i>
+                <div class="mz-grid-label">购物车</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-paper"></i>
+                <div class="mz-grid-label">发现</div>
+            </div>
+            <div class="mz-col-xs-3">
+                <i class="mz-iconfont mz-icon-video"></i>
+                <div class="mz-grid-label">视频</div>
+            </div>
+        </div>
+    </section>
+</body>
+<script type="text/javascript" src="../script/api.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+    }
+    var tab = document.querySelectorAll(".mz-tab-item");
+    for(var i in tab){
+        tab[i].onclick = function(e){
+            document.querySelector(".mz-tab-item.mz-active").classList.remove("mz-active");
+            e.target.classList.add("mz-active");
+        }
+    }
+</script>
+</html>

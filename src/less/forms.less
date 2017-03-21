@@ -1,0 +1,178 @@
+//
+// Forms
+// --------------------------------------------------
+
+.mzen {
+
+// form\text\textarea\radio\checkbox
+input[type="text"],
+input[type="password"],
+input[type="search"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input[type="number"],
+select,
+textarea {
+    border: none;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    min-height: 2.2rem;
+    color: #424242;
+    font-size: 0.8rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    -webkit-user-select: text;
+            user-select: text;
+    -webkit-appearance: none;
+            appearance: none;
+    -webkit-appearance: none;
+}
+input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+}
+
+// 单选、多选、开关
+.mz-radio,
+.mz-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    background-color: #ffffff;
+    border: solid 1px #dddddd;
+    -webkit-border-radius: 0.6rem;
+    border-radius: 0.6rem;
+    font-size: 0.8rem;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    cursor: default;
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+            user-select: none;
+    -webkit-transition: background-color ease 0.1s;
+            transition: background-color ease 0.1s;
+}
+.mz-checkbox {
+    border-radius: 0.1rem;
+}
+.mz-radio:checked,
+.mz-radio.mz-checked,
+.mz-checkbox:checked,
+.mz-checkbox.mz-checked {
+    background-color: #03a9f4;
+    border: solid 1px #03a9f4;
+    text-align: center;
+    background-clip: padding-box;
+}
+.mz-radio:checked:before,
+.mz-radio.mz-checked:before,
+.mz-checkbox:checked:before,
+.mz-checkbox.mz-checked:before,
+.mz-radio:checked:after,
+.mz-radio.mz-checked:after,
+.mz-checkbox:checked:after,
+.mz-checkbox.mz-checked:after {
+    content: '';
+    width: 0.5rem;
+    height: 0.3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -0.25rem;
+    margin-top: -0.25rem;
+    background: transparent;
+    border: 1px solid #ffffff;
+    border-top: none;
+    border-right: none;
+    z-index: 2;
+    -webkit-border-radius: 0;
+            border-radius: 0;
+    -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+}
+.mz-radio:disabled,
+.mz-radio.mz-disabled,
+.mz-checkbox:disabled,
+.mz-checkbox.mz-disabled {
+    background-color: #dddddd;
+    border: solid 1px #dddddd;
+}
+.mz-radio:disabled:before,
+.mz-radio.mz-disabled:before,
+.mz-radio:disabled:after,
+.mz-radio.mz-disabled:after,
+.mz-checkbox:disabled:before,
+.mz-checkbox.mz-disabled:before,
+.mz-checkbox:disabled:after,
+.mz-checkbox.mz-disabled:after {
+    content: '';
+    width: 0.5rem;
+    height: 0.3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -0.25rem;
+    margin-top: -0.25rem;
+    background: transparent;
+    border: 1px solid #ffffff;
+    border-top: none;
+    border-right: none;
+    z-index: 2;
+    -webkit-border-radius: 0;
+            border-radius: 0;
+    -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+}
+.mz-switch {
+    width: 2.3rem;
+    height: 1.2rem;
+    position: relative;
+    vertical-align: top;
+    border: 1px solid #dddddd;
+    background-color: #dddddd;
+    border-radius: 0.6rem;
+    background-clip: content-box;
+    display: inline-block;
+    outline: none;
+    -webkit-appearance: none;
+            appearance: none;
+    -webkit-user-select: none;
+            user-select: none;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+    -webkit-transition: all 0.2s linear;
+            transition: all 0.2s linear;
+}
+.mz-switch:before {
+    width: 1.1rem;
+    height: 1.1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 0.6rem;
+    background-color: #fff;
+    content: '';
+    -webkit-transition: left 0.2s;
+            transition: left 0.2s;
+}
+.mz-switch:checked {
+    border-color: #03a9f4;
+    background-color: #03a9f4;
+}
+.mz-switch:checked:before {
+    left: 1.1rem;
+}
+
+}

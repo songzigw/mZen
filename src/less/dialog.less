@@ -1,0 +1,148 @@
+
+.mzen {
+
+.mz-dialog {
+    width: 13.5rem;
+    text-align: center;
+    position: fixed;
+    z-index: 999;
+    left: 50%;
+    margin-left: -6.75rem;
+    margin-top: 0;
+    top: 45%;
+    border-radius: 0.3rem;
+    opacity: 0;
+    background-color: #ffffff;
+    -webkit-transform: translate3d(0, 0, 0) scale(1.2);
+            transform: translate3d(0, 0, 0) scale(1.2);
+    -webkit-transition-property: -webkit-transform, opacity;
+            transition-property: transform, opacity;
+    /*display: none;*/
+}
+.mz-dialog-header {
+    padding: 0.5rem 0.75rem 0 0.75rem;
+    text-align: center;
+    font-size: 1em;
+    color: #212121;
+}
+.mz-dialog-body {
+    padding: 0.75rem;
+    overflow: hidden;
+    font-size: 0.875em;
+    color: #757575;
+}
+.mz-dialog-body input {
+    border: 1px solid #bdbdbd;
+    border-radius: 0.2rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    min-height: 1.8rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+.mz-dialog-footer {
+    position: relative;
+    font-size: 1em;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+            justify-content: center;
+}
+.mz-dialog-footer:after {
+    width: 100%;
+    height: 1px;
+    background-color: #dddddd;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+    z-index: 2;
+    -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+}
+.mz-dialog-btn {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0 0.25rem;
+    height: 2.2rem;
+    font-size: 0.8rem;
+    line-height: 2.2rem;
+    text-align: center;
+    color: #0894ec;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-box-flex: 1;
+            box-flex: 1;
+}
+.mz-dialog-btn:after {
+    width: 1px;
+    height: 100%;
+    background-color: #dddddd;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+    -webkit-transform-origin: 100% 50%;
+            transform-origin: 100% 50%;
+}
+.mz-dialog-btn:first-child:after {
+    width: 0;
+}
+.mz-dialog.mz-dialog-in {
+    opacity: 1;
+    -webkit-transition-duration: 300ms;
+          transition-duration: 300ms;
+    -webkit-transform: translate3d(0, 0, 0) scale(1);
+          transform: translate3d(0, 0, 0) scale(1);
+}
+.mz-dialog.mz-dialog-out {
+    opacity: 0;
+    -webkit-transition-duration: 300ms;
+          transition-duration: 300ms;
+    -webkit-transform: translate3d(0, 0, 0) scale(0.815);
+          transform: translate3d(0, 0, 0) scale(0.815);
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
+    .mz-dialog-footer:after  {
+        -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+    }
+    .mz-dialog-btn:after  {
+        -webkit-transform: scaleX(1);
+                transform: scaleX(1);
+    }
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+    .mz-dialog-footer:after {
+        -webkit-transform: scaleY(0.5);
+                transform: scaleY(0.5);
+    }
+    .mz-dialog-btn:after {
+        -webkit-transform: scaleX(0.5);
+                transform: scaleX(0.5);
+    }
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 3) {
+    .mz-dialog-footer:after {
+        -webkit-transform: scaleY(0.333);
+                transform: scaleY(0.333);
+    }
+    .mz-dialog-btn:after {
+        -webkit-transform: scaleX(0.333);
+                transform: scaleX(0.333);
+    }
+}
+
+}
